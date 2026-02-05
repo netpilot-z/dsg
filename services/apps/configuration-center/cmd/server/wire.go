@@ -23,5 +23,5 @@ func InitApp(*conf.Server, *db.Database, *redis.Options) (*AppRunner, func(), er
 		domain.Set,
 		infrastructure.Set,
 		newApp,
-		NewAppRunner))
+		NewAppRunnerWithInit))
 }

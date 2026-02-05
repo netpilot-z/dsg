@@ -18,6 +18,7 @@ type Config struct {
 	BuildDate              string      `yaml:"buildDate"`
 	VEClientExpire         string      `yaml:"VEClientExpire"`
 	VEClientExpireDuration time.Duration
+	Using                  string    `yaml:"using"`
 	Redis                  RedisInfo `json:"redis"`
 }
 type OauthInfo struct {

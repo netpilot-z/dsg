@@ -83,6 +83,7 @@ config:
   productVersion: "${PRODUCT_VERSION}"
   buildDate: "${BUILD_DATE}"
   VEClientExpire: "${VECLIENTEXPIRE}"
+  using: "${USING}"
   redis:
     connectInfo:
       masterGroupName: "${REDIS_MASTER_NAME}"

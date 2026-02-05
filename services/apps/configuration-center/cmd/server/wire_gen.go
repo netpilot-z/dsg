@@ -344,7 +344,12 @@ func InitApp(server *conf.Server, database *db.Database, options *redis.Options)
 	entityChangeTransport := callbacks.NewEntityChangeTransport(producer)
 	transports := callbacks.NewTransport(gormDB, entityChangeTransport)
 	wfStarter := workflow.NewWFStarter(workflowInterface, client)
-	appRunner := NewAppRunner(app, implMQ, transports, wfStarter)
+	appRunner, err := NewAppRunnerWithInit(app, implMQ, transports, wfStarter, configurationCase)
+	if err != nil {
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	return appRunner, func() {
 		cleanup2()
 		cleanup()

@@ -9,7 +9,7 @@ require (
 	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/daknob/ntlm v0.0.0-20180331151128-c6369eea43f9
 	github.com/extrame/xls v0.0.1
-	github.com/gin-gonic/gin v1.9.1
+	github.com/gin-gonic/gin v1.11.0
 	github.com/glebarez/sqlite v1.5.0
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
@@ -21,7 +21,7 @@ require (
 	github.com/imroc/req/v2 v2.1.0
 	github.com/jinzhu/copier v0.4.0
 	github.com/json-iterator/go v1.1.12
-	github.com/kweaver-ai/TelemetrySDK-Go/exporter/v2 v2.10.2
+	github.com/kweaver-ai/TelemetrySDK-Go/exporter/v2 v2.10.3
 	github.com/kweaver-ai/idrm-go-common v0.1.4-0.20260119010937-2456e402a095
 	github.com/kweaver-ai/idrm-go-frame v0.1.3
 	github.com/mitchellh/mapstructure v1.5.0
@@ -47,7 +47,7 @@ require (
 	golang.org/x/sync v0.19.0
 	golang.org/x/text v0.32.0
 	google.golang.org/grpc v1.65.0
-	google.golang.org/protobuf v1.34.2
+	google.golang.org/protobuf v1.36.9
 	gopkg.in/fatih/set.v0 v0.2.1
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/gen v0.3.27
@@ -98,6 +98,7 @@ require (
 	github.com/go-redsync/redsync/v4 v4.15.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
+	github.com/goccy/go-yaml v1.18.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
@@ -153,6 +154,8 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/power-devops/perfstat v0.0.0-20221212215047-62379fc7944b // indirect
+	github.com/quic-go/qpack v0.6.0 // indirect
+	github.com/quic-go/quic-go v0.58.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
@@ -224,4 +227,10 @@ require (
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
+)
+
+replace (
+github.com/kweaver-ai/TelemetrySDK-Go/exporter/v2 => github.com/kweaver-ai/TelemetrySDK-Go/exporter/v2 v2.10.3
+github.com/kweaver-ai/TelemetrySDK-Go/event/v2 => github.com/kweaver-ai/TelemetrySDK-Go/event/v2 v2.10.3
+github.com/kweaver-ai/TelemetrySDK-Go/span/v2 => github.com/kweaver-ai/TelemetrySDK-Go/span/v2 v2.10.3
 )

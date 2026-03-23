@@ -1,16 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "data-semantic.fullname" . }}-api
-  namespace: {{ include "data-semantic.namespace" . }}
+  name: {{ .Values.name.api }}
+  namespace: {{ .Values.namespace }}
   labels:
-    {{- include "data-semantic.labels" . | nindent 4 }}
+    {{- toYaml .Values.labels.api.deployment | nindent 4}}
 spec:
   replicas: {{ .Values.api.replicaCount | default 1 }}
   selector:
     matchLabels:
-      {{- include "data-semantic.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: api
+      {{- toYaml .Values.labels.api.pod | nindent 6}}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -18,14 +17,14 @@ spec:
       maxUnavailable: 0
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-api.yaml") . | sha256sum }}
       labels:
-        {{- include "data-semantic.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: api
+        {{- toYaml .Values.labels.api.pod | nindent 8}}
     spec:
-      serviceAccountName: {{ include "data-semantic.serviceAccountName" . }}
       containers:
       - name: api
-        image: "{{ .Values.image.api.repository }}:{{ .Values.image.api.tag | default .Chart.AppVersion }}"
+        image: "{{ .Values.image.api.registry }}/{{ .Values.image.api.repository }}:{{ .Values.image.api.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.image.api.pullPolicy }}
         ports:
         - name: http
@@ -65,6 +64,12 @@ spec:
       volumes:
       - name: config
         configMap:
-          name: {{ include "data-semantic.fullname" . }}-api
+          name: {{ .Values.name.api }}-cm
       - name: logs
         emptyDir: {}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+      {{- range .}}
+        {{ .labelKey | quote }}: {{ .labelVal | quote }}
+      {{- end }}
+    {{- end }}

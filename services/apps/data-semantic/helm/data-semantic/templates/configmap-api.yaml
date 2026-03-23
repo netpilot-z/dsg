@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "data-semantic.fullname" . }}-api
-  namespace: {{ include "data-semantic.namespace" . }}
+  name: {{ .Values.name.api }}-cm
+  namespace: {{ .Values.namespace }}
   labels:
-    {{- include "data-semantic.labels" . | nindent 4 }}
+    {{- toYaml .Values.labels.api.deployment | nindent 4}}
 data:
   api.yaml: |
     Name: data-semantic-api

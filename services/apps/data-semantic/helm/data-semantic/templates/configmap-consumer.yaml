@@ -1,10 +1,11 @@
+{{- if .Values.consumer.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "data-semantic.fullname" . }}-consumer
-  namespace: {{ include "data-semantic.namespace" . }}
+  name: {{ .Values.name.consumer }}-cm
+  namespace: {{ .Values.namespace }}
   labels:
-    {{- include "data-semantic.labels" . | nindent 4 }}
+    {{- toYaml .Values.labels.consumer.deployment | nindent 4}}
 data:
   consumer.yaml: |
     Name: data-semantic-consumer
@@ -53,3 +54,4 @@ data:
     Cache:
       - Host: proton-redis-proton-redis-sentinel.resource.svc.cluster.local.
         Type: node
+{{- end }}

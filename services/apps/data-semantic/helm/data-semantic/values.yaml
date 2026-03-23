@@ -1,24 +1,57 @@
-# 默认镜像配置
+namespace: anyshare
+
+name:
+  api: data-semantic-api
+  consumer: data-semantic-consumer
+
+labels:
+  api:
+    deployment:
+      app: data-semantic-api
+      component: api
+    pod:
+      app: data-semantic-api
+      component: api
+    service:
+      app: data-semantic-api
+  consumer:
+    deployment:
+      app: data-semantic-consumer
+      component: consumer
+    pod:
+      app: data-semantic-consumer
+      component: consumer
+
 image:
   api:
-    repository: data-semantic-api
-    tag: latest
+    registry: acr.xxx.cn
+    repository: af/data-semantic-api
+    tag: "1.0.0-develop"
     pullPolicy: IfNotPresent
   consumer:
-    repository: data-semantic-consumer
-    tag: latest
+    registry: acr.xxx.cn
+    repository: af/data-semantic-consumer
+    tag: "1.0.0-develop"
     pullPolicy: IfNotPresent
 
-# 服务配置
 service:
   api:
-    type: ClusterIP
-    port: 8888
-  consumer:
+    name: data-semantic-api
     type: ClusterIP
     port: 8888
 
-# API 服务配置
+ingress:
+  enabled: false
+  className: class-443
+  annotations:
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+  paths:
+    - path: /api/data-semantic
+      pathType: ImplementationSpecific
+    - path: /swagger/data-semantic
+      pathType: ImplementationSpecific
+
 api:
   replicaCount: 1
   resources:
@@ -29,7 +62,6 @@ api:
       cpu: 100m
       memory: 128Mi
 
-# Consumer 服务配置
 consumer:
   enabled: true
   replicaCount: 1
@@ -41,10 +73,4 @@ consumer:
       cpu: 100m
       memory: 128Mi
 
-# ServiceAccount 配置
-serviceAccount:
-  create: true
-
-# Pod 安全上下文
-securityContext: {}
-podSecurityContext: {}
+nodeSelector: []

@@ -34,7 +34,7 @@ data:
       Redis:
         Host: {{ .Values.depServices.redis.connectInfo.sentinelHost }}
         Port: {{ .Values.depServices.redis.connectInfo.sentinelPort }}
-        Password: {{ .Values.depServices.redis.connectInfo.sentinelPassword }}
+        Password: {{ .Values.depServices.redis.connectInfo.password }}
         Channel: messages
 
     DB:

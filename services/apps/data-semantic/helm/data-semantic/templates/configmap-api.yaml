@@ -58,7 +58,7 @@ data:
       Host: {{ .Values.depServices.redis.connectInfo.sentinelHost }}
       Port: {{ .Values.depServices.redis.connectInfo.sentinelPort }}
       DB: {{ .Values.depServices.redis.database }}
-      Password: {{ .Values.depServices.redis.connectInfo.sentinelPassword | quote }}
+      Password: {{ .Values.depServices.redis.connectInfo.password }}
 
     # 认证配置
     Auth:

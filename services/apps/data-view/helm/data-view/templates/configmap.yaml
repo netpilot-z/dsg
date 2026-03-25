@@ -1,5 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
+{{- $mq := .Values.depServices.mq | default dict }}
+{{- $kafkaMQHost := printf "%s:%v" $mq.kafkaHost $mq.kafkaPort }}
+{{- if and $mq.mqHost $mq.mqPort }}
+{{- $kafkaMQHost = printf "%s:%v" $mq.mqHost $mq.mqPort }}
+{{- end }}
 metadata:
   name: {{ .Values.name }}-cm
   namespace: {{ .Values.namespace }}
@@ -40,7 +45,7 @@ data:
   AUTH_USERNAME: {{ .depServices.mq.auth.username | quote }}
   AUTH_PASSWORD: {{ .depServices.mq.auth.password | quote }}
   AUTH_MECHANISM: {{ .depServices.mq.auth.mechanism | quote }}
-  KAFKA_MQ_HOST: "{{ .depServices.mq.kafkaHost}}:{{ .depServices.mq.kafkaPort}}"
+  KAFKA_MQ_HOST: "{{ $kafkaMQHost }}"
   KAFKA_MQ_USENAME: "{{ .depServices.mq.auth.username}}"
   KAFKA_MQ_PASSWORD: "{{ .depServices.mq.auth.password}}"
   NSQ_TYPE: "{{ .depServices.mq.nsq.type }}"

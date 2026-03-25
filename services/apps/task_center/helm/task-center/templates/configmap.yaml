@@ -1,5 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
+{{- $mq := .Values.depServices.mq | default dict }}
+{{- $kafka := .Values.kafka | default dict }}
+{{- $kafkaURI := $kafka.uri | default "" }}
+{{- if and $mq.mqHost $mq.mqPort }}
+{{- $kafkaURI = printf "%s:%v" $mq.mqHost $mq.mqPort }}
+{{- else if $mq.mqHost }}
+{{- $kafkaURI = $mq.mqHost }}
+{{- end }}
 metadata:
   name: {{ .Values.name }}-cm
   namespace: {{ .Values.namespace }}
@@ -24,12 +32,12 @@ data:
   MQ_AUTH_MECHANISM: {{ .depServices.mq.auth.mechanism | quote }}
   MQ_AUTH_PASSWORD: {{ .depServices.mq.auth.password | quote }}
   MQ_AUTH_USERNAME: {{ .depServices.mq.auth.username | quote }}
-  KAFKA_VERSION: {{ .kafka.version | quote}}
-  KAFKA_URI:  {{ .kafka.uri | quote}}
-  KAFKA_CLIENT_ID:  {{ .kafka.clientId | quote}}
-  KAFKA_USERNAME:  {{ .kafka.username | quote}}
-  KAFKA_PASSWORD:  {{ .depServices.mq.auth.password | quote }}
-  KAFKA_GROUP_ID:  {{ .kafka.groupId | quote}}
+  KAFKA_VERSION: {{ $mq.version | default $kafka.version | quote }}
+  KAFKA_URI:  {{ $kafkaURI | quote}}
+  KAFKA_CLIENT_ID:  {{ $mq.clientId | default $kafka.clientId | quote}}
+  KAFKA_USERNAME:  {{ $mq.auth.username | default $kafka.username | quote}}
+  KAFKA_PASSWORD:  {{ $mq.auth.password | default $kafka.password | quote }}
+  KAFKA_GROUP_ID:  {{ $mq.groupId | default $kafka.groupId | quote}}
   CONFIG_CENTER_HOST: "{{index .depServices "configuration-center" "host"}}:{{index .depServices "configuration-center" "port"}}"
   HYDRA_HOST: "{{index .depServices "hydraService" "administrativeHost"}}:{{index .depServices "hydraService" "administrativePort"}}"
   HYDRA_PUBLIC_HOST: "{{index .depServices "hydraService" "publicHost"}}:{{index .depServices "hydraService" "publicPort"}}"

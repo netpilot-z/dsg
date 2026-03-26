@@ -15,7 +15,7 @@
   },
   "basePath": "/",
   "paths": {
-    "/api/v1/data-semantic/batch-object-match": {
+    "/api/data-semantic/v1/batch-object-match": {
       "post": {
         "consumes": [
           "application/json"
@@ -140,7 +140,7 @@
         }
       }
     },
-    "/api/v1/data-semantic/{id}/business-objects": {
+    "/api/data-semantic/v1/{id}/business-objects": {
       "get": {
         "produces": [
           "application/json"
@@ -365,7 +365,7 @@
         }
       }
     },
-    "/api/v1/data-semantic/{id}/business-objects/attributes/move": {
+    "/api/data-semantic/v1/{id}/business-objects/attributes/move": {
       "put": {
         "consumes": [
           "application/json"
@@ -424,7 +424,7 @@
         }
       }
     },
-    "/api/v1/data-semantic/{id}/business-objects/regenerate": {
+    "/api/data-semantic/v1/{id}/business-objects/regenerate": {
       "post": {
         "consumes": [
           "application/x-www-form-urlencoded"
@@ -460,7 +460,7 @@
         }
       }
     },
-    "/api/v1/data-semantic/{id}/fields": {
+    "/api/data-semantic/v1/{id}/fields": {
       "get": {
         "produces": [
           "application/json"
@@ -552,7 +552,7 @@
         }
       }
     },
-    "/api/v1/data-semantic/{id}/generate": {
+    "/api/data-semantic/v1/{id}/generate": {
       "post": {
         "consumes": [
           "application/json"
@@ -632,7 +632,7 @@
         }
       }
     },
-    "/api/v1/data-semantic/{id}/semantic-info": {
+    "/api/data-semantic/v1/{id}/semantic-info": {
       "put": {
         "consumes": [
           "application/json"
@@ -720,7 +720,7 @@
         }
       }
     },
-    "/api/v1/data-semantic/{id}/status": {
+    "/api/data-semantic/v1/{id}/status": {
       "get": {
         "produces": [
           "application/json"
@@ -753,7 +753,7 @@
         }
       }
     },
-    "/api/v1/data-semantic/{id}/submit": {
+    "/api/data-semantic/v1/{id}/submit": {
       "post": {
         "consumes": [
           "application/x-www-form-urlencoded"
@@ -789,7 +789,7 @@
         }
       }
     },
-    "/api/v1/health": {
+    "/api/data-semantic/v1/health": {
       "get": {
         "produces": [
           "application/json"

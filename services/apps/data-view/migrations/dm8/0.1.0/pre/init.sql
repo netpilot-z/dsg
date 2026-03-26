@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS  "form_view" (
     "sheet_as_new_column" int DEFAULT NULL,
     "source_sign" INT DEFAULT NULL,
     "mdl_id" VARCHAR(36 char) NULL DEFAULT NULL,
+    "understand_status" int NOT NULL DEFAULT 0,
     CLUSTER PRIMARY KEY ("form_view_id")
 );
 
@@ -64,6 +65,8 @@ CREATE TABLE IF NOT EXISTS  "form_view_field" (
     "technical_name" VARCHAR(255 char)  NOT NULL,
     "business_name" VARCHAR(255 char)  DEFAULT NULL,
     "original_name" VARCHAR(255 char)  DEFAULT NULL,
+    "field_role" int DEFAULT NULL,
+    "field_description" varchar(300) DEFAULT NULL,
     "comment" text  NULL,
     "status" int NOT NULL,
     "primary_key" TINYINT,

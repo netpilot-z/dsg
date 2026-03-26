@@ -1,5 +1,12 @@
 apiVersion: v1
 kind: ConfigMap
+{{- $redis := .Values.depServices.redis | default dict }}
+{{- $redisConnectInfo := $redis.connectInfo | default dict }}
+{{- $redisHost := $redis.host }}
+{{- if and $redisConnectInfo.sentinelHost $redisConnectInfo.sentinelPort }}
+{{- $redisHost = printf "%s:%v" $redisConnectInfo.sentinelHost $redisConnectInfo.sentinelPort }}
+{{- end }}
+{{- $redisPassword := $redisConnectInfo.password | default $redis.password }}
 metadata:
   name: {{ .Values.name }}-cm
   namespace: {{ .Values.namespace }}
@@ -12,8 +19,8 @@ data:
   DB_USERNAME: {{ .Values.depServices.rds.user | quote }}
   DB_PASSWORD: {{ .Values.depServices.rds.password | quote }}
   DB_NAME: {{ .Values.depServices.rds.database | quote }}
-  REDIS_HOST: "{{ .Values.depServices.redis.host }}"
-  REDIS_PASSWORD: "{{ .Values.depServices.redis.password }}"
+  REDIS_HOST: "{{ $redisHost }}"
+  REDIS_PASSWORD: "{{ $redisPassword }}"
   KAFKA_TYPE: "{{ .Values.depServices.mq.mqType }}"
   KAFKA_HOST: "{{ .Values.depServices.mq.mqHost }}"
   KAFKA_PORT: "{{ .Values.depServices.mq.mqPort }}"

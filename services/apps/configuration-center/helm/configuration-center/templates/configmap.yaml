@@ -1,5 +1,29 @@
 apiVersion: v1
 kind: ConfigMap
+{{- $mq := .Values.depServices.mq | default dict }}
+{{- $mqNsq := $mq.nsq | default dict }}
+{{- $kafkaMQHost := printf "%s:%v" $mq.kafkaHost $mq.kafkaPort }}
+{{- if and $mq.mqHost $mq.mqPort }}
+{{- $kafkaMQHost = printf "%s:%v" $mq.mqHost $mq.mqPort }}
+{{- end }}
+{{- $nsqMQHost := $mq.nsqHost }}
+{{- if and $mqNsq.host $mqNsq.port }}
+{{- $nsqMQHost = printf "%s:%v" $mqNsq.host $mqNsq.port }}
+{{- end }}
+{{- $nsqMQHTTPHost := $mq.nsqHttpHost }}
+{{- if and $mqNsq.httpHost $mqNsq.httpPort }}
+{{- $nsqMQHTTPHost = printf "%s:%v" $mqNsq.httpHost $mqNsq.httpPort }}
+{{- end }}
+{{- $nsqLookupdHost := $mq.nsqLookupdHost }}
+{{- if and $mqNsq.lookupdHost $mqNsq.lookupdPort }}
+{{- $nsqLookupdHost = printf "%s:%v" $mqNsq.lookupdHost $mqNsq.lookupdPort }}
+{{- end }}
+{{- $redis := .Values.depServices.redis | default dict }}
+{{- $redisConnectInfo := $redis.connectInfo | default dict }}
+{{- $redisHost := printf "%s:%v" $redisConnectInfo.host $redisConnectInfo.port }}
+{{- if and $redisConnectInfo.sentinelHost $redisConnectInfo.sentinelPort }}
+{{- $redisHost = printf "%s:%v" $redisConnectInfo.sentinelHost $redisConnectInfo.sentinelPort }}
+{{- end }}
 metadata:
   name: {{ .Values.name }}-cm
   namespace: {{ .Values.namespace }}
@@ -23,12 +47,12 @@ data:
   MQ_AUTH_MECHANISM: {{ .depServices.mq.auth.mechanism | quote }}
   MQ_AUTH_USERNAME: {{ .depServices.mq.auth.username | quote }}
   MQ_AUTH_PASSWORD: {{ .depServices.mq.auth.password | quote }}
-  KAFKA_MQ_HOST: "{{ .depServices.mq.kafkaHost}}:{{ .depServices.mq.kafkaPort}}"
+  KAFKA_MQ_HOST: "{{ $kafkaMQHost }}"
   KAFKA_MQ_USENAME: "{{ .depServices.mq.auth.username}}"
   KAFKA_MQ_PASSWORD: "{{ .depServices.mq.auth.password}}"
-  NSQ_MQ_HOST: "{{ .depServices.mq.nsqHost}}"
-  NSQ_MQ_HTTP_HOST: "{{ .depServices.mq.nsqHttpHost}}"
-  NSQ_LOOKUPD_HOST: "{{ .depServices.mq.nsqLookupdHost}}"
+  NSQ_MQ_HOST: "{{ $nsqMQHost }}"
+  NSQ_MQ_HTTP_HOST: "{{ $nsqMQHTTPHost }}"
+  NSQ_LOOKUPD_HOST: "{{ $nsqLookupdHost }}"
   OSS_APP: {{ .depServices.oss.ossApp | quote}}
   OSS_HOST: {{ .depServices.oss.ossHost | quote}}
   OSS_PROTOCOL: {{ .depServices.oss.ossProtocol | quote}}
@@ -54,7 +78,7 @@ data:
   {{- end }}
   {{- with .Values.depServices.redis }}
   REDIS_MASTER_NAME: {{ .connectInfo.masterGroupName | quote }}
-  REDIS_HOST: "{{ .connectInfo.host}}:{{ .connectInfo.port}}"
+  REDIS_HOST: "{{ $redisHost }}"
   REDIS_PASSWORD: {{ .connectInfo.password | quote }}
   REDIS_SENTINEL_HOST: {{ .connectInfo.sentinelHost | quote }}
   REDIS_SENTINEL_PASSWORD: {{ .connectInfo.sentinelPassword | quote }}

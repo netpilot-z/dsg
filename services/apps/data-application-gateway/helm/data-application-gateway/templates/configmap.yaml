@@ -1,5 +1,23 @@
 apiVersion: v1
 kind: ConfigMap
+{{- $redis := .Values.depServices.redis | default dict }}
+{{- $redisConnectInfo := $redis.connectInfo | default dict }}
+{{- $redisHost := $redis.host }}
+{{- if and $redisConnectInfo.sentinelHost $redisConnectInfo.sentinelPort }}
+{{- $redisHost = printf "%s:%v" $redisConnectInfo.sentinelHost $redisConnectInfo.sentinelPort }}
+{{- end }}
+{{- $redisPassword := $redisConnectInfo.password | default $redis.password }}
+{{- $redisMasterName := $redisConnectInfo.masterGroupName | default $redis.master_name }}
+{{- $mq := .Values.depServices.mq | default dict }}
+{{- $mqKafka := $mq.kafka | default dict }}
+{{- $mqType := $mq.mqType | default $mqKafka.type }}
+{{- $mqHost := $mq.mqHost | default $mqKafka.host }}
+{{- $mqPort := $mq.mqPort | default $mqKafka.port }}
+{{- $mqLookupdHost := $mq.mqLookupdHost | default $mqKafka.lookupdHost }}
+{{- $mqLookupdPort := $mq.mqLookupdPort | default $mqKafka.lookupdPort }}
+{{- $mqUsername := $mq.auth.username | default $mqKafka.username }}
+{{- $mqPassword := $mq.auth.password | default $mqKafka.password }}
+{{- $mqMechanism := $mq.auth.mechanism | default $mqKafka.mechanism }}
 metadata:
   name: {{ .Values.name }}-cm
   namespace: {{ .Values.namespace }}
@@ -12,17 +30,17 @@ data:
   DB_USERNAME: {{ .Values.depServices.rds.user | quote }}
   DB_PASSWORD: {{ .Values.depServices.rds.password | quote }}
   DB_NAME: {{ .Values.depServices.rds.database | quote }}
-  REDIS_HOST: "{{ .Values.depServices.redis.host }}"
-  REDIS_PASSWORD: "{{ .Values.depServices.redis.password }}"
-  REDIS_MASTER_NAME: "{{ .Values.depServices.redis.master_name }}"
-  KAFKA_TYPE: "{{ .Values.depServices.mq.kafka.type }}"
-  KAFKA_HOST: "{{ .Values.depServices.mq.kafka.host }}"
-  KAFKA_PORT: "{{ .Values.depServices.mq.kafka.port }}"
-  KAFKA_LOOKUPD_HOST: "{{ .Values.depServices.mq.kafka.lookupdHost }}"
-  KAFKA_LOOKUPD_PORT: "{{ .Values.depServices.mq.kafka.lookupdPort }}"
-  KAFKA_USERNAME: "{{ .Values.depServices.mq.kafka.username }}"
-  KAFKA_PASSWORD: "{{ .Values.depServices.mq.kafka.password }}"
-  KAFKA_MECHANISM: "{{ .Values.depServices.mq.kafka.mechanism }}"
+  REDIS_HOST: "{{ $redisHost }}"
+  REDIS_PASSWORD: "{{ $redisPassword }}"
+  REDIS_MASTER_NAME: "{{ $redisMasterName }}"
+  KAFKA_TYPE: "{{ $mqType }}"
+  KAFKA_HOST: "{{ $mqHost }}"
+  KAFKA_PORT: "{{ $mqPort }}"
+  KAFKA_LOOKUPD_HOST: "{{ $mqLookupdHost }}"
+  KAFKA_LOOKUPD_PORT: "{{ $mqLookupdPort }}"
+  KAFKA_USERNAME: "{{ $mqUsername }}"
+  KAFKA_PASSWORD: "{{ $mqPassword }}"
+  KAFKA_MECHANISM: "{{ $mqMechanism }}"
   NSQ_TYPE: "{{ .Values.depServices.mq.nsq.type }}"
   NSQ_HOST: "{{ .Values.depServices.mq.nsq.host }}"
   NSQ_PORT: "{{ .Values.depServices.mq.nsq.port }}"

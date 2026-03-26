@@ -1,5 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
+{{- $mq := .Values.depServices.mq | default dict }}
+{{- $mqType := $mq.mqType | default $mq.mq_type }}
+{{- $mqHost := $mq.mqHost | default $mq.mq_hosts }}
+{{- $mqPort := $mq.mqPort | default $mq.mq_port }}
+{{- $mqLookupdHost := $mq.mqLookupdHost | default $mq.mq_hosts }}
+{{- $mqLookupdPort := $mq.mqLookupdPort | default $mq.mq_port }}
 metadata:
   name: {{ .Values.name }}-cm
   namespace: {{ .Values.namespace }}
@@ -35,12 +41,12 @@ data:
 #  REDIS_MASTER_NAME: { { .masterGroupName | quote } }
   {{- end }}
 
-  {{- with .Values.depServices.mq }}
-  KAFKA_TYPE: "{{ .mq_type }}"
-  KAFKA_HOST: "{{ .mq_hosts }}"
-  KAFKA_PORT: "{{ .mq_port }}"
-  KAFKA_LOOKUPD_HOST: "{{ .mq_hosts }}"
-  KAFKA_LOOKUPD_PORT: "{{ .mq_port }}"
+  {{- with $mq }}
+  KAFKA_TYPE: "{{ $mqType }}"
+  KAFKA_HOST: "{{ $mqHost }}"
+  KAFKA_PORT: "{{ $mqPort }}"
+  KAFKA_LOOKUPD_HOST: "{{ $mqLookupdHost }}"
+  KAFKA_LOOKUPD_PORT: "{{ $mqLookupdPort }}"
   KAFKA_USERNAME: "{{ .auth.username }}"
   KAFKA_PASSWORD: "{{ .auth.password }}"
   KAFKA_MECHANISM: "{{ .auth.mechanism }}"
@@ -69,5 +75,4 @@ data:
   {{- with .Values.optionalDepServices.anyshare }}
   ANYSHARE_HOST: "{{ .protocol}}://{{ .host}}:{{ .port}}"
   {{- end }}
-
 

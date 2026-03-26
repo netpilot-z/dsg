@@ -117,7 +117,8 @@ const ResourcesDirAudit = () => {
 
                 return (
                     <Space size={8}>
-                        <a
+                        <div
+                            className={styles.link}
                             onClick={() => {
                                 setIsAudit(true)
                                 setAuditOpen(true)
@@ -125,7 +126,7 @@ const ResourcesDirAudit = () => {
                             }}
                         >
                             {__('审核')}
-                        </a>
+                        </div>
                     </Space>
                 )
             },

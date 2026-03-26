@@ -21,9 +21,12 @@ import {
     getCurrentMicroAppType,
     MicroAppType,
 } from '@/utils'
+import { isRuntimeMicroApp } from '@/utils/runtimeConfig'
+import { tokenManager } from '@/utils/tokenManager'
 import { useUserPermCtx } from '@/context/UserPermissionProvider'
 
 let globalMenus: any[] = [] // 权限路由
+let globalRawMenus: any[] = [] // 原始菜单(未按配置过滤)
 
 /** 不受权限管控的路由 */
 const defaultRoute = [
@@ -283,10 +286,29 @@ const groupMenus = {
     ],
 }
 
+const normalizeModule = (moduleValue: any, menuItem?: any) => {
+    if (!moduleValue) return moduleValue
+    if (Array.isArray(moduleValue)) return moduleValue
+    if (typeof moduleValue === 'string') {
+        const segments = moduleValue
+            .split(/[/,|>]+/)
+            .map((item) => item.trim())
+            .filter(Boolean)
+        if (segments.length === 0) return moduleValue
+        if (segments.length === 1) {
+            const groupKey = menuItem?.groupKey || menuItem?.group_key
+            return groupKey ? [segments[0], groupKey] : segments
+        }
+        return segments
+    }
+    return moduleValue
+}
+
 // 适配菜单 -- 将方法提取出来
 export const getRouters = (routers: any, parentKey?: string) => {
     const list = routers.map((item) => {
         const { layoutElement, element, children, key, attribute } = item
+        const normalizedModule = normalizeModule(item.module, item)
         let el
         // 插件为组件加载模式，解决刷新过程中的偶现挂载节点未加载
         if (element === 'WorkflowManagePage') {
@@ -304,6 +326,7 @@ export const getRouters = (routers: any, parentKey?: string) => {
                     isDeveloping: checkMenuDeveloping(item),
                     element: el,
                     icon: lazyLoadIcon(attribute),
+                    module: normalizedModule,
                     children: getRouters(
                         [{ index: true, element, layoutElement: undefined }],
                         key,
@@ -323,6 +346,7 @@ export const getRouters = (routers: any, parentKey?: string) => {
             isDeveloping: checkMenuDeveloping(item),
             element: el,
             icon: lazyLoadIcon(attribute),
+            module: normalizedModule,
             children: children?.length ? getRouters(children, key) : undefined,
         }
     })
@@ -341,6 +365,7 @@ export const useMenus = (): [
     const { checkPermissions } = useUserPermCtx()
     const [{ using, local_app }] = useGeneralConfig()
     const [menus, setMenus] = useState<any[]>(globalMenus)
+    const [rawMenus, setRawMenus] = useState<any[]>(globalRawMenus)
     const platform = getPlatformNumber()
     const pathname = getInnerUrl(window.location.pathname)
     const currentToken = Cookies.get('af.oauth2_token') || ''
@@ -352,6 +377,10 @@ export const useMenus = (): [
 
     // 根据配置过滤菜单
     useEffect(() => {
+        // using === -1 表示全局配置尚未从后端加载完成，此时 belong 过滤无法正确执行
+        if (using === -1) return
+
+        const sourceMenus = rawMenus.length ? rawMenus : menus
         const filterKeys: string[] = []
 
         // 没有大模型时，不显示数据应用
@@ -365,17 +394,17 @@ export const useMenus = (): [
         }
 
         if (filterKeys.length > 0) {
-            const filtered = menus.filter(
+            const filtered = sourceMenus.filter(
                 (item) => !filterKeys.includes(item.key),
             )
             globalMenus = filtered
             setMenus(filtered)
         } else {
-            const felterMenus = filterMenusByBelong(menus)
+            const felterMenus = filterMenusByBelong(sourceMenus)
             globalMenus = felterMenus
             setMenus(felterMenus)
         }
-    }, [llm, local_app, applyRoles, using])
+    }, [llm, local_app, applyRoles, using, rawMenus])
 
     // 重定向登录
     const redirectToLogin = (pf: number = platform) => {
@@ -458,7 +487,9 @@ export const useMenus = (): [
 
     const getMenus = useCallback(
         async (pf: number = platform) => {
-            const token = Cookies.get('af.oauth2_token')
+            const token = isRuntimeMicroApp()
+                ? await tokenManager.getToken()
+                : Cookies.get('af.oauth2_token')
             try {
                 // 单点登录不需要请求菜单，在otherRoutes里面配置
                 if (dataAssetsIndicatorPath === pathname) {
@@ -466,14 +497,20 @@ export const useMenus = (): [
                         ...otherRoutes,
                         ...defaultRoute,
                     ])
+                    globalRawMenus = routers
+                    setRawMenus(routers)
                     globalMenus = routers
                     setMenus(routers)
                     return
                 }
                 if (!token) {
-                    const routers = getRouters(defaultRoute || [])
-                    globalMenus = routers
-                    setMenus(routers)
+                    if (!isRuntimeMicroApp()) {
+                        const routers = getRouters(defaultRoute || [])
+                        globalRawMenus = routers
+                        setRawMenus(routers)
+                        globalMenus = routers
+                        setMenus(routers)
+                    }
                 } else {
                     // 根据微应用类型决定 resource_type
                     const microAppType = getCurrentMicroAppType()
@@ -497,6 +534,8 @@ export const useMenus = (): [
                         ...(groupType ? groupMenus[groupType] : []),
                         ...backendMenus,
                     ])
+                    globalRawMenus = routers
+                    setRawMenus(routers)
                     globalMenus = routers
                     setMenus(routers)
                 }
@@ -518,7 +557,9 @@ export const useMenus = (): [
 
     const clearMenus = useCallback(() => {
         globalMenus = []
+        globalRawMenus = []
         setMenus([])
+        setRawMenus([])
     }, [])
 
     useEffect(() => {

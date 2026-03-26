@@ -3,13 +3,11 @@ import { Image, Table } from 'antd'
 import moment from 'moment'
 import classnames from 'classnames'
 import lodash from 'lodash'
-import Icon from '@ant-design/icons'
 import styles from './styles.module.less'
 import __ from './locale'
 import { IFormEnumConfigModel, IdimensionConfig, IdimensionModel } from '@/core'
 import { basicInfoList, reportClassify } from './const'
 import BasicInfoView from './BasicInfoView'
-import { conbineSvg } from '../UserRoleManage/helper'
 
 interface IReportData extends IdimensionConfig {
     // true-折叠 false-展开

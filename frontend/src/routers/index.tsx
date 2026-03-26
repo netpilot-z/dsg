@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useRoutes } from 'react-router-dom'
 import { useDocumentTitleContext, useMicroAppProps } from '@/context'
 import { goEffectivePath, LoginPlatform } from '@/core'
+import { getInnerUrl } from '@/utils'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { getRouteByAttr, useMenus } from '@/hooks/useMenus'
 import { useAuthContext } from '@/providers'
@@ -95,8 +96,11 @@ const AnyFabricRoutes: React.FC<AnyFabricRoutesProps> = ({
 
     useMemo(() => {
         if (menus.length) {
+            const innerPathname = getInnerUrl(pathname)
             // 从可用路由中获取当前路径的key
-            const key1 = getRouteByAttr(pathname, 'path')?.key
+            const key1 =
+                getRouteByAttr(innerPathname, 'path', menus)?.key ||
+                getRouteByAttr(pathname, 'path', menus)?.key
             // 如果当前路径不在路由中，跳转到403
             if (!key1) {
                 navigator('403')

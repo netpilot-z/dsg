@@ -38,7 +38,12 @@ const DocAuditClientPlugin: React.FC<{ basePath: string }> = ({ basePath }) => {
                         },
                     },
                 },
-                {},
+                {
+                    sandbox: {
+                        strictStyleIsolation: false,
+                        experimentalStyleIsolation: true,
+                    },
+                },
                 {
                     afterMount: () => setLoading(false) as any,
                 },

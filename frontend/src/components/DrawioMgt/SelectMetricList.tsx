@@ -7,33 +7,23 @@ import {
     useLayoutEffect,
     useMemo,
 } from 'react'
-import { useLocalStorageState, useSelections } from 'ahooks'
-import { Button, Checkbox, Input, Modal, message } from 'antd'
+import { useLocalStorageState } from 'ahooks'
+import { Button, Checkbox, Modal, message } from 'antd'
 import classnames from 'classnames'
-import { SearchOutlined } from '@ant-design/icons'
 import styles from './styles.module.less'
 import {
-    getIndicatorList,
-    getAllIndicatorList,
-    getIndicatorModels,
     formatError,
     flowCellBindFormModel,
     getCoreBusinessIndicators,
     transformQuery,
 } from '@/core'
 import { DrawioInfoContext } from '@/context/DrawioProvider'
-import FlowchartInfoManager, {
-    SelectedStatus,
-    FormLabel,
-    OperateType,
-} from './helper'
+import FlowchartInfoManager, { SelectedStatus } from './helper'
 import __ from './locale'
-import { IndicatorModelOutlined, IndicatorThinColored } from '@/icons'
-import dataEmpty from '../../assets/dataEmpty.svg'
+import { IndicatorThinColored } from '@/icons'
+import dataEmpty from '@/assets/dataEmpty.svg'
 import searchEmpty from '@/assets/searchEmpty.svg'
-import Icons from '../BusinessArchitecture/Icons'
 import Empty from '@/ui/Empty'
-import addEmpty from '@/assets/emptyAdd.svg'
 import { SearchInput } from '@/ui'
 import { useBusinessModelContext } from '../BusinessModeling/BusinessModelProvider'
 

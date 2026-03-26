@@ -1,8 +1,4 @@
-import {
-    CaretLeftOutlined,
-    CaretRightOutlined,
-    ExclamationCircleOutlined,
-} from '@ant-design/icons'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { useDebounceFn } from 'ahooks'
 import {
     Button,
@@ -39,7 +35,6 @@ import {
     TaskDetail,
     TaskInfos,
 } from '@/core/apis/taskCenter/index.d'
-import { AddOutlined } from '@/icons'
 import FiltersFilledOutlined from '@/icons/FiltersFilledOutlined'
 import { SearchInput } from '@/ui'
 import Empty from '@/ui/Empty'
@@ -62,7 +57,6 @@ import { PriorityLabel } from '../WorkOrderTask/components/PrioritySelect'
 import StatusSelect from '../WorkOrderTask/components/StatusSelect'
 import TaskDetails from '../WorkOrderTask/components/TaskDetails'
 import {
-    defaultDeadlineList,
     defaultPriorityList,
     menus,
     MyTaskType,
@@ -72,7 +66,6 @@ import {
 } from '../WorkOrderTask/const'
 import CreateTaskGuide from '../WorkOrderTask/CreateTaskGuide'
 import {
-    DeadlineFilter,
     ExecutorFilter,
     PriorityFilter,
     StatusFilter,
@@ -80,11 +73,7 @@ import {
 } from '../WorkOrderTask/custom/filterDropdown'
 import { StatusLabel } from '../WorkOrderTask/custom/StatusComponent'
 import { TaskTypeContent } from '../WorkOrderTask/custom/taskTypeComponent'
-import { TextNumLabel } from '../WorkOrderTask/custom/TextNumLabel'
-import {
-    getTaskSortHelpComponent,
-    taskClassification,
-} from '../WorkOrderTask/helper'
+import { getTaskSortHelpComponent } from '../WorkOrderTask/helper'
 import __ from '../WorkOrderTask/locale'
 import styles from '../WorkOrderTask/styles.module.less'
 import { useUserPermCtx } from '@/context/UserPermissionProvider'

@@ -17,6 +17,7 @@ import {
     putCategory,
     ICategoryApplyScopeConfig,
 } from '@/core'
+import { useGeneralConfig } from '@/hooks/useGeneralConfig'
 import { IconType } from '@/icons/const'
 
 interface IConfigSortNew {
@@ -26,6 +27,7 @@ interface IConfigSortNew {
 }
 
 const SPECIAL_CATEGORY_ID = '00000000-0000-0000-0000-000000000001'
+const CATLOG_ID = '00000000-0000-0000-0000-000000000002'
 
 const ConfigSortNew: React.FC<IConfigSortNew> = ({
     visible,
@@ -49,6 +51,7 @@ const ConfigSortNew: React.FC<IConfigSortNew> = ({
 
     // 当前类目是否有修改（用于控制保存按钮的禁用状态）
     const [hasChanges, setHasChanges] = useState(false)
+    const [{ using }, updateUsing] = useGeneralConfig()
 
     useEffect(() => {
         if (visible) {
@@ -427,178 +430,193 @@ const ConfigSortNew: React.FC<IConfigSortNew> = ({
 
                         {/* 树形列表：二层为 modules，三层为 trees 的 nodes */}
                         <div className={styles.configBody}>
-                            {activeCate?.modules?.map((module) => {
-                                const isExpanded = expandedKeys.includes(
-                                    module.apply_scope_id,
+                            {activeCate?.modules
+                                ?.filter((module) =>
+                                    using === 2
+                                        ? module.apply_scope_id !== CATLOG_ID
+                                        : true,
                                 )
+                                ?.map((module) => {
+                                    const isExpanded = expandedKeys.includes(
+                                        module.apply_scope_id,
+                                    )
 
-                                return (
-                                    <div key={module.apply_scope_id}>
-                                        {/* 父节点行（二层：Module） */}
-                                        <div className={styles.configRow}>
-                                            <div className={styles.parentRow}>
+                                    return (
+                                        <div key={module.apply_scope_id}>
+                                            {/* 父节点行（二层：Module） */}
+                                            <div className={styles.configRow}>
                                                 <div
-                                                    className={
-                                                        styles.parentLeft
-                                                    }
+                                                    className={styles.parentRow}
                                                 >
-                                                    <span
-                                                        className={
-                                                            styles.expandIcon
-                                                        }
-                                                        onClick={() => {
-                                                            setExpandedKeys(
-                                                                (prev) =>
-                                                                    isExpanded
-                                                                        ? prev.filter(
-                                                                              (
-                                                                                  k,
-                                                                              ) =>
-                                                                                  k !==
-                                                                                  module.apply_scope_id,
-                                                                          )
-                                                                        : [
-                                                                              ...prev,
-                                                                              module.apply_scope_id,
-                                                                          ],
-                                                            )
-                                                        }}
-                                                    >
-                                                        {isExpanded ? (
-                                                            <CaretDownOutlined />
-                                                        ) : (
-                                                            <CaretRightOutlined />
-                                                        )}
-                                                    </span>
-                                                    <Checkbox
-                                                        checked={
-                                                            module.selected
-                                                        }
-                                                        onChange={(e) =>
-                                                            handleModuleCheck(
-                                                                module.apply_scope_id,
-                                                                e.target
-                                                                    .checked,
-                                                            )
-                                                        }
-                                                        disabled={isSpecialCate}
-                                                    />
-                                                    <span
-                                                        className={
-                                                            styles.parentName
-                                                        }
-                                                    >
-                                                        {module.name}
-                                                    </span>
-                                                    <Tooltip
-                                                        title={__(
-                                                            '勾选后，在创建/编辑页面会展示',
-                                                        )}
-                                                    >
-                                                        <FontIcon
-                                                            name="icon-bangzhu"
-                                                            type={
-                                                                IconType.FONTICON
-                                                            }
-                                                            className={
-                                                                styles.helpIcon
-                                                            }
-                                                        />
-                                                    </Tooltip>
-                                                </div>
-                                                <div
-                                                    className={
-                                                        styles.parentRight
-                                                    }
-                                                >
-                                                    <Radio.Group
-                                                        value={
-                                                            module.required
-                                                                ? 'req'
-                                                                : 'opt'
-                                                        }
-                                                        onChange={(e) =>
-                                                            handleModuleRequiredChange(
-                                                                module.apply_scope_id,
-                                                                e.target
-                                                                    .value ===
-                                                                    'req',
-                                                            )
-                                                        }
-                                                        disabled={isSpecialCate}
-                                                    >
-                                                        <Radio value="req">
-                                                            {__('必填')}
-                                                        </Radio>
-                                                        <Radio value="opt">
-                                                            {__('非必填')}
-                                                        </Radio>
-                                                    </Radio.Group>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* 子节点列表（三层：Trees 的 Nodes） */}
-                                        {isExpanded &&
-                                            module.trees?.map((tree) =>
-                                                tree.nodes?.map((node) => (
                                                     <div
                                                         className={
-                                                            styles.configRowChild
+                                                            styles.parentLeft
                                                         }
-                                                        key={node.id}
                                                     >
-                                                        <div
+                                                        <span
                                                             className={
-                                                                styles.colName
+                                                                styles.expandIcon
+                                                            }
+                                                            onClick={() => {
+                                                                setExpandedKeys(
+                                                                    (prev) =>
+                                                                        isExpanded
+                                                                            ? prev.filter(
+                                                                                  (
+                                                                                      k,
+                                                                                  ) =>
+                                                                                      k !==
+                                                                                      module.apply_scope_id,
+                                                                              )
+                                                                            : [
+                                                                                  ...prev,
+                                                                                  module.apply_scope_id,
+                                                                              ],
+                                                                )
+                                                            }}
+                                                        >
+                                                            {isExpanded ? (
+                                                                <CaretDownOutlined />
+                                                            ) : (
+                                                                <CaretRightOutlined />
+                                                            )}
+                                                        </span>
+                                                        <Checkbox
+                                                            checked={
+                                                                module.selected
+                                                            }
+                                                            onChange={(e) =>
+                                                                handleModuleCheck(
+                                                                    module.apply_scope_id,
+                                                                    e.target
+                                                                        .checked,
+                                                                )
+                                                            }
+                                                            disabled={
+                                                                isSpecialCate
+                                                            }
+                                                        />
+                                                        <span
+                                                            className={
+                                                                styles.parentName
                                                             }
                                                         >
-                                                            <span
+                                                            {module.name}
+                                                        </span>
+                                                        <Tooltip
+                                                            title={__(
+                                                                '勾选后，在创建/编辑页面会展示',
+                                                            )}
+                                                        >
+                                                            <FontIcon
+                                                                name="icon-bangzhu"
+                                                                type={
+                                                                    IconType.FONTICON
+                                                                }
                                                                 className={
-                                                                    styles.childIndent
+                                                                    styles.helpIcon
                                                                 }
                                                             />
-                                                            <Checkbox
-                                                                checked={
-                                                                    node.selected
-                                                                }
-                                                                onChange={(e) =>
-                                                                    handleTreeNodeCheck(
-                                                                        module.apply_scope_id,
-                                                                        tree.key,
-                                                                        node.id,
-                                                                        e.target
-                                                                            .checked,
-                                                                    )
-                                                                }
-                                                                disabled={
-                                                                    isSpecialCate
-                                                                }
-                                                            />
-                                                            <span
+                                                        </Tooltip>
+                                                    </div>
+                                                    <div
+                                                        className={
+                                                            styles.parentRight
+                                                        }
+                                                    >
+                                                        <Radio.Group
+                                                            value={
+                                                                module.required
+                                                                    ? 'req'
+                                                                    : 'opt'
+                                                            }
+                                                            onChange={(e) =>
+                                                                handleModuleRequiredChange(
+                                                                    module.apply_scope_id,
+                                                                    e.target
+                                                                        .value ===
+                                                                        'req',
+                                                                )
+                                                            }
+                                                            disabled={
+                                                                isSpecialCate
+                                                            }
+                                                        >
+                                                            <Radio value="req">
+                                                                {__('必填')}
+                                                            </Radio>
+                                                            <Radio value="opt">
+                                                                {__('非必填')}
+                                                            </Radio>
+                                                        </Radio.Group>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* 子节点列表（三层：Trees 的 Nodes） */}
+                                            {isExpanded &&
+                                                module.trees?.map((tree) =>
+                                                    tree.nodes?.map((node) => (
+                                                        <div
+                                                            className={
+                                                                styles.configRowChild
+                                                            }
+                                                            key={node.id}
+                                                        >
+                                                            <div
                                                                 className={
-                                                                    styles.childName
+                                                                    styles.colName
                                                                 }
                                                             >
-                                                                {node.name}
-                                                            </span>
+                                                                <span
+                                                                    className={
+                                                                        styles.childIndent
+                                                                    }
+                                                                />
+                                                                <Checkbox
+                                                                    checked={
+                                                                        node.selected
+                                                                    }
+                                                                    onChange={(
+                                                                        e,
+                                                                    ) =>
+                                                                        handleTreeNodeCheck(
+                                                                            module.apply_scope_id,
+                                                                            tree.key,
+                                                                            node.id,
+                                                                            e
+                                                                                .target
+                                                                                .checked,
+                                                                        )
+                                                                    }
+                                                                    disabled={
+                                                                        isSpecialCate
+                                                                    }
+                                                                />
+                                                                <span
+                                                                    className={
+                                                                        styles.childName
+                                                                    }
+                                                                >
+                                                                    {node.name}
+                                                                </span>
+                                                            </div>
+                                                            <div
+                                                                className={
+                                                                    styles.colCheck
+                                                                }
+                                                            />
+                                                            <div
+                                                                className={
+                                                                    styles.colRequired
+                                                                }
+                                                            />
                                                         </div>
-                                                        <div
-                                                            className={
-                                                                styles.colCheck
-                                                            }
-                                                        />
-                                                        <div
-                                                            className={
-                                                                styles.colRequired
-                                                            }
-                                                        />
-                                                    </div>
-                                                )),
-                                            )}
-                                    </div>
-                                )
-                            })}
+                                                    )),
+                                                )}
+                                        </div>
+                                    )
+                                })}
                         </div>
                     </div>
                 </div>

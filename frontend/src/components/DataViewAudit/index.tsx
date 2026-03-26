@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import classnames from 'classnames'
-import moment from 'moment'
 import styles from './styles.module.less'
 import __ from './locale'
-import LogicViewDetail from './LogicViewDetail'
+// import LogicViewDetail from './LogicViewDetail'
+import LogicViewDetail from '@/components/DataAssetsCatlg/LogicViewDetail'
 
 const DataViewAudit = ({ props }: any) => {
     const {
@@ -57,14 +57,6 @@ const DataViewAudit = ({ props }: any) => {
                     }}
                     showShadow={false}
                     id={id}
-                    style={{
-                        position: 'fixed',
-                        width: 'calc(100% - 220px)',
-                        top: '52px',
-                        height: '100%',
-                        marginLeft: 220,
-                    }}
-                    getContainer={document.getElementById('wrapper') || false}
                 />
             )}
         </div>

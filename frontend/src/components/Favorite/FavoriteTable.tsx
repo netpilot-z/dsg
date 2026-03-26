@@ -27,7 +27,6 @@ import __ from './locale'
 import styles from './styles.module.less'
 import DataCatlgContent from '@/components/DataAssetsCatlg/DataCatlgContent'
 import InfoCatlgDetails from '@/components/DataAssetsCatlg/InfoResourcesCatlg/InfoCatlgDetails'
-import LicenseDetail from '@/components/DataAssetsCatlg/ElectronicLicense/Detail'
 import ApplicationServiceDetail from '@/components/DataAssetsCatlg/ApplicationServiceDetail'
 import LogicViewDetail from '@/components/DataAssetsCatlg/LogicViewDetail'
 
@@ -404,14 +403,6 @@ const FavoriteTable: React.FC<{
                 />
             )}
 
-            {elecLicenceCatalogVisible && (
-                <LicenseDetail
-                    open={elecLicenceCatalogVisible}
-                    onClose={handleCloseElecLicenceCatalog}
-                    id={operateItem?.res_id || ''}
-                    canChat
-                />
-            )}
             {interfaceSvcVisible && (
                 <ApplicationServiceDetail
                     open={interfaceSvcVisible}

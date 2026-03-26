@@ -14,4 +14,5 @@ export default i18n([
         'No business domain found, please select a business domain',
     ],
     ['全部助手', '全部助手', 'All assistants'],
+    ['返回', '返回', 'Back'],
 ])

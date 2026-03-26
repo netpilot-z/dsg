@@ -79,6 +79,7 @@ import {
     getLabelByPermission,
 } from '@/components/AccessPolicy/components/VisitAccessSelect/helper'
 import DataPreview from '@/components/DatasheetView/DataPreview'
+import ReportDetailContent from '@/components/WorkOrder/QualityReport/ReportDetail/ReportDetailContent'
 import { DataViewProvider } from '@/components/DatasheetView/DataViewProvider'
 import ConsanguinityGraph from '@/components/ConsanguinityGraph'
 import ImpactAnalysis from '@/components/ImpactAnalysis'
@@ -141,6 +142,8 @@ interface ILogicViewDetail {
     onCancelFavorite?: ({ is_favored, favor_id }: UpdateFavoriteParams) => void
     isPersonalCenter?: boolean // 是否来自个人中心
     showDataConsanguinity?: boolean // 是否显示数据血缘关系
+    showFavoriteOperation?: boolean // 是否显示收藏操作
+    showFeedbackOperation?: boolean // 是否显示反馈操作
 }
 
 const LogicViewDetail = ({
@@ -171,6 +174,8 @@ const LogicViewDetail = ({
     onAddFavorite = noop,
     onCancelFavorite = noop,
     showDataConsanguinity = false,
+    showFavoriteOperation = true,
+    showFeedbackOperation = true,
     isPersonalCenter = false,
 }: ILogicViewDetail) => {
     const [userId] = useCurrentUser('ID')
@@ -263,7 +268,7 @@ const LogicViewDetail = ({
     )
 
     const detailTabItems = useMemo(() => {
-        if (isPersonalCenter || !showDataConsanguinity) {
+        if (isPersonalCenter) {
             return [
                 {
                     label: __('字段'),
@@ -292,10 +297,10 @@ const LogicViewDetail = ({
                 label: __('影响分析'),
                 key: detailTabKey.impactAnalysis,
             },
-            // {
-            //     label: __('数据质量'),
-            //     key: detailTabKey.dataQuality,
-            // },
+            {
+                label: __('数据质量'),
+                key: detailTabKey.dataPreview,
+            },
         ]?.filter((tab) => tab.label)
     }, [baseInfoData, isPersonalCenter])
 
@@ -1292,8 +1297,8 @@ const LogicViewDetail = ({
                                                         )
                                                     }
                                                 /> */}
-                                                    {!isPersonalCenter && (
-                                                        <>
+                                                    {!isPersonalCenter &&
+                                                        showFavoriteOperation && (
                                                             <FavoriteOperation
                                                                 type="button"
                                                                 item={
@@ -1322,6 +1327,9 @@ const LogicViewDetail = ({
                                                                     handleFavoriteCancel
                                                                 }
                                                             />
+                                                        )}
+                                                    {!isPersonalCenter &&
+                                                        showFeedbackOperation && (
                                                             <FeedbackOperation
                                                                 type="button"
                                                                 item={
@@ -1344,8 +1352,7 @@ const LogicViewDetail = ({
                                                                     styles.itemOprIcon
                                                                 }
                                                             />
-                                                        </>
-                                                    )}
+                                                        )}
                                                 </>
                                             )}
                                         </div>
@@ -1573,7 +1580,7 @@ const LogicViewDetail = ({
                             </div>
                         ) : tabActiveKey === detailTabKey.dataPreview ? (
                             <div className={styles.dataPreviewWrapper}>
-                                <DataPreview
+                                {/* <DataPreview
                                     dataViewId={rescId}
                                     isNeedPermisControl={getIsNeedPermisControl(
                                         microWidgetProps,
@@ -1581,6 +1588,14 @@ const LogicViewDetail = ({
                                     isMarket
                                     isOwner={baseInfoData?.owner_id === userId}
                                     // formViewStatus={formViewStatus}
+                                /> */}
+                                <ReportDetailContent
+                                    item={{
+                                        ...(baseInfoData || {}),
+                                        form_view_id: id,
+                                    }}
+                                    isMarket
+                                    showCorrection={false} // 不显示整改按钮
                                 />
                             </div>
                         ) : tabActiveKey === detailTabKey.dataConsanguinity ? (

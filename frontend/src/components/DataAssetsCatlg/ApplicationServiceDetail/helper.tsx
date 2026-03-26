@@ -43,18 +43,18 @@ export const itemOtherInfo = [
     //     toolTipTitle: `${__('数据Owner')}：`,
     // },
     // 接口权限不能给到用户，先屏蔽
-    {
-        infoKey: 'access',
-        title: (
-            <FontIcon
-                name="icon-ziyuanquanxian"
-                className={styles.commonIcon}
-                type={IconType.FONTICON}
-                style={{ fontSize: 16, marginRight: '8px' }}
-            />
-        ),
-        toolTipTitle: `${__('权限')}：`,
-    },
+    // {
+    //     infoKey: 'access',
+    //     title: (
+    //         <FontIcon
+    //             name="icon-ziyuanquanxian"
+    //             className={styles.commonIcon}
+    //             type={IconType.FONTICON}
+    //             style={{ fontSize: 16, marginRight: '8px' }}
+    //         />
+    //     ),
+    //     toolTipTitle: `${__('权限')}：`,
+    // },
 ]
 
 // 接口列表-卡片-参数详情项

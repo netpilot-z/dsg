@@ -1300,7 +1300,7 @@ const ApplicationServiceDetail = ({
                                                 applicationInfo,
                                             )
                                         })}
-                                        <div
+                                        {/* <div
                                             className={styles.itemDetailInfo}
                                             hidden={isOwner}
                                         >
@@ -1319,7 +1319,7 @@ const ApplicationServiceDetail = ({
                                                     {__('查看规则权限')}
                                                 </span>
                                             </Tooltip>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </Space>

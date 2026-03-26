@@ -46,11 +46,11 @@ const CategoryCard: React.FC<ICategoryCard> = ({
                 ].includes(item.id as SystemCategory)
             ) {
                 return [
-                    {
-                        key: OperateType.JUMP,
-                        label: __('跳转编辑'),
-                        menuType: OptionMenuType.Menu,
-                    },
+                    // {
+                    //     key: OperateType.JUMP,
+                    //     label: __('跳转编辑'),
+                    //     menuType: OptionMenuType.Menu,
+                    // },
                 ]
             }
             return [
@@ -59,11 +59,11 @@ const CategoryCard: React.FC<ICategoryCard> = ({
                     label: item.using ? __('停用') : __('启用'),
                     menuType: OptionMenuType.Menu,
                 },
-                {
-                    key: OperateType.JUMP,
-                    label: __('跳转编辑'),
-                    menuType: OptionMenuType.Menu,
-                },
+                // {
+                //     key: OperateType.JUMP,
+                //     label: __('跳转编辑'),
+                //     menuType: OptionMenuType.Menu,
+                // },
             ]
         }
         return [

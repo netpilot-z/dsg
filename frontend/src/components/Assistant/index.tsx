@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react'
-import { Button, Input, message, Spin } from 'antd'
+import { Button, Input, message, Spin, Tooltip } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 import { useInfiniteScroll, useDebounceFn } from 'ahooks'
 import { useNavigate } from 'react-router-dom'
@@ -148,6 +148,20 @@ const Assistant: React.FC = () => {
         return (
             <div className={styles.header}>
                 <div className={styles.leftSection}>
+                    <Tooltip title={__('返回')}>
+                        <div
+                            className={styles.chatKitLeftIcon}
+                            onClick={() => {
+                                navigate('/')
+                            }}
+                        >
+                            <FontIcon
+                                type={IconType.COLOREDICON}
+                                name="icon-zhuye"
+                                style={{ fontSize: 24 }}
+                            />
+                        </div>
+                    </Tooltip>
                     <div className={styles.logo}>
                         <FontIcon
                             name="icon-quanbuzhushou"
@@ -216,7 +230,7 @@ const Assistant: React.FC = () => {
     return (
         <div className={styles.assistantContainer}>
             {renderHeader()}
-            <Category onChange={handleCategoryChange} />
+            {/* <Category onChange={handleCategoryChange} /> */}
             {loading ? (
                 <Loader tip={__('加载中...')} />
             ) : assistantList.length > 0 ? (

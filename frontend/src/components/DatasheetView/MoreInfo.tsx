@@ -57,6 +57,8 @@ const MoreInfo: React.FC<IMoreInfo> = ({
         isSubmitBasicInfoForm,
         setDatasheetInfo,
         isValueEvaluation,
+        fieldsTableData,
+        baseInfoData,
     } = useDataViewContext()
     const [moreInfoData, setMoreInfoData] = useState<any>()
     const [dataViewOtherData, setDataViewOtherData] =
@@ -100,14 +102,13 @@ const MoreInfo: React.FC<IMoreInfo> = ({
         if (moreInfoData?.id) {
             getMoreInfoContent()
         }
-    }, [moreInfoData])
+    }, [moreInfoData, fieldsTableData, baseInfoData])
 
     useEffect(() => {
         if (datasheetInfo?.id || baseInfo?.id) {
             setMoreInfoData(datasheetInfo?.id ? datasheetInfo : baseInfo)
         }
     }, [datasheetInfo, baseInfo])
-
     useEffect(() => {
         getFormIschanged?.(isChanged)
     }, [isChanged])
@@ -186,9 +187,12 @@ const MoreInfo: React.FC<IMoreInfo> = ({
     }
 
     const getMoreInfoContent = () => {
-        const hasTimestamp = moreInfoData?.fields?.some(
-            (o) => o.business_timestamp,
-        )
+        // 从 fieldsTableData 或 baseInfoData.fields 中获取字段数据来判断是否有业务时间戳
+        const fields =
+            fieldsTableData?.length > 0
+                ? fieldsTableData
+                : baseInfoData?.fields || moreInfoData?.fields || []
+        const hasTimestamp = fields.some((o) => o.business_timestamp)
         if (moreInfoData?.info_system_id) {
             setInfoSystem(moreInfoData?.info_system_id)
         }
@@ -288,7 +292,6 @@ const MoreInfo: React.FC<IMoreInfo> = ({
             return []
         }
     }
-
     return (
         <div
             className={
@@ -302,7 +305,7 @@ const MoreInfo: React.FC<IMoreInfo> = ({
                     <div className={styles.moreInfoView}>
                         <div style={{ marginTop: -20 }}>
                             <BasicCantainer
-                                labelWidth="140px"
+                                labelWidth="142px"
                                 basicCantainerContent={moreInfoContent}
                             />
                         </div>

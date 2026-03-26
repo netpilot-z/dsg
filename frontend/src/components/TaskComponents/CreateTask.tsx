@@ -46,14 +46,13 @@ import {
     ErrorInfo,
     getPlatformNumber,
 } from '@/utils'
-import { validateName, validateTextLegitimacy } from '@/utils/validate'
+import { validateTextLegitimacy } from '@/utils/validate'
 import { statusInfos } from '../MyTask/const'
 import { ProjectSelect } from '../MyTask/custom/ProjectComponent'
 import { StageNodeCascader } from '../MyTask/custom/StageNodeCascader'
 import { StatusSelect } from '../MyTask/custom/StatusComponent'
 import { PrioritySelect } from './PrioritySelect'
 import { ExecutorSelect } from '../MyTask/custom/ExecutorComponent'
-import { DeadlineOutlined } from '@/icons'
 import {
     freeTaskTypeList,
     modalSubTypeList,
@@ -61,11 +60,9 @@ import {
 } from './helper'
 import { TaskTypeSelect } from '../MyTask/custom/taskTypeComponent'
 import __ from './locale'
-import FreeTaskRelateCoreBusiness from './FreeTaskRelateCoreBusiness'
 import FreeTaskRelateForms from './FreeTaskRelateForms'
 import FreeTaskRelateCats from './FreeTaskRelateCats'
 import BusinessDomainSelect from '../BusiArchitecture/BusinessDomainSelect'
-import BusinessDomainTree from '../BusiArchitecture/BusinessDomainTree'
 import RelateModel from './RelateModel'
 import { useGeneralConfig } from '@/hooks/useGeneralConfig'
 import { StdTypeSelect } from './StdTypeSelect'

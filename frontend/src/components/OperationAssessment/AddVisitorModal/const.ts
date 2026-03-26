@@ -1,4 +1,3 @@
-import { Architecture } from '@/components/BusinessArchitecture/const'
 import { IObject } from '@/core/apis/configurationCenter/index'
 
 export interface DataNode extends IObject {

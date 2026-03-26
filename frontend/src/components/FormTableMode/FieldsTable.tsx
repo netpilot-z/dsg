@@ -6,7 +6,6 @@ import {
     useRef,
     useState,
 } from 'react'
-import { Table, Pagination } from 'antd'
 import { noop } from 'lodash'
 import {
     StandardDataDetail,
@@ -15,8 +14,6 @@ import {
     produceUniqueId,
 } from './const'
 import { IFormEnumConfigModel, IGradeLabel, formsEnumConfig } from '@/core'
-import dataEmpty from '@/assets/dataEmpty.svg'
-import Empty from '@/ui/Empty'
 import __ from './locale'
 import ViewFieldsTable from './ViewFieldsTable'
 import EditFieldsTable from './EditFieldsTable'

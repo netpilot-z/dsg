@@ -14,7 +14,6 @@ import {
 import { getIconScore } from '@/components/DatasheetView/DataPreview/DataPreviewView'
 import __ from './locale'
 import styles from './styles.module.less'
-import { FieldMaxColored } from '@/icons'
 import RuleDetail from '@/components/DatasheetView/DataPreview/RuleDetail'
 import BlockContainer from '@/components/ApplicationAuth/BlockContainer'
 import { formatRateByDataSize } from '@/utils/number'

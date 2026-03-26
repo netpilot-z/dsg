@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { Drawer, Image } from 'antd'
 import { MessageOutlined } from '@ant-design/icons'
 import Cookies from 'js-cookie'
@@ -29,12 +29,12 @@ const SearchDataCopilot: React.FC = () => {
         adp_business_domain_id: string
     } | null>(null)
     const { microAppProps } = useMicroAppProps()
+    const drawerContainerRef = useRef<HTMLDivElement>(null)
 
     // 获取 token，参考 Chatkit 组件的实现
     const { assistantToken, assistantRefreshToken } = useMemo(() => {
-        const accessTokenFromMicroApp = microAppProps.props?.token?.accessToken
-        const refreshTokenFromMicroApp =
-            microAppProps.props?.token?.refreshToken
+        const accessTokenFromMicroApp = microAppProps.token?.accessToken
+        const refreshTokenFromMicroApp = microAppProps?.token?.refreshToken
 
         const token =
             accessTokenFromMicroApp || Cookies.get('af.oauth2_token') || ''
@@ -65,6 +65,10 @@ const SearchDataCopilot: React.FC = () => {
                     const data = blockInfo?.data || []
                     setBlockData(data as any[])
                     setOpenResource(true)
+                    return () => {
+                        setBlockData([])
+                        setOpenResource(false)
+                    }
                 },
             },
             {
@@ -80,6 +84,29 @@ const SearchDataCopilot: React.FC = () => {
                     const data = blockInfo?.data || []
                     setBlockData(data as any[])
                     setOpenResource(true)
+                    return () => {
+                        setBlockData([])
+                        setOpenResource(false)
+                    }
+                },
+            },
+            {
+                name: 'datasource_rerank',
+                Icon: (
+                    <FontIcon
+                        name="icon-wenjianjia"
+                        type={IconType.COLOREDICON}
+                        style={{ fontSize: 22, color: '#128ee3' }}
+                    />
+                ),
+                onClick: (blockInfo) => {
+                    const data = blockInfo?.data || []
+                    setBlockData(data as any[])
+                    setOpenResource(true)
+                    return () => {
+                        setBlockData([])
+                        setOpenResource(false)
+                    }
                 },
             },
         ])
@@ -124,7 +151,7 @@ const SearchDataCopilot: React.FC = () => {
         <>
             {/* 固定按钮 */}
             <div className={styles.fixedButton} onClick={handleToggle}>
-                <Image src={qaColored} preview={false} />
+                <Image src={qaColored} preview={false} width={24} height={24} />
             </div>
 
             {/* Copilot 抽屉 */}
@@ -167,7 +194,10 @@ const SearchDataCopilot: React.FC = () => {
                         <Loader tip="加载中..." />
                     </div>
                 ) : agentInfo ? (
-                    <div className={styles.copilotContainer}>
+                    <div
+                        className={styles.copilotContainer}
+                        ref={drawerContainerRef}
+                    >
                         {React.createElement(
                             Assistant as any,
                             {

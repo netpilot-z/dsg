@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react'
-import { Drawer, DrawerProps, Space, Button } from 'antd'
-import { LeftOutlined } from '@ant-design/icons'
+import React from 'react'
+import { Drawer, DrawerProps } from 'antd'
 import classnames from 'classnames'
-import { ModelOutlined } from '@/icons'
 import styles from './styles.module.less'
 
 interface IDrawerContent extends DrawerProps {

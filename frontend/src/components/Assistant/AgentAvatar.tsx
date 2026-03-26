@@ -13,6 +13,10 @@ export interface AgentAvatarProps {
     avatar?: string
     /** 名称，用于显示首字母 */
     name?: string
+    /** 大小，默认为32 */
+    size?: number
+
+    style?: React.CSSProperties
 }
 
 /**
@@ -25,6 +29,8 @@ const AgentAvatar: React.FC<AgentAvatarProps> = ({
     avatarType = 1,
     avatar,
     name,
+    size = 32,
+    style = { width: 48, height: 48 },
 }) => {
     // 获取预设图标
     const getPresetIcon = () => {
@@ -38,16 +44,19 @@ const AgentAvatar: React.FC<AgentAvatarProps> = ({
     const presetIcon = getPresetIcon()
 
     return (
-        <div className={styles.iconWrapper} style={{ background: BG_COLOR }}>
+        <div
+            className={styles.iconWrapper}
+            style={{ background: BG_COLOR, ...style }}
+        >
             {presetIcon ? (
                 <Avatar
                     src={presetIcon}
-                    size={32}
+                    size={size}
                     className={styles.agentIcon}
                 />
             ) : (
                 <Avatar
-                    size={32}
+                    size={size}
                     className={styles.avatar}
                     style={{ background: 'transparent' }}
                 >

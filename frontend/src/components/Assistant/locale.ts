@@ -59,4 +59,5 @@ export default i18n([
         'You can only select ${num} categories',
     ],
     ['请选择分类', '請選擇分類', 'Please select category'],
+    ['返回', '返回', 'Back'],
 ])

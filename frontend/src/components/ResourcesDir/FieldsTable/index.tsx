@@ -5,30 +5,29 @@ import React, {
     useImperativeHandle,
     forwardRef,
 } from 'react'
-import { Table, Modal, message, Tooltip, Button, Form } from 'antd'
+import { Table, Tooltip, Button, Form } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { TableComponents } from 'rc-table/lib/interface'
 import { arrayMoveImmutable } from 'array-move'
-import type { SortableContainerProps, SortEnd } from 'react-sortable-hoc'
+import type { SortableContainerProps } from 'react-sortable-hoc'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 import { useGetState } from 'ahooks'
-import { debounce, noop, set } from 'lodash'
+import { debounce, noop } from 'lodash'
 import { TableRowSelection } from 'antd/lib/table/interface'
-import { DownOutlined, InfoCircleFilled, UpOutlined } from '@ant-design/icons'
+import { DownOutlined, UpOutlined } from '@ant-design/icons'
 import styles from './styles.module.less'
 import __ from './locale'
 import {
     scollerToErrorElement,
     filterSingleData,
 } from '../../FormTableMode/helper'
-import { SearchInput, Loader } from '@/ui'
+import { SearchInput } from '@/ui'
 import { needBatchField, StandardKeys } from '../const'
 import {
     getBatchValuesStatus,
     getUniqueCount,
     RefStatus,
 } from '../../FormTableMode/const'
-import dataEmpty from '@/assets/dataEmpty.svg'
 import Empty from '@/ui/Empty'
 import { getEditTableColumns } from './EditTableColumns'
 

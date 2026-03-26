@@ -7,6 +7,7 @@ import __ from './locale'
 import { FontIcon } from '@/icons'
 import { IconType } from '@/icons/const'
 import DataCatlgContent from '../DataAssetsCatlg/DataCatlgContent'
+import LogicViewDetail from '../DataAssetsCatlg/LogicViewDetail'
 
 export interface IDataCatalogItem {
     /** 目录 ID */
@@ -14,7 +15,7 @@ export interface IDataCatalogItem {
     /** 目录编码 */
     code: string
     /** 目录类型 */
-    type: 'data_catalog'
+    type: string
     /** 目录标题 */
     title: string
     /** 目录描述 */
@@ -41,11 +42,20 @@ const DataCatlgDrawer: React.FC<IDataCatlgDrawerProps> = ({
     const [selectedCatalogItem, setSelectedCatalogItem] =
         useState<IDataCatalogItem | null>(null)
 
+    const [dataView, setDataView] = useState<IDataCatalogItem | null>(null)
+
     const [openDetailDrawer, setOpenDetailDrawer] = useState(false)
+    const [openDataViewDrawer, setOpenDataViewDrawer] = useState(false)
     // 处理目录项点击
     const handleItemClick = (item: IDataCatalogItem) => {
-        setSelectedCatalogItem(item)
-        setOpenDetailDrawer(true)
+        console.log('item', item)
+        if (item.type === 'datacatalog') {
+            setSelectedCatalogItem(item)
+            setOpenDetailDrawer(true)
+        } else {
+            setDataView(item)
+            setOpenDataViewDrawer(true)
+        }
     }
 
     // 计算抽屉尺寸
@@ -70,7 +80,7 @@ const DataCatlgDrawer: React.FC<IDataCatlgDrawerProps> = ({
                         type={IconType.COLOREDICON}
                     />
                     <span className={styles.titleText}>
-                        {__('${length}条数据目录', { length: data.length })}
+                        {__('${length}条数据资源', { length: data.length })}
                     </span>
                 </div>
             }
@@ -118,7 +128,11 @@ const DataCatlgDrawer: React.FC<IDataCatlgDrawerProps> = ({
                                 <div className={styles.itemContent}>
                                     <div className={styles.itemIcon}>
                                         <FontIcon
-                                            name="icon-shujumuluguanli1"
+                                            name={
+                                                item.type === 'datacatalog'
+                                                    ? 'icon-shujumuluguanli1'
+                                                    : 'icon-shujubiaoshitu'
+                                            }
                                             className={styles.titleIcon}
                                             type={IconType.COLOREDICON}
                                         />
@@ -142,6 +156,15 @@ const DataCatlgDrawer: React.FC<IDataCatlgDrawerProps> = ({
                         setOpenDetailDrawer(false)
                     }}
                     assetsId={selectedCatalogItem?.id}
+                    hasAsst={false}
+                    getContainer={false}
+                />
+            )}
+            {openDataViewDrawer && (
+                <LogicViewDetail
+                    open={openDataViewDrawer}
+                    onClose={() => setOpenDataViewDrawer(false)}
+                    id={dataView?.id}
                     hasAsst={false}
                     getContainer={false}
                 />

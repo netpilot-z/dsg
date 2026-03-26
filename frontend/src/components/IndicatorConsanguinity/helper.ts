@@ -29,8 +29,6 @@ import {
     compositeExpressionRegx,
 } from '../IndicatorManage/const'
 import DataStruct from './dataStruct'
-import { currentTime } from '../BussinessConfigure/const'
-import IndicatorManagementOutlined from '@/icons/IndicatorManagementOutlined'
 
 const defaultPorts = {
     groups: {

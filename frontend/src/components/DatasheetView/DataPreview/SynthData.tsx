@@ -89,7 +89,7 @@ const SynthData = ({
                         ? await getLogicViewSampleData(catalogId)
                         : await getSynthData(id)
                 setSynthData(res2)
-                // setIsAIData(!res2?.type || res2.type !== SampleDataType.Real)
+                setIsAIData(!res2?.type || res2.type !== SampleDataType.Real)
                 const resColumns =
                     res2?.columns?.map((item) => {
                         return {

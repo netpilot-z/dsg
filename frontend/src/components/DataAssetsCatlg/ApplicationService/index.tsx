@@ -11,7 +11,6 @@ import { Row, Col, Tooltip, Divider, Radio, BackTop } from 'antd'
 import { useLocation } from 'react-router-dom'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { isEqual } from 'lodash'
-import moment from 'moment'
 import { CaretLeftOutlined } from '@ant-design/icons'
 import { useUpdateEffect, useUnmount } from 'ahooks'
 import classnames from 'classnames'
@@ -22,11 +21,7 @@ import { Architecture } from '@/components/ResourcesDir/const'
 import Loader from '@/ui/Loader'
 import Empty from '@/ui/Empty'
 import dataEmpty from '@/assets/dataEmpty.svg'
-import {
-    DatasheetViewColored,
-    InterfaceColored,
-    ReturnTopOutlined,
-} from '@/icons'
+import { ReturnTopOutlined } from '@/icons'
 import {
     DataRescToServiceType,
     ServiceType,
@@ -40,7 +35,6 @@ import {
     LoginPlatform,
     IDataRescQuery,
     IRole,
-    allRoleList,
     formatError,
     getDataRescList,
     getDataRescListByOper,
@@ -61,17 +55,13 @@ import GlossaryDirTree from '@/components/BusinessDomain/GlossaryDirTree'
 import InterfaceCard from '../ApplicationServiceDetail/InterfaceCard'
 import LogicViewCard from '../LogicViewDetail/LogicViewCard'
 import { BusinessDomainType } from '@/components/BusinessDomain/const'
-import IndicatorManagementOutlined from '@/icons/IndicatorManagementOutlined'
 import IndicatorViewCard from '../IndicatorViewDetail/IndicatorViewCard'
 import IndicatorViewDetail from '../IndicatorViewDetail'
 import { MicroWidgetPropsContext } from '@/context'
 import DragBox from '@/components/DragBox'
 import FilterConditionLayout from '../FilterConditionLayout'
 import DataRescItem from '../DataResc/DataRescItem'
-import { useAuditProcess } from '@/hooks/useAuditProcess'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
-import { dataAssetsIndicatorPath } from '@/components/DataAssetsIndicator/const'
-import { BizType, PolicyType } from '@/components/AuditPolicy/const'
 import { useUserPermCtx } from '@/context/UserPermissionProvider'
 import { SearchInput } from '@/ui'
 
@@ -96,7 +86,7 @@ const ApplicationService: React.FC<IApplicationService> = forwardRef(
     (props: any, ref) => {
         const {
             searchKey,
-            resourceType,
+            resourceType = ServiceType.LOGICVIEW,
             isIntroduced,
             getClickAsset,
             getAddAsset,
@@ -108,17 +98,9 @@ const ApplicationService: React.FC<IApplicationService> = forwardRef(
         const refTree: any = useRef()
         const query = useQuery()
         const serviceCode = query.get('serviceCode')
-        // const [hasAuditProcess, refreshAuditProcess] = useAuditProcess({
-        //     audit_type: PolicyType.AssetPermission,
-        //     service_type: BizType.AuthService,
-        // })
         const [userId] = useCurrentUser('ID')
         const { permissions, checkPermissions } = useUserPermCtx()
-        // useCogAsstContext 已移除，相关功能已下线
 
-        useUnmount(() => {
-            // useCogAsstContext 已移除
-        })
         // 是否拥有数据运营工程师
         const hasDataOperRole = useMemo(() => {
             return checkPermissions(HasAccess.isGovernOrOperation) ?? false
@@ -145,10 +127,6 @@ const ApplicationService: React.FC<IApplicationService> = forwardRef(
 
         const [expand, setExpand] = useState<boolean>(true)
 
-        const [isTagExpand, setIsTagExpand] = useState(false)
-
-        const lightweightSearchRef: any = useRef()
-        // const [direction, setDirection] = useState<'asc' | 'desc'>('desc')
         const [departmentId, setDepartmentId] = useState<string>('')
         const [openStatus, setOpenStatus] = useState<boolean>(!!serviceCode)
         // 数据库表详情
@@ -226,11 +204,6 @@ const ApplicationService: React.FC<IApplicationService> = forwardRef(
             setSearchKeyword(searchKeyword)
         }, [permissions, departmentId, filterParams])
 
-        useEffect(() => {
-            setSearchKeyword('')
-            setFilterParams({})
-        }, [resourceType])
-
         useUpdateEffect(() => {
             if (scrollRef.current) {
                 scrollRef.current.scrollTop = 0
@@ -247,7 +220,7 @@ const ApplicationService: React.FC<IApplicationService> = forwardRef(
         }))
 
         const refresh = (type?: any) => {
-            getApplicationData([], searchKeyword, type)
+            getApplicationData([], searchKeyword)
             filterConditionRef?.current?.init()
         }
 
@@ -313,11 +286,7 @@ const ApplicationService: React.FC<IApplicationService> = forwardRef(
          * 获取接口数据
          * @param preData 之前获取到的数据
          */
-        const getApplicationData = async (
-            preData: Array<any>,
-            keyword,
-            type?: any,
-        ) => {
+        const getApplicationData = async (preData: Array<any>, keyword) => {
             try {
                 setListDataLoading(true)
                 if (!preData || !preData?.length) {
@@ -343,7 +312,7 @@ const ApplicationService: React.FC<IApplicationService> = forwardRef(
                                 ? false
                                 : undefined,
                     },
-                    type: type || resourceType,
+                    type: resourceType,
                 }
 
                 // 发布状态
@@ -425,116 +394,6 @@ const ApplicationService: React.FC<IApplicationService> = forwardRef(
         const getAssetIsOnline = (item, type: ServiceType) => {
             getClickAsset(item, type)
         }
-        // const timeChange = (val, dateString) => {
-        //     setTimeValue(val)
-        //     const timeObj: any = {
-        //         start: null,
-        //         end: null,
-        //     }
-        //     if (val) {
-        //         const [startStr, endStr] = dateString
-        //         timeObj.start = moment(`${startStr} 00:00:00`).valueOf()
-        //         timeObj.end = moment(`${endStr} 23:59:59`).valueOf()
-        //         setFilterTitle(
-        //             `${__('发布时间')}：${startStr} ${__('至')} ${endStr}`,
-        //         )
-        //         setOnlineTime(timeObj)
-        //     } else {
-        //         setFilterTitle(__('发布时间'))
-        //         setOnlineTime(undefined)
-        //     }
-        // }
-
-        // const clearCondition = () => {
-        //     setOnlineTime(undefined)
-        //     setRescType(DataRescType.NOLIMIT)
-        //     setTimeValue(undefined)
-        //     setRescFilterTitle(__('资源类型不限'))
-        //     setFilterTitle(__('发布时间'))
-        // }
-
-        // const filterContent = () => {
-        //     return (
-        //         <div className={styles.filterContent}>
-        //             <RangePicker
-        //                 placeholder={[__('开始日期'), __('结束日期')]}
-        //                 value={timeValue}
-        //                 onChange={timeChange}
-        //                 disabledDate={(current: any) =>
-        //                     disabledDate(current, {})
-        //                 }
-        //                 allowEmpty={[true, true]}
-        //                 onBlur={() => {
-        //                     if (!timeValue) {
-        //                         return
-        //                     }
-        //                     // 当天结束时间-时间戳
-        //                     const curDateTimeStamp = moment()
-        //                         .endOf('day')
-        //                         .valueOf()
-        //                     if (timeValue[0] && !timeValue[1]) {
-        //                         const end = moment(curDateTimeStamp)
-        //                         setTimeValue([timeValue[0], end])
-
-        //                         const stStr = moment(timeValue[0])?.format(
-        //                             'YYYY-MM-DD',
-        //                         )
-        //                         const etStr = moment(end)?.format('YYYY-MM-DD')
-        //                         const timeObj: any = {
-        //                             start: moment(
-        //                                 `${stStr} 00:00:00`,
-        //                             ).valueOf(),
-        //                             end: moment(curDateTimeStamp).valueOf(),
-        //                         }
-
-        //                         setFilterTitle(
-        //                             // `${__('发布时间')}：${stStr} ${__(
-        //                             //     '至',
-        //                             // )} ${etStr}`,
-        //                             __('发布时间${start}至${end}', {
-        //                                 start: stStr,
-        //                                 end: etStr,
-        //                             }),
-        //                         )
-        //                         setOnlineTime(timeObj)
-        //                     }
-        //                     if (!timeValue[0] && timeValue[1]) {
-        //                         const etStr = moment(timeValue[1])?.format(
-        //                             'YYYY-MM-DD',
-        //                         )
-        //                         setFilterTitle(
-        //                             `${__('发布时间')}：${etStr}${__('之前')}`,
-        //                         )
-        //                     }
-        //                 }}
-        //             />
-        //         </div>
-        //     )
-        // }
-        // const dropdownItems = [
-        //     {
-        //         key: '1',
-        //         label: filterContent(),
-        //     },
-        // ]
-
-        // const handleRescTypeChange = (data, dataKey?: any) => {
-        //     // if (dataKey === 'rescType') {
-        //     //     // handleObjChange(data[dataKey])
-        //     //     setRescType(data[dataKey])
-        //     // }
-        //     const val = data.key
-        //     if (val === DataRescType.NOLIMIT) {
-        //         setRescFilterTitle(__('资源类型不限'))
-        //     } else {
-        //         setRescFilterTitle(
-        //             rescTypeOptionList?.find((item) => item.value === val)
-        //                 ?.label || '',
-        //         )
-        //     }
-        //     setRescType(data.key)
-        //     setRescTypeOpen(false)
-        // }
 
         const showToolTip = (title: any, toolTipTitle: any, value: any) => {
             return (
@@ -583,103 +442,6 @@ const ApplicationService: React.FC<IApplicationService> = forwardRef(
                     type="vertical"
                 />
             )
-        }
-
-        // render 列表项-信息展示
-        const renderOtherInfo = (item: any, data: any) => {
-            const { infoKey, type, title, toolTipTitle } = item
-            let showContent = data[infoKey]
-            if (infoKey === 'published_at') {
-                showContent = `${moment(showContent).format('YYYY-MM-DD')}`
-                return (
-                    <>
-                        <div
-                            style={{
-                                flexShrink: 0,
-                            }}
-                        >
-                            {`${__('上线于')} ${showContent}`}
-                        </div>
-                        {showDivder()}
-                    </>
-                )
-            }
-
-            return showToolTip(title, toolTipTitle, showContent)
-        }
-
-        const getDataRescTypeIcon = (type) => {
-            switch (type) {
-                case DataRescType.INTERFACE:
-                    return <InterfaceColored className={styles.itemIcon} />
-                case DataRescType.LOGICALVIEW:
-                    return <DatasheetViewColored className={styles.itemIcon} />
-                case DataRescType.INDICATOR:
-                    return (
-                        <div className={styles.iconContainer}>
-                            <IndicatorManagementOutlined
-                                style={{
-                                    color: '#fff',
-                                    fontSize: 20,
-                                }}
-                            />
-                        </div>
-                    )
-                default:
-                    return ''
-            }
-        }
-
-        /**
-         *  获取字段的显示
-         * @param item
-         * @returns
-         */
-        const getFieldsInfo = (item) => {
-            const fieldData = item.fields || []
-
-            return fieldData?.length
-                ? fieldData?.slice(0, 3)?.map((fItem: any) => (
-                      <Tooltip
-                          title={
-                              <div>
-                                  <div>
-                                      <span>{__('业务名称：')}</span>
-                                      <span
-                                          dangerouslySetInnerHTML={{
-                                              __html:
-                                                  `${fItem?.business_name}` ||
-                                                  '--',
-                                          }}
-                                      />
-                                  </div>
-
-                                  <div>
-                                      <span>{__('技术名称：')}</span>
-                                      <span
-                                          dangerouslySetInnerHTML={{
-                                              __html:
-                                                  `${fItem?.technical_name}` ||
-                                                  '--',
-                                          }}
-                                      />
-                                  </div>
-                              </div>
-                          }
-                          color="#fff"
-                          overlayInnerStyle={{
-                              color: 'rgba(0,0,0,0.85)',
-                          }}
-                      >
-                          <div
-                              className={styles.fieldTag}
-                              dangerouslySetInnerHTML={{
-                                  __html: `${fItem?.business_name}` || '--',
-                              }}
-                          />
-                      </Tooltip>
-                  ))
-                : '--'
         }
 
         const handleItemClick = (item) => {
@@ -986,16 +748,6 @@ const ApplicationService: React.FC<IApplicationService> = forwardRef(
                                     )}
                                 </div>
                             </div>
-                            {/* <span
-                            className={styles.expandSwitch}
-                            hidden={expand}
-                            onClick={() => {
-                                setExpand(true)
-                            }}
-                        >
-                            <ViewOutlined />
-                            <span>{__('视角')}</span>
-                        </span> */}
                         </Col>
                     )}
                     <Col flex="auto">
@@ -1100,12 +852,6 @@ const ApplicationService: React.FC<IApplicationService> = forwardRef(
                                                     padding: 0,
                                                     minWidth: 417,
                                                 }}
-                                                // hiddenElement={
-                                                //     viewCardOpen ||
-                                                //     interfaceCardOpen || indicatorCardOpen
-                                                //         ? 'right'
-                                                //         : ''
-                                                // }
                                             >
                                                 {renderListContent()}
                                                 <div
@@ -1373,30 +1119,6 @@ const ApplicationService: React.FC<IApplicationService> = forwardRef(
                         />
                     </div>
                 )}
-                {/* 权限申请 */}
-                {/* {permissionRequestOpen && (
-                    <ApplyPolicy
-                        id={selectedResc.id}
-                        onClose={(needRefresh: boolean) => {
-                            setPermissionRequestOpen(false)
-                            if (needRefresh) {
-                                refreshAuditProcess()
-                            }
-                        }}
-                    />
-                )} */}
-
-                {/* {applyOpen && (
-                    <ApplyApplication
-                        open={applyOpen}
-                        onOk={() => {
-                            getApplicationData([], searchKeyword)
-                            setApplyOpen(false)
-                        }}
-                        onClose={() => setApplyOpen(false)}
-                        id={selectedResc?.id}
-                    />
-                )} */}
 
                 {authInfoOpen && (
                     <AuthInfo

@@ -67,9 +67,11 @@ const IndexMenuSider = ({ resizable = false }: IIndexMenuSider) => {
     const [selectedModuleKey, setSelectedModuleKey] = useState<string>('')
 
     useEffect(() => {
-        setMenusType(getRootMenuByPath(pathname)?.module?.[0] || '')
+        const nextMenusType =
+            getRootMenuByPath(pathname, menus)?.module?.[0] || ''
+        setMenusType(nextMenusType)
         getDefaultSelectKey()
-    }, [pathname])
+    }, [pathname, menus])
 
     useEffect(() => {
         if (menusType) {
@@ -106,7 +108,7 @@ const IndexMenuSider = ({ resizable = false }: IIndexMenuSider) => {
     }, [menusCountConfigs])
 
     const adaptMenu = () => {
-        const result = filterMenus(getRouteByModuleWithGroups(menusType))
+        const result = filterMenus(getRouteByModuleWithGroups(menusType, menus))
         setMenuItems(result)
     }
 
@@ -253,8 +255,9 @@ const IndexMenuSider = ({ resizable = false }: IIndexMenuSider) => {
         return items
             .map((item) => {
                 const { key, label, children, icon, type } = item
-                const currentRoute = getRouteByAttr(key, 'key')
-                const realPath = currentRoute?.path || findFirstPathByKeys(key)
+                const currentRoute = getRouteByAttr(key, 'key', menus)
+                const realPath =
+                    currentRoute?.path || findFirstPathByKeys([key], menus)
                 const href = `${getActualUrl(realPath)}`
                 const showBadge = menusCountConfigs.find(
                     (it) => it.key === key,
@@ -632,7 +635,7 @@ const IndexMenuSider = ({ resizable = false }: IIndexMenuSider) => {
         if (!menusType) {
             return
         }
-        const menu = getRouteByAttr(pathname, 'path')
+        const menu = getRouteByAttr(pathname, 'path', menus)
         if (menu.index) {
             setSelectedKey(findParentMenuByKey(menu?.key)?.key)
         } else {
@@ -642,8 +645,8 @@ const IndexMenuSider = ({ resizable = false }: IIndexMenuSider) => {
     }
 
     const setOpenKey = () => {
-        const pathKey = getRouteByAttr(pathname, 'path')?.key
-        const rootMenu = getRootMenuByPath(pathname)
+        const pathKey = getRouteByAttr(pathname, 'path', menus)?.key
+        const rootMenu = getRootMenuByPath(pathname, menus)
         // 当前key匹配则是一级菜单，否则查找父key
         if (pathKey === rootMenu?.key) {
             setOpenKeys([pathKey])
@@ -679,8 +682,8 @@ const IndexMenuSider = ({ resizable = false }: IIndexMenuSider) => {
     const handleMenuClick = (item) => {
         setSelectedKey(item.key)
         const path =
-            getRouteByAttr(item.key, 'key')?.path ||
-            findFirstPathByKeys(item.key, [findMenuTreeByKey(item.key)])
+            getRouteByAttr(item.key, 'key', menus)?.path ||
+            findFirstPathByKeys([item.key], menus)
         const url = path.substring(0, 1) === '/' ? path : `/${path}`
         navigate(url)
     }
@@ -699,7 +702,7 @@ const IndexMenuSider = ({ resizable = false }: IIndexMenuSider) => {
     const onOpenChange = (keys) => {
         const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1)
         // 一级菜单
-        const firstMenus = getRouteByModuleWithGroups(menusType)
+        const firstMenus = getRouteByModuleWithGroups(menusType, menus)
         if (firstMenus.map((item) => item.key).indexOf(latestOpenKey!) === -1) {
             setOpenKeys(keys)
         } else {
@@ -716,7 +719,7 @@ const IndexMenuSider = ({ resizable = false }: IIndexMenuSider) => {
         setOpenKeys([])
 
         // 自动跳转到该模块下的第一个有权限的菜单
-        const firstUrl = findFirstPathByModule(moduleKey)
+        const firstUrl = findFirstPathByModule(moduleKey, menus)
         if (firstUrl) {
             navigate(firstUrl)
         }

@@ -2,7 +2,6 @@ import { FC, ReactNode, useEffect, useState } from 'react'
 import { Button, Input, Select } from 'antd'
 import { noop } from 'lodash'
 import { SearchOutlined } from '@ant-design/icons'
-import { AddOutlined } from '@/icons'
 import __ from './locale'
 import styles from './styles.module.less'
 

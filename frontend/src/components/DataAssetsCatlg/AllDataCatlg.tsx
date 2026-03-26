@@ -7,7 +7,6 @@ import { ServiceType } from './helper'
 import { useGeneralConfig } from '@/hooks/useGeneralConfig'
 import DataCatlg from './DataCatlg'
 import InfoResourcesCatlg from './InfoResourcesCatlg'
-import ElectronicLicense from './ElectronicLicense'
 import Interface from './Interface'
 import { useRescProviderContext } from './RescProvider'
 import ApplicationService from './ApplicationService'
@@ -34,7 +33,6 @@ const AllDataCatlg: React.FC<IAllDataCatlgProps> = (props: any, ref) => {
     const query = useQuery()
     const [{ governmentSwitch, local_app, using }] = useGeneralConfig()
     const platform = getPlatformNumber()
-    const applicationServiceRef = useRef<any>()
 
     const [activeKey, setActiveKey] = useState<string>()
 
@@ -78,20 +76,6 @@ const AllDataCatlg: React.FC<IAllDataCatlgProps> = (props: any, ref) => {
                 onChange={(key) => {
                     setActiveKey(key)
                     resetCatlgView?.()
-                    if (using === 2) {
-                        applicationServiceRef.current?.refresh(
-                            key === ServiceType.APPLICATIONSERVICE
-                                ? 'interface_svc'
-                                : ServiceType.LOGICVIEW,
-                        )
-                    }
-                    if (using === 2) {
-                        applicationServiceRef.current?.refresh(
-                            key === ServiceType.APPLICATIONSERVICE
-                                ? 'interface_svc'
-                                : ServiceType.LOGICVIEW,
-                        )
-                    }
                 }}
                 getPopupContainer={(node) => node}
                 tabBarGutter={32}
@@ -107,18 +91,12 @@ const AllDataCatlg: React.FC<IAllDataCatlgProps> = (props: any, ref) => {
             {activeKey === ServiceType.INFORESOURCESDATACATLG && (
                 <InfoResourcesCatlg />
             )}
-            {using === 2 && (
+            {activeKey === ServiceType.LOGICVIEW && (
                 <ApplicationService
-                    ref={applicationServiceRef}
                     searchKey={searchKey}
                     isIntroduced={isIntroduced}
                     getClickAsset={getClickAsset}
                     getAddAsset={getAddAsset}
-                    resourceType={
-                        activeKey === ServiceType.APPLICATIONSERVICE
-                            ? 'interface_svc'
-                            : ServiceType.LOGICVIEW
-                    }
                 />
             )}
             {/* 数据资源目录 */}
@@ -134,11 +112,7 @@ const AllDataCatlg: React.FC<IAllDataCatlgProps> = (props: any, ref) => {
                 />
             )}
             {/* 接口服务 */}
-            {activeKey === ServiceType.APPLICATIONSERVICE && using === 1 && (
-                <Interface />
-            )}
-            {/* 电子证照目录 */}
-            {activeKey === ServiceType.LICENSE && <ElectronicLicense />}
+            {activeKey === ServiceType.APPLICATIONSERVICE && <Interface />}
         </>
     )
 }

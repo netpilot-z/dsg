@@ -100,6 +100,7 @@ const CatalogCard = (props: ICatalogCard) => {
             setIsRescExist(false)
             getDetails()
             getMountInfo()
+            getInfoItems()
         }
     }, [catalogId])
 

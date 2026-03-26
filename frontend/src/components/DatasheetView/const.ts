@@ -786,10 +786,10 @@ export const detailTabItems = [
     //     label: __('样例数据'),
     //     key: detailTabKey.sampleData,
     // },
-    // {
-    //     label: __('数据预览'),
-    //     key: detailTabKey.dataPreview,
-    // },
+    {
+        label: __('数据质量'),
+        key: detailTabKey.dataPreview,
+    },
     // {
     //     label: __('数据血缘'),
     //     key: detailTabKey.dataConsanguinity,
@@ -798,10 +798,6 @@ export const detailTabItems = [
     //     label: __('影响分析'),
     //     key: detailTabKey.impactAnalysis,
     // },
-    {
-        label: __('数据质量'),
-        key: detailTabKey.dataQuality,
-    },
     // {
     //     label: __('高级配置'),
     //     key: detailTabKey.advancedSettings,

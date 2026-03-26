@@ -16,8 +16,7 @@ import { FontIcon } from '@/icons'
 import { IconType } from '@/icons/const'
 import { getFieldTypeIcon } from './helper'
 import { Empty } from '@/ui'
-import Icons from '../BussinessConfigure/Icons'
-import { disabledField, disabledFieldTips } from './const'
+import { disabledField } from './const'
 
 // import Empty from '../Empty'
 

@@ -19,14 +19,14 @@ const FeedbackList = (props: any) => {
         replied_num: 0,
     })
 
-    useEffect(() => {
-        getData()
-    }, [])
+    // useEffect(() => {
+    //     getData()
+    // }, [])
 
-    const getData = async () => {
-        const res = await getFeedbackCountResMode({ res_type: resType })
-        setNumMap(res)
-    }
+    // const getData = async () => {
+    //     const res = await getFeedbackCountResMode({ res_type: resType })
+    //     setNumMap(res)
+    // }
 
     const handleTabChange = (key: FeedbackMenuEnum) => {
         setActiveKey(key)
@@ -39,7 +39,7 @@ const FeedbackList = (props: any) => {
             <FeedbackTable
                 key={key}
                 menu={key}
-                onReplySuccess={getData}
+                // onReplySuccess={getData}
                 scrollY="calc(100vh - 301px)"
                 resType={resType}
             />
@@ -62,12 +62,14 @@ const FeedbackList = (props: any) => {
                 onChange={(key) => handleTabChange(key as FeedbackMenuEnum)}
                 items={[
                     {
-                        label: renderTabLabel(__('待办'), numMap?.pending_num),
+                        // label: renderTabLabel(__('待办'), numMap?.pending_num),
+                        label: __('待办'),
                         key: FeedbackMenuEnum.Pending,
                         children: renderTabContent(FeedbackMenuEnum.Pending),
                     },
                     {
-                        label: renderTabLabel(__('已办'), numMap?.replied_num),
+                        // label: renderTabLabel(__('已办'), numMap?.replied_num),
+                        label: __('已办'),
                         key: FeedbackMenuEnum.Handled,
                         children: renderTabContent(FeedbackMenuEnum.Handled),
                     },

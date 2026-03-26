@@ -1,4 +1,3 @@
-export * from './IntlProvider'
 export * from './LanguageProvider'
 export * from './ConfigInfoProvider'
 export * from './TaskInfoProvider'

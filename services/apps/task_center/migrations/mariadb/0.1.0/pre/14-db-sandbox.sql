@@ -88,6 +88,6 @@ create table if not EXISTS `db_sandbox_log`(
     `execute_step`  int(4) NOT NULL default 0 COMMENT '操作步骤,1申请�?扩容�?审核�?实施�?完成',
     `executor_id`  varchar(36) DEFAULT NULL COMMENT '实施人ID',
     `executor_name` varchar(255) DEFAULT NULL COMMENT '实施人名称',
-    `execute_time`  datetime(3) NOT NULL DEFAULT current_timestamp() COMMENT '操作时间' ,
+    `execute_time`  datetime(0) NOT NULL DEFAULT current_timestamp() COMMENT '操作时间' ,
     PRIMARY KEY (`id`) USING BTREE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='数据实施操作日志';

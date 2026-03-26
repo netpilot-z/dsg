@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	jsoniter "github.com/json-iterator/go"
 	data_view "github.com/kweaver-ai/dsg/services/apps/task_center/adapter/driven/data_view"
@@ -152,6 +153,43 @@ func (d *dataView) GetViewByTechnicalNameAndHuaAoId(ctx context.Context, req *da
 		}
 	}
 	res := &data_view.GetViewFieldsResp{}
+	if err := json.Unmarshal(body, res); err != nil {
+		log.WithContext(ctx).Error(err.Error())
+		return nil, errorcode.Detail(errorcode.TaskDataViewJsonError, err.Error())
+	}
+	return res, nil
+}
+
+// GetWorkOrderExploreProgress 获取质量检测工单对应探查任务处理进度
+func (d *dataView) GetWorkOrderExploreProgress(ctx context.Context, workOrderIDs []string) (*data_view.WorkOrderExploreProgressResp, error) {
+	errorMsg := "DataView GetWorkOrderExploreProgress "
+	urlStr := fmt.Sprintf("http://%s/api/internal/data-view/v1/explore-task/progress?work_order_ids=%s",
+		d.baseURL, strings.Join(workOrderIDs, ","))
+
+	request, _ := http.NewRequest(http.MethodGet, urlStr, nil)
+	resp, err := d.client.Do(request.WithContext(ctx))
+	if err != nil {
+		log.Error(errorMsg+"client.Do error", zap.Error(err))
+		return nil, errorcode.Desc(errorcode.TaskDataViewUrlError)
+	}
+	//延时关闭
+	defer resp.Body.Close()
+
+	//返回的结果resp.Body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.WithContext(ctx).Error(err.Error())
+		return nil, errorcode.Detail(errorcode.InternalError, err.Error())
+	}
+	log.WithContext(ctx).Info(string(body))
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusNotFound {
+			return nil, errorcode.Desc(errorcode.TaskDataViewUrlError)
+		} else {
+			return nil, errorcode.Desc(errorcode.TaskDataViewQueryError)
+		}
+	}
+	res := &data_view.WorkOrderExploreProgressResp{}
 	if err := json.Unmarshal(body, res); err != nil {
 		log.WithContext(ctx).Error(err.Error())
 		return nil, errorcode.Detail(errorcode.TaskDataViewJsonError, err.Error())

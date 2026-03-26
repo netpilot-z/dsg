@@ -438,11 +438,11 @@ func (r *repo) UpdateFinished(tx *gorm.DB, ctx context.Context, m *model.Report)
 			m.TaskID, m.TaskVersion, m.Result, m.FinishedAt, m.Status, m.TotalScore,
 			m.TotalCompleteness, m.TotalStandardization, m.TotalUniqueness, m.TotalAccuracy, m.TotalConsistency,
 			m.TaskID, m.TaskVersion).Error; err != nil {
-			return errors.Wrap(err, "Update UpdateLatestStateV2 failed in db")
+			return errors.Wrap(err, "Update UpdateFinished failed in db")
 		}
 	case 4, 5:
-		if err := r.do(tx, ctx).Model(&model.Report{}).Where("f_status < 3").Save(m).Error; err != nil {
-			return errors.Wrap(err, "Update UpdateLatestStateV2 failed in db")
+		if err := r.do(tx, ctx).Model(&model.Report{}).Where("f_id = ? and f_status < 3", m.ID).Updates(m).Error; err != nil {
+			return errors.Wrap(err, "Update UpdateFinished failed in db")
 		}
 	}
 

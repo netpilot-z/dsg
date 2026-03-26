@@ -10,6 +10,7 @@ type DataView interface {
 	FinishProject(ctx context.Context, taskIds []string) error
 	GetList(ctx context.Context, req *GetListReq) ([]*FormView, error)
 	GetViewByTechnicalNameAndHuaAoId(ctx context.Context, req *GetViewByTechnicalNameAndHuaAoIdReq) (*GetViewFieldsResp, error)
+	GetWorkOrderExploreProgress(ctx context.Context, workOrderIDs []string) (*WorkOrderExploreProgressResp, error)
 }
 
 type GetListReq struct {
@@ -92,4 +93,21 @@ type SimpleViewField struct {
 	StandardName     string `json:"standard_name"`      // 数据标准名称
 	CodeTableID      string `json:"code_table_id"`      // 码表ID
 	Index            int    `json:"index"`              // 字段顺序
+}
+
+type ExploreTaskStatusEntity struct {
+	DataSourceID string `json:"data_source_id"` // 数据源ID
+	FormViewID   string `json:"form_view_id"`   // 视图ID
+	Status       string `json:"status"`         // 任务状态，1：queuing（等待中）；2：running（进行中）；3：finished（已完成）；4：canceled（已取消）；5：failed（异常）；
+}
+
+type WorkOrderExploreProgressEntity struct {
+	WorkOrderId     string                     `json:"work_order_id"`     // 工单ID
+	TotalTaskNum    int64                      `json:"total_task_num"`    // 总任务数
+	FinishedTaskNum int64                      `json:"finished_task_num"` // 已完成任务数
+	Entries         []*ExploreTaskStatusEntity `json:"entries"`           // 视图探查状态信息
+}
+
+type WorkOrderExploreProgressResp struct {
+	Entries []*WorkOrderExploreProgressEntity `json:"entries"` // 工单探查任务进度
 }

@@ -251,7 +251,7 @@ CREATE TABLE IF NOT EXISTS `work_order` (
     `data_aggregation_inventory_id` CHAR(36) NOT NULL COMMENT '关联的数据归集清ID，工单类型是数据归集时有值',
     `business_forms` BLOB DEFAULT NULL COMMENT '归集工单关联的业务表',
     `description` VARCHAR(800) DEFAULT '' COMMENT '工单说明',
-    `remark` TEXT DEFAULT NULL COMMENT '备注',
+    `remark` LONGTEXT DEFAULT NULL COMMENT '备注',
     `processing_instructions` VARCHAR(300) DEFAULT '' COMMENT '处理说明',
     `audit_id` BIGINT(20) DEFAULT NULL COMMENT '审核id',
     `audit_status` tinyint(4) DEFAULT NULL COMMENT '审核状',
@@ -617,7 +617,7 @@ CREATE TABLE IF NOT EXISTS `tc_tenant_app_db_account` (
 
 
 CREATE TABLE IF NOT EXISTS `tc_tenant_app_db_data_resource` (
-      `data_resource_id` bigint(20) DEFAULT NULL COMMENT '数据资源id, 雪花id',
+      `data_resource_id` bigint(20) NOT NULL COMMENT '数据资源id, 雪花id',
       `id` varchar(100) DEFAULT NULL COMMENT 'id, uuid',
       `tenant_application_id` varchar(100) DEFAULT NULL COMMENT '申请id',
       `database_account_id` varchar(100) DEFAULT NULL COMMENT '数据库账号id',
@@ -730,7 +730,7 @@ create table if not EXISTS `db_sandbox_log`(
     `execute_step`  tinyint(4) NOT NULL default 0 COMMENT '操作步骤,1申请中2扩容中3审核中4实施中5完成',
     `executor_id`  varchar(36) DEFAULT NULL COMMENT '实施人ID',
     `executor_name` varchar(255) DEFAULT NULL COMMENT '实施人名',
-    `execute_time`  datetime(3) NOT NULL DEFAULT current_timestamp() COMMENT '操作时间' ,
+    `execute_time`  datetime(0) NOT NULL DEFAULT current_timestamp() COMMENT '操作时间' ,
     PRIMARY KEY (`id`) USING BTREE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='数据实施操作日志';
 

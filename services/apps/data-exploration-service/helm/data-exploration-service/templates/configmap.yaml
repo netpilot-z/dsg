@@ -50,4 +50,5 @@ data:
   retry_wait_time: "100"
   retry_time_out: "60s"
   mdl_uni_query_client_time_out: "120"
+  MDL_UNIQUERY_CALL_INTERVAL: "{{ .exploration.mdlUniQueryCallInterval}}"
   {{- end }}

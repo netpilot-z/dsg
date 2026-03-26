@@ -54,8 +54,8 @@ func StatusCodeNotOK(errorMsg string, statusCode int, body []byte) error {
 			log.Error(errorMsg+"400 error jsoniter.Unmarshal", zap.Error(err))
 			return err
 		}
-		log.Error(errorMsg+"400 error", zap.String("code", res.ErrorCode), zap.String("description", res.Description))
-		return errorcode.New(res.ErrorCode, res.ErrorCode+res.Description, res.Description, res.Solution, res.ErrorDetails, res.ErrorLink)
+		log.Error(errorMsg+"400 error", zap.String("body", string(body)))
+		return errors.New("MDLUniQuery error: " + string(body))
 	} else {
 		log.Error(errorMsg+"http status error", zap.Int("status", statusCode))
 		return errors.New("http status error: " + strconv.Itoa(statusCode))

@@ -278,7 +278,7 @@ CREATE TABLE IF NOT EXISTS "work_order" (
     "data_aggregation_inventory_id" VARCHAR(36 char) NOT NULL,
     "business_forms" text,
     "description" VARCHAR(800 char) DEFAULT '',
-    "remark" VARCHAR(300 char) DEFAULT '',
+    "remark" text,
     "processing_instructions" VARCHAR(255 char) DEFAULT '',
     "audit_id" BIGINT DEFAULT NULL,
     "audit_status" TINYINT DEFAULT NULL,

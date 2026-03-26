@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"sync"
 	"time"
 
@@ -66,6 +67,8 @@ type groupManager struct {
 	errs              []error
 	updateFailedItems []*model.ReportItem
 	mutex             *sync.Mutex
+
+	callInterval time.Duration
 }
 
 func NewGroupTaskExecutor(ctx context.Context, maxGroupNum int, maxTaskNum int) (*groupTaskExecutor, error) {
@@ -148,6 +151,18 @@ func (g *groupManager) start() error {
 		mdlID       string
 		reportItems []*model.ReportItem
 	)
+
+	callInterval := os.Getenv("MDL_UNIQUERY_CALL_INTERVAL")
+	if len(callInterval) == 0 {
+		callInterval = "1s"
+	}
+	if g.callInterval, err = time.ParseDuration(callInterval); err != nil {
+		close(g.tChan)
+		<-g.groupTaskExecutor.gChan
+		g.e.mtx.Release(g.ctx, g.l)
+		log.Errorf("report code %s form view id %s time.ParseDuration MDL_UNIQUERY_CALL_INTERVAL failed: %v", *g.group.Code, *g.group.TableID, err)
+		return err
+	}
 
 	if err = g.e.data.DB.WithContext(g.ctx).Table("af_main.form_view").Select("mdl_id").Where("id = ?", g.group.TableID).Take(&mdlID).Error; err != nil {
 		close(g.tChan)
@@ -261,16 +276,18 @@ func (g *groupManager) start() error {
 												if len(result.Entries) > 0 {
 													retData = append(retData, result.Entries...)
 												}
-
+												time.Sleep(g.callInterval)
 												for len(result.SearchAfter) > 0 {
 													result, err = g.e.mdl_uniquery.QueryDataV2(ctx, *g.group.CreatedByUID, mdlID,
 														mdl_uniquery.QueryDataBody{SearchAfter: result.SearchAfter, UseSearchAfter: true})
 													if err != nil {
+														time.Sleep(g.callInterval)
 														return nil, err
 													}
 													if len(result.Entries) > 0 {
 														retData = append(retData, result.Entries...)
 													}
+													time.Sleep(g.callInterval)
 												}
 											}
 											return retData, err
@@ -337,9 +354,18 @@ func (g *groupManager) start() error {
 									},
 								)
 								if cancelItemNum == 0 {
-									errs := lo.Map(g.errs, func(err error, _ int) string { return err.Error() })
+									errDescMap := make(map[string]bool, len(g.errs))
+									errs := make([]string, 0, len(g.errs))
+									for i := range g.errs {
+										if _, ok := errDescMap[g.errs[i].Error()]; !ok {
+											errDescMap[g.errs[i].Error()] = true
+											errs = append(errs, g.errs[i].Error())
+										}
+									}
 									buf, _ := json.Marshal(errs)
 									g.group.Reason = util.ValueToPtr(string(buf))
+									errDescMap = nil
+									errs = nil
 								} else {
 									g.group.Status = util.ValueToPtr(constant.Explore_Status_Canceled)
 								}

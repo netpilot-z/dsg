@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS  "form_view_field" (
     "technical_name" VARCHAR(255 char)  NOT NULL,
     "business_name" VARCHAR(255 char)  DEFAULT NULL,
     "original_name" VARCHAR(255 char)  DEFAULT NULL,
-    "field_role" int DEFAULT NULL,
+    "field_role" TINYINT DEFAULT NULL,
     "field_description" varchar(300) DEFAULT NULL,
     "comment" text  NULL,
     "status" int NOT NULL,

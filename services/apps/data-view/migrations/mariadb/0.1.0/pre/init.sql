@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS  `form_view_field` (
   `technical_name` varchar(255)  NOT NULL COMMENT '列技术名称',
   `business_name` varchar(255)  DEFAULT NULL COMMENT '列业务名称',
   `original_name` varchar(255)  DEFAULT NULL COMMENT '原始字段名称',
-  `field_role` int DEFAULT NULL COMMENT '字段角色：1-业务主键, 2-关联标识, 3-业务状态, 4-时间字段, 5-业务指标, 6-业务特征, 7-审计字段, 8-技术字段',
+  `field_role` tinyint DEFAULT NULL COMMENT '字段角色：1-业务主键, 2-关联标识, 3-业务状态, 4-时间字段, 5-业务指标, 6-业务特征, 7-审计字段, 8-技术字段',
   `field_description` varchar(300) DEFAULT NULL COMMENT '字段描述',
   `comment` text  NULL COMMENT '列注释',
   `status` int NOT NULL COMMENT '列视图状态（扫描结果） 0：无变化、1：新增、2：删除',

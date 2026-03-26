@@ -2,7 +2,7 @@ USE `af_tasks`;
 
 
 CREATE TABLE IF NOT EXISTS `tc_tenant_app_db_data_resource` (
-    `data_resource_id` bigint(20) DEFAULT NULL COMMENT '数据资源id, 雪花id',
+    `data_resource_id` bigint(20) NOT NULL COMMENT '数据资源id, 雪花id',
     `id` varchar(100) DEFAULT NULL COMMENT 'id, uuid',
     `tenant_application_id` varchar(100) DEFAULT NULL COMMENT '申请id',
     `database_account_id` varchar(100) DEFAULT NULL COMMENT '数据库账号id',

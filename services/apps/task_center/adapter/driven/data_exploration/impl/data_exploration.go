@@ -34,7 +34,7 @@ func (d *dataExploration) GetReportList(ctx context.Context, req *data_explorati
 		urlStr = fmt.Sprintf("%s&third_party=true", urlStr)
 	}
 	if req.CatalogName != "" {
-		urlStr = fmt.Sprintf("%s&catalog_name=vdm_%s", urlStr, req.CatalogName)
+		urlStr = fmt.Sprintf("%s&catalog_name=%s", urlStr, req.CatalogName)
 	}
 	if req.Keyword != "" {
 		urlStr = fmt.Sprintf("%s&keyword=%s", urlStr, req.Keyword)

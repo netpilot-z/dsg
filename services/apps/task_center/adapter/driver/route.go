@@ -203,6 +203,8 @@ func (a *Router) RegisterApi(r *gin.Engine) {
 	workOrderRouter.GET("/work-order/aggregation-for-quality-audit", a.WorkOrderServiceApi.AggregationForQualityAudit) // 给质检工单使用的归集工单列表
 	workOrderRouter.GET("/work-order/:id/quality-audit-resource", a.WorkOrderServiceApi.QualityAuditResource)          // 查看质量检测资源
 
+	workOrderRouter.POST("/work-order/:id/re-explore", a.WorkOrderServiceApi.ReExplore) // 质量检测工单探查
+	
 	// 工单任务 WorkOrderTask
 	{
 		g := taskCenterRouter.Group("work-order-tasks")

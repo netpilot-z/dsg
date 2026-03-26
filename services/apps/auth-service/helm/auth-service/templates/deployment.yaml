@@ -1,12 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
+{{- $replicas := .Values.replicaCount }}
+{{- if and (eq (int .Values.replicaCount) 1) .Values.replicaCountOverwrite }}
+{{- $replicas = .Values.replicaCountOverwrite }}
+{{- end }}
 metadata:
   name: {{   .Values.name  }}
   namespace: {{.Values.namespace}}
   labels:
     {{- toYaml .Values.labels.deployment | nindent 4}}
 spec:
-  replicas: {{ .Values.replicaCountOverwrite }}
+  replicas: {{ $replicas }}
   strategy:
     rollingUpdate:
       maxSurge: 0

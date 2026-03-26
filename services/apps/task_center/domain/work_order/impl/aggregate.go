@@ -319,17 +319,27 @@ func (w *workOrderUseCase) aggregateWorkOrderTaskCountByWorkOrderIDAndWorkOrderT
 			return
 		}
 		if !thirdParty {
-			resp, err := w.dataView.GetExploreTaskList(ctx, id)
+			// resp, err := w.dataView.GetExploreTaskList(ctx, id)
+			// if err != nil {
+			// 	log.Warn("aggregate work order task count by work order id fail", zap.Error(err), zap.String("workOrderID", id))
+			// }
+			// if resp != nil {
+			// 	result.Total = int(resp.TotalCount)
+			// 	for _, task := range resp.Entries {
+			// 		if task.Status == domain.TaskStatusFinished || task.Status == domain.TaskStatusCanceled || task.Status == domain.TaskStatusFailed {
+			// 			result.Completed++
+			// 		}
+			// 	}
+			// }
+
+			datas, err := w.dv.GetWorkOrderExploreProgress(ctx, []string{id})
 			if err != nil {
-				log.Warn("aggregate work order task count by work order id fail", zap.Error(err), zap.String("workOrderID", id))
+				log.Error("aggregateWorkOrderTaskCountByWorkOrderIDAndWorkOrderType w.dv.GetWorkOrderExploreProgress failed", zap.String("id", id), zap.Error(err))
+				return
 			}
-			if resp != nil {
-				result.Total = int(resp.TotalCount)
-				for _, task := range resp.Entries {
-					if task.Status == domain.TaskStatusFinished || task.Status == domain.TaskStatusCanceled || task.Status == domain.TaskStatusFailed {
-						result.Completed++
-					}
-				}
+			if len(datas.Entries) > 0 {
+				result.Total = int(datas.Entries[0].TotalTaskNum)
+				result.Completed = int(datas.Entries[0].FinishedTaskNum)
 			}
 			return
 		}

@@ -69,6 +69,7 @@ import (
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/mq/kafkax"
 	utilities "github.com/kweaver-ai/idrm-go-frame/core/utils"
+	data_view_driven "github.com/kweaver-ai/dsg/services/apps/task_center/adapter/driven/data_view"
 )
 
 type workOrderUseCase struct {
@@ -131,6 +132,8 @@ type workOrderUseCase struct {
 
 	mqClient msqclient.ProtonMQClient
 	ccRepo   configuration.Repo
+
+	dv data_view_driven.DataView
 }
 
 func NewWorkOrderUseCase(
@@ -175,6 +178,7 @@ func NewWorkOrderUseCase(
 	callback callback.Interface,
 	mqClient msqclient.ProtonMQClient,
 	ccRepo configuration.Repo,
+	dv data_view_driven.DataView,
 ) domain.WorkOrderUseCase {
 	w := &workOrderUseCase{
 		repo:                  repo,
@@ -233,6 +237,7 @@ func NewWorkOrderUseCase(
 
 		mqClient: mqClient,
 		ccRepo:   ccRepo,
+		dv:       dv,
 	}
 	woc := &WorkOrderCallback{
 		CallbackEnabled:          settings.ConfigInstance.Callback.Enabled,
@@ -2661,6 +2666,75 @@ func (w *workOrderUseCase) GetDataQualityImprovement(ctx context.Context) (*doma
 		}
 	}
 	return resp, nil
+}
+
+func (w *workOrderUseCase) ReExplore(ctx context.Context, workOrderId string, userId, userName string, req *domain.ReExploreReq) (*domain.IDResp, error) {
+	workOrder, err := w.repo.GetById(ctx, workOrderId)
+	if err != nil {
+		log.Error("ReExplore w.repo.GetById failed", zap.String("id", workOrderId), zap.Error(err))
+		return nil, errorcode.Detail(errorcode.PublicDatabaseError, err)
+	}
+	if workOrder.Type != domain.WorkOrderTypeDataQualityAudit.Integer.Int32() {
+		err = errors.New("no data_quality_audit work order found")
+		log.Error("ReExplore failed", zap.String("id", workOrderId), zap.Error(err))
+		return nil, errorcode.Detail(errorcode.PublicResourceNotFound, err)
+	}
+	if !(workOrder.Status == domain.WorkOrderStatusOngoing.Integer.Int32() || workOrder.Status == domain.WorkOrderStatusFinished.Integer.Int32()) {
+		err = errors.New("reexplore not allowed by current data_quality_audit work order status")
+		log.Error("ReExplore failed", zap.String("id", workOrderId), zap.Error(err))
+		return nil, errorcode.Detail(errorcode.InternalError, err)
+	}
+	if workOrder.ResponsibleUID != userId {
+		err = errors.New("reexplore not allowed by current user, only the responsible user can reexplore")
+		log.Error("ReExplore failed", zap.String("id", workOrderId), zap.Error(err))
+		return nil, errorcode.Detail(errorcode.InternalError, err)
+	}
+	datas, err := w.dv.GetWorkOrderExploreProgress(ctx, []string{workOrderId})
+	if err != nil {
+		log.Error("ReExplore w.dv.GetWorkOrderExploreProgress failed", zap.String("id", workOrderId), zap.Error(err))
+		return nil, errorcode.Detail(errorcode.InternalError, err)
+	}
+	if len(datas.Entries) > 0 {
+		bOnlyFailed := req.ReExploreMode == domain.ReExploreModeFailed.String
+		formViewIDs := make([]string, 0, len(datas.Entries[0].Entries))
+		for i := range datas.Entries[0].Entries {
+			if bOnlyFailed {
+				if !(datas.Entries[0].Entries[i].Status == "canceled" || datas.Entries[0].Entries[i].Status == "failed") {
+					continue
+				}
+			}
+			formViewIDs = append(formViewIDs, datas.Entries[0].Entries[i].FormViewID)
+		}
+
+		if len(formViewIDs) > 0 {
+			var remark domain.Remark
+			if err := json.Unmarshal([]byte(workOrder.Remark), &remark); err != nil {
+				log.Error("ReExplore json.Unmarshal failed", zap.String("id", workOrderId), zap.Error(err))
+				return nil, err
+			}
+			req := &data_view.CreateWorkOrderTaskReq{
+				WorkOrderID:  workOrder.WorkOrderID,
+				FormViewIDs:  formViewIDs,
+				CreatedByUID: workOrder.CreatedByUID,
+				TotalSample:  remark.TotalSample,
+			}
+			_, err := w.dataView.CreateWorkOrderTask(ctx, req)
+			if err != nil {
+				log.Error("ReExplore w.dataView.CreateWorkOrderTask failed", zap.String("id", workOrderId), zap.Error(err))
+				return nil, errorcode.Detail(errorcode.InternalError, err)
+			}
+
+			now := time.Now()
+			workOrder.Status = domain.WorkOrderStatusOngoing.Integer.Int32()
+			workOrder.UpdatedAt = now
+			err = w.repo.Update(ctx, workOrder)
+			if err != nil {
+				log.Error("ReExplore w.repo.Update failed", zap.String("id", workOrderId), zap.Error(err))
+				return nil, errorcode.Detail(errorcode.PublicDatabaseError, err)
+			}
+		}
+	}
+	return &domain.IDResp{Id: workOrder.WorkOrderID}, nil
 }
 
 func (w *workOrderUseCase) GetAlarmRule(ctx context.Context) (*domain.AlarmRuleInfo, error) {

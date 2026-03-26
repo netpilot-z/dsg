@@ -45,6 +45,12 @@ type WorkOrderUseCase interface {
 	QueryDataFusionPreviewSQL(ctx context.Context, req *DataFusionPreviewSQLReq) (*DataFusionPreviewSQLResp, error)
 	AggregationForQualityAudit(ctx context.Context, query *AggregationForQualityAuditListReq) (*AggregationForQualityAuditListResp, error)
 	QualityAuditResource(ctx context.Context, workOrderId string, query *QualityAuditResourceReq) (*QualityAuditResourceResp, error)
+
+	ReExplore(ctx context.Context, workOrderId string, userId, userName string, req *ReExploreReq) (*IDResp, error)
+}
+
+type ReExploreReq struct {
+	ReExploreMode string `json:"re_explore_mode" form:"re_explore_mode" binding:"required,oneof=all failed"` // 重新探查模式：all 全部重新检测，failed 仅重新检测失败任务
 }
 
 // 其他模块想要的
@@ -934,6 +940,13 @@ var (
 	WorkOrderTypeDataCatalog        = enum.New[WorkOrderType](8, "data_catalog")         // 资源编目工单
 	WorkOrderTypeFrontEndProcessors = enum.New[WorkOrderType](9, "front_end_processors") // 前置机申请工单
 
+)
+
+type ReExploreMode enum.Object
+
+var (
+	ReExploreModeAll    = enum.New[ReExploreMode](1, "all")    // 全部重新检测
+	ReExploreModeFailed = enum.New[ReExploreMode](2, "failed") // 仅重新检测失败任务
 )
 
 type DataFusionType enum.Object

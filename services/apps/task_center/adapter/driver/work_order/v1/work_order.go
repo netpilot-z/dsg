@@ -915,3 +915,59 @@ func (s *WorkOrderService) QualityAuditResource(c *gin.Context) {
 	}
 	ginx.ResOKJson(c, pageResult)
 }
+
+// ReExplore  质量检测工单重新发起检测
+//
+//	@Description	质量检测工单重新发起检测
+//	@Tags			工单
+//	@Summary		质量检测工单重新发起检测
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Param			Authorization	header		string							true	"token"
+//	@Param			id				path		string							true	"工单id"
+//	@Param			_				body		work_order.ReExploreReq	true	"请求参数"
+//	@Success		200				{object}	work_order.IDResp				"成功响应参数"
+//	@Failure		400				{object}	rest.HttpError					"失败响应参数"
+//	@Router			/work-order/{id}/re-explore  [POST]
+func (s *WorkOrderService) ReExplore(c *gin.Context) {
+	var err error
+	ctx, span := af_trace.StartInternalSpan(c.Request.Context())
+	defer func() { af_trace.TelemetrySpanEnd(span, err) }()
+
+	taskPathModel := work_order.WorkOrderPathReq{}
+	valid, errs := form_validator.BindUriAndValid(c, &taskPathModel)
+	if !valid {
+		log.WithContext(ctx).Error(errs.Error())
+		c.Writer.WriteHeader(400)
+		ginx.ResErrJson(c, errorcode.Detail(errorcode.WorkOrderInvalidParameter, errs))
+		return
+	}
+
+	var workOrderReExploreReq work_order.ReExploreReq
+	valid, errs = form_validator.BindJsonAndValid(c, &workOrderReExploreReq)
+
+	if !valid {
+		c.Writer.WriteHeader(400)
+		_, ok := errs.(form_validator.ValidErrors)
+		if ok {
+			ginx.ResErrJson(c, errorcode.Detail(errorcode.WorkOrderInvalidParameter, errs))
+		} else {
+			ginx.ResErrJson(c, errorcode.Desc(errorcode.WorkOrderInvalidParameterJson))
+		}
+		return
+	}
+	info, err := user_util.ObtainUserInfo(c)
+	if err != nil {
+		c.Writer.WriteHeader(400)
+		ginx.ResErrJson(c, err)
+		return
+	}
+
+	resp, err := s.service.ReExplore(ctx, taskPathModel.Id, info.ID, info.Name, &workOrderReExploreReq)
+	if err != nil {
+		c.Writer.WriteHeader(400)
+		ginx.ResErrJson(c, err)
+		return
+	}
+	ginx.ResOKJson(c, resp)
+}

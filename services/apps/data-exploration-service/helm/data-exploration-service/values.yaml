@@ -120,3 +120,4 @@ exploration:
   reportDefaultOvertime: 7200 
   virtualQueryResultTopic: af.data_exploration_virtual_result
   virtualEngineTimeout: 300
+  mdlUniQueryCallInterval: 1ms

@@ -98,6 +98,7 @@ func (f FormViewInfoFetcher) getDepartmentInfo(ctx context.Context, id string) (
 		return nil, err
 	}
 	if len(result.Departments) <= 0 {
+		err := fmt.Errorf("empty department info %v", id)
 		log.Errorf("empty department info %v", id)
 		return nil, err
 	}
@@ -113,6 +114,7 @@ func (f FormViewInfoFetcher) getInfoSystem(ctx context.Context, id string) (*dat
 		return nil, err
 	}
 	if len(infoSystems) <= 0 {
+		err := fmt.Errorf("empty infosystem info %v", id)
 		log.Errorf("empty infosystem info %v", id)
 		return nil, err
 	}

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/kweaver-ai/dsg/services/apps/auth-service/domain/common_auth"
+	"github.com/kweaver-ai/idrm-go-common/rest/authorization"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kweaver-ai/dsg/services/apps/auth-service/common/dto"
@@ -415,6 +416,10 @@ func (s *Controller) MenuResourceActions(c *gin.Context) {
 	if _, err := form_validator.BindQueryAndValid(c, req); err != nil {
 		ginx.ResErrJson(c, errorcode.Detail(errorcode.PublicInvalidParameterJson, err))
 		return
+	}
+
+	if req.ResourceType == "" {
+		req.ResourceType = authorization.RESOURCE_TYPE_MENUS
 	}
 
 	res, err := s.authDomain.MenuResourceActions(c.Request.Context(), req)

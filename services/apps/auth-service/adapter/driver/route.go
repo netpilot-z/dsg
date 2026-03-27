@@ -3,8 +3,9 @@ package driver
 import (
 	"bytes"
 	"context"
-	"github.com/kweaver-ai/dsg/services/apps/auth-service/adapter/driver/v1/dwh_auth_request_form"
 	"strings"
+
+	"github.com/kweaver-ai/dsg/services/apps/auth-service/adapter/driver/v1/dwh_auth_request_form"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
@@ -103,7 +104,7 @@ func (r *Router) RegisterApi(engine *gin.Engine) {
 		routerInternal.GET("/objects/policy/expired", r.AuthV2Controller.QueryPolicyExpiredObjects)                //查询某个资源有没有过期的
 		routerInternal.POST("/enforce", setContextWithToken, r.AuthV2Controller.Enforce)                           //数据权限验证
 		routerInternal.POST("/rule/enforce", setContextWithToken, r.AuthV2Controller.RuleEnforce)                  //数据策略验证
-		routerInternal.POST("/menu-resource/enforce", setContextWithToken, r.AuthV2Controller.MenuResourceEnforce) //权限资源验证
+		routerInternal.POST("/menu-resource/enforce", setContextWithToken, r.AuthV2Controller.MenuResourceEnforce) //权限资源验证, 废弃
 		routerInternal.GET("/menu-resource/actions", setContextWithToken, r.AuthV2Controller.MenuResourceActions)  //查询菜单资源的允许的操作
 	}
 	// 指标维度规则

@@ -28,18 +28,20 @@ import (
 	"github.com/kweaver-ai/dsg/services/apps/auth-service/infrastructure/repository/redis"
 	"github.com/kweaver-ai/idrm-go-common/audit"
 	v1_2 "github.com/kweaver-ai/idrm-go-common/middleware/v1"
-	"github.com/kweaver-ai/idrm-go-common/rest/auth-service/v1"
+	v1 "github.com/kweaver-ai/idrm-go-common/rest/auth-service/v1"
 	impl3 "github.com/kweaver-ai/idrm-go-common/rest/authorization/impl"
 	impl2 "github.com/kweaver-ai/idrm-go-common/rest/configuration_center/impl"
 	impl4 "github.com/kweaver-ai/idrm-go-common/rest/data_application_service/impl"
 	impl5 "github.com/kweaver-ai/idrm-go-common/rest/data_view/impl"
+
 	"github.com/kweaver-ai/idrm-go-common/rest/hydra/impl"
 	impl6 "github.com/kweaver-ai/idrm-go-common/rest/indicator_management/impl"
+	impl20 "github.com/kweaver-ai/idrm-go-common/rest/studio_web/impl"
 	"github.com/kweaver-ai/idrm-go-common/rest/user_management"
 	impl9 "github.com/kweaver-ai/idrm-go-common/rest/workflow/impl"
 	"github.com/kweaver-ai/idrm-go-common/trace"
 	"github.com/kweaver-ai/idrm-go-common/workflow"
-	"github.com/kweaver-ai/idrm-go-frame"
+	idrm_go_frame "github.com/kweaver-ai/idrm-go-frame"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/rest"
 )
 
@@ -105,7 +107,8 @@ func InitApp(s *settings.Settings) (*AppRunner, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	registerClient := resources.NewRegisterClient(authorizationDriven)
+	studio_webDriven := impl20.NewDriven(client)
+	registerClient := resources.NewRegisterClient(authorizationDriven, studio_webDriven)
 	appRunner := &AppRunner{
 		App:              app,
 		nsq:              wfConsumerRegister,

@@ -1,0 +1,38 @@
+From be40426302a860cd7aeb15ad71c5719d1d38daeb Mon Sep 17 00:00:00 2001
+From: "zhou.yu" <zhou.yu@aishu.cn>
+Date: Wed, 4 Feb 2026 13:29:35 +0800
+Subject: [PATCH 30/37] =?UTF-8?q?=E5=8E=BB=E6=8E=89=E8=A7=86=E5=9B=BE?=
+ =?UTF-8?q?=E6=8F=8F=E8=BF=B0=E9=95=BF=E5=BA=A6=E6=A0=A1=E9=AA=8C?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ domain/form_view/interface.go | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/domain/form_view/interface.go b/domain/form_view/interface.go
+index 9c160f6a..069e0f1c 100644
+--- a/domain/form_view/interface.go
++++ b/domain/form_view/interface.go
+@@ -953,7 +953,7 @@ type UpdateFormViewDetailsReq struct {
+ type UpdateFormViewDetailsParamPath struct {
+ 	BusinessName  string   `json:"business_name" binding:"required,min=1,max=255" example:"xxxx"`                                              // 视图业务名称
+ 	TechnicalName *string  `json:"technical_name" binding:"omitempty,min=1,max=255" example:"xxxx"`                                            // 视图技术名称（仅自定义视图、逻辑实体视图支持）
+-	Description   string   `json:"description"  binding:"TrimSpace,omitempty,lte=300" example:"description"`                                   // 描述
++	Description   string   `json:"description"  binding:"TrimSpace,omitempty" example:"description"`                                           // 描述
+ 	SubjectID     string   `json:"subject_id" form:"subject_id" binding:"omitempty,uuid" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"`       // 主题域id (逻辑实体视图不支持)
+ 	DepartmentID  string   `json:"department_id" form:"department_id" binding:"omitempty,uuid" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"` // 部门id
+ 	OwnerID       []string `json:"owner_id" form:"owner_id" binding:"omitempty,dive,uuid" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"`      // 数据Owner id
+@@ -1704,7 +1704,7 @@ type FieldObjV1 struct {
+ type Member struct {
+ 	FieldObjV1        // 字段对象
+ 	Operator   string `json:"operator" form:"field_id" binding:"required"` // 限定条件
+-	Value      string `json:"value" form:"value"`                          // 限定比较值
++	Value      string `json:"value" form:"value"` // 限定比较值
+ }
+ 
+ type TaskDetail struct {
+-- 
+2.51.1.windows.1
+

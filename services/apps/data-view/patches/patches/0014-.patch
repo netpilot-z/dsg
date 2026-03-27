@@ -1,0 +1,70 @@
+From 426fdd9b52650f00f4cc5fe13e59a1a5fe288549 Mon Sep 17 00:00:00 2001
+From: "David.chen02" <David.chen02@aishu.cn>
+Date: Wed, 28 Jan 2026 14:44:28 +0800
+Subject: [PATCH 14/37] =?UTF-8?q?=E9=80=9A=E8=BF=87=E8=B4=A8=E9=87=8F?=
+ =?UTF-8?q?=E6=A3=80=E6=B5=8B=E5=B7=A5=E5=8D=95=E8=8E=B7=E5=8F=96=E4=BB=BB?=
+ =?UTF-8?q?=E5=8A=A1=E6=97=B6=E5=8F=96=E8=A7=86=E5=9B=BE=E7=9A=84=E6=9C=80?=
+ =?UTF-8?q?=E6=96=B0=E4=BB=BB=E5=8A=A1?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ .../gorm/explore_task/impl/explore_task.go    | 24 ++++++++++++-------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/adapter/driven/gorm/explore_task/impl/explore_task.go b/adapter/driven/gorm/explore_task/impl/explore_task.go
+index 9bb9c9f1..e3bda3f1 100644
+--- a/adapter/driven/gorm/explore_task/impl/explore_task.go
++++ b/adapter/driven/gorm/explore_task/impl/explore_task.go
+@@ -2,6 +2,7 @@ package impl
+ 
+ import (
+ 	"context"
++
+ 	"gorm.io/gorm/logger"
+ 
+ 	"errors"
+@@ -171,13 +172,18 @@ func (r *exploreTaskRepo) Delete(ctx context.Context, taskId string) error {
+ }
+ 
+ func (r *exploreTaskRepo) GetList(ctx context.Context, req *domain.ListExploreTaskReq, userId string) (total int64, tasks []*domain.TaskInfo, err error) {
+-	db := r.db.WithContext(ctx).Table("explore_task e")
++	db := r.db.WithContext(ctx)
++	if len(req.WorkOrderId) == 0 {
++		db = db.Table("(select * from explore_task where created_by_uid = ? and (work_order_id is null or work_order_id = '')) e", userId)
++	} else {
++		db = db.Table("(select * from explore_task where work_order_id = ? and id in (select max(id) from explore_task where work_order_id = ? group by datasource_id, form_view_id)) e", req.WorkOrderId, req.WorkOrderId)
++	}
+ 	db = db.Select("e.*,e.created_by_uid as created_by,f.business_name as form_view_name,f.type as form_view_type,d.name as datasource_name,d.type_name as datasource_type").
+ 		Joins("LEFT JOIN form_view f ON e.form_view_id = f.id").
+ 		Joins("LEFT JOIN datasource d ON e.datasource_id = d.id").Where("e.deleted_at = 0")
+-	if req.WorkOrderId == "" {
+-		db = db.Where("e.created_by_uid = ?", userId)
+-	}
++	// if req.WorkOrderId == "" {
++	// 	db = db.Where("e.created_by_uid = ?", userId)
++	// }
+ 	keyword := req.Keyword
+ 	if keyword != "" {
+ 		if strings.Contains(keyword, "_") {
+@@ -212,11 +218,11 @@ func (r *exploreTaskRepo) GetList(ctx context.Context, req *domain.ListExploreTa
+ 			db = db.Where("e.status in  ?", status)
+ 		}
+ 	}
+-	if req.WorkOrderId == "" {
+-		db = db.Where("e.work_order_id is null or e.work_order_id = ''")
+-	} else {
+-		db = db.Where("e.work_order_id = ?", req.WorkOrderId)
+-	}
++	// if req.WorkOrderId == "" {
++	// 	db = db.Where("e.work_order_id is null or e.work_order_id = ''")
++	// } else {
++	// 	db = db.Where("e.work_order_id = ?", req.WorkOrderId)
++	// }
+ 	err = db.Debug().Count(&total).Error
+ 	if err != nil {
+ 		return total, tasks, err
+-- 
+2.51.1.windows.1
+

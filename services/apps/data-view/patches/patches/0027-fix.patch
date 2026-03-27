@@ -1,0 +1,340 @@
+From 796d45eb20288b25d5cea98edb95458aee1678df Mon Sep 17 00:00:00 2001
+From: "David.chen02" <David.chen02@aishu.cn>
+Date: Fri, 30 Jan 2026 16:21:12 +0800
+Subject: [PATCH 27/37] fix
+
+---
+ .../gorm/explore_task/impl/explore_task.go    |  9 +++
+ adapter/driven/gorm/explore_task/interface.go |  3 +
+ .../gorm/template_rule/impl/template_rule.go  | 22 +++++++-
+ .../driven/gorm/template_rule/interface.go    |  2 +
+ .../driver/explore_task/v1/explore_task.go    | 15 +++++
+ adapter/driver/route.go                       |  2 +
+ domain/explore_rule/v1/explore_rule.go        | 14 ++++-
+ domain/explore_task/interface.go              | 43 ++++++++++++---
+ domain/explore_task/v1/explore_task.go        | 55 ++++++++++++++++++-
+ 9 files changed, 148 insertions(+), 17 deletions(-)
+
+diff --git a/adapter/driven/gorm/explore_task/impl/explore_task.go b/adapter/driven/gorm/explore_task/impl/explore_task.go
+index e3bda3f1..994b1b30 100644
+--- a/adapter/driven/gorm/explore_task/impl/explore_task.go
++++ b/adapter/driven/gorm/explore_task/impl/explore_task.go
+@@ -171,6 +171,15 @@ func (r *exploreTaskRepo) Delete(ctx context.Context, taskId string) error {
+ 	return r.db.WithContext(ctx).Model(&model.ExploreTask{}).Where("task_id =?", taskId).Delete(&model.ExploreTask{}).Error
+ }
+ 
++func (r *exploreTaskRepo) GetListByWorkOrderIDs(ctx context.Context, workOrderIDs []string) (exploreTasks []*model.ExploreTask, err error) {
++	err = r.db.WithContext(ctx).
++		Model(&model.ExploreTask{}).
++		Where("work_order_id in ? and id in (select max(id) from explore_task where work_order_id in ? group by datasource_id, form_view_id)", workOrderIDs, workOrderIDs).
++		Order("datasource_id asc, form_view_id asc").
++		Find(&exploreTasks).Error
++	return exploreTasks, err
++}
++
+ func (r *exploreTaskRepo) GetList(ctx context.Context, req *domain.ListExploreTaskReq, userId string) (total int64, tasks []*domain.TaskInfo, err error) {
+ 	db := r.db.WithContext(ctx)
+ 	if len(req.WorkOrderId) == 0 {
+diff --git a/adapter/driven/gorm/explore_task/interface.go b/adapter/driven/gorm/explore_task/interface.go
+index 025ef7f5..e8314f7a 100644
+--- a/adapter/driven/gorm/explore_task/interface.go
++++ b/adapter/driven/gorm/explore_task/interface.go
+@@ -2,6 +2,7 @@ package explore_task
+ 
+ import (
+ 	"context"
++
+ 	domain "devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/domain/explore_task"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/infrastructure/db/model"
+ )
+@@ -22,4 +23,6 @@ type ExploreTaskRepo interface {
+ 	GetConfigsByDatasourceId(ctx context.Context, datasourceId string) ([]*model.ExploreTask, error)
+ 	GetList(ctx context.Context, req *domain.ListExploreTaskReq, userId string) (total int64, tasks []*domain.TaskInfo, err error)
+ 	GetDetail(ctx context.Context, taskId string) (exploreTask *domain.TaskInfo, err error)
++
++	GetListByWorkOrderIDs(ctx context.Context, workOrderIDs []string) ([]*model.ExploreTask, error)
+ }
+diff --git a/adapter/driven/gorm/template_rule/impl/template_rule.go b/adapter/driven/gorm/template_rule/impl/template_rule.go
+index aba51a8c..d81676a3 100644
+--- a/adapter/driven/gorm/template_rule/impl/template_rule.go
++++ b/adapter/driven/gorm/template_rule/impl/template_rule.go
+@@ -2,17 +2,18 @@ package impl
+ 
+ import (
+ 	"context"
++	"errors"
++	"fmt"
++	"strings"
++
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/adapter/driven/gorm/template_rule"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/common/errorcode"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/domain/explore_rule"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/infrastructure/db/model"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/go-frame/core/enum"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/go-frame/core/telemetry/log"
+-	"errors"
+-	"fmt"
+ 	"go.uber.org/zap"
+ 	"gorm.io/gorm"
+-	"strings"
+ )
+ 
+ func NewTemplateRuleRepo(db *gorm.DB) template_rule.TemplateRuleRepo {
+@@ -126,3 +127,18 @@ func (r *templateRuleRepo) NameRepeat(ctx context.Context, ruleId, name string)
+ 	}
+ 	return true, nil
+ }
++
++func (r *templateRuleRepo) CheckSysRuleNameRepeat(ctx context.Context, name string) (bool, error) {
++	var exploreRule *model.TemplateRule
++	var err error
++	db := r.db.WithContext(ctx).Model(&model.TemplateRule{}).Where("source = 1 and rule_name = ? and deleted_at = 0", name)
++
++	err = db.Take(&exploreRule).Error
++	if err != nil {
++		if errors.Is(err, gorm.ErrRecordNotFound) {
++			return false, nil
++		}
++		return false, err
++	}
++	return true, nil
++}
+diff --git a/adapter/driven/gorm/template_rule/interface.go b/adapter/driven/gorm/template_rule/interface.go
+index 6dbfcd29..90aea9b9 100644
+--- a/adapter/driven/gorm/template_rule/interface.go
++++ b/adapter/driven/gorm/template_rule/interface.go
+@@ -2,6 +2,7 @@ package template_rule
+ 
+ import (
+ 	"context"
++
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/domain/explore_rule"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/infrastructure/db/model"
+ )
+@@ -15,4 +16,5 @@ type TemplateRuleRepo interface {
+ 	GetList(ctx context.Context, req *explore_rule.GetTemplateRuleListReq) ([]*model.TemplateRule, error)
+ 	GetInternalRules(ctx context.Context) ([]*model.TemplateRule, error)
+ 	NameRepeat(ctx context.Context, ruleId, name string) (bool, error)
++	CheckSysRuleNameRepeat(ctx context.Context, name string) (bool, error)
+ }
+diff --git a/adapter/driver/explore_task/v1/explore_task.go b/adapter/driver/explore_task/v1/explore_task.go
+index 97ead916..adf970f4 100644
+--- a/adapter/driver/explore_task/v1/explore_task.go
++++ b/adapter/driver/explore_task/v1/explore_task.go
+@@ -368,3 +368,18 @@ func (f *ExploreTaskService) GetList(c *gin.Context) {
+ 
+ 	ginx.ResOKJson(c, res)
+ }
++
++func (f *ExploreTaskService) GetWorkOrderExploreProgress(c *gin.Context) {
++	req := form_validator.Valid[explore_task.WorkOrderExploreProgressReq](c)
++	if req == nil {
++		return
++	}
++
++	res, err := util.TraceA1R2(c, req, f.uc.GetWorkOrderExploreProgress)
++	if err != nil {
++		ginx.ResBadRequestJson(c, err)
++		return
++	}
++
++	ginx.ResOKJson(c, res)
++}
+diff --git a/adapter/driver/route.go b/adapter/driver/route.go
+index 41aae791..e2ee6841 100644
+--- a/adapter/driver/route.go
++++ b/adapter/driver/route.go
+@@ -417,6 +417,8 @@ func (r *Router) RegisterInternal(engine *gin.Engine) {
+ 	internalRouter.POST("/form-view/sync", r.FormViewDomainApi.Sync)                                                                              // 同步统一视图服务视图信息
+ 	internalRouter.GET("/explore-task", r.ExploreTaskDomainApi.GetList)                                                                           // 探查任务列表
+ 	internalRouter.POST("/department/explore-reports", r.FormViewDomainApi.CreateExploreReports)                                                  // 定时更新探查报告表
++
++	internalRouter.GET("/explore-task/progress", r.ExploreTaskDomainApi.GetWorkOrderExploreProgress) // 获取工单探查进度                                                                          // 探查任务列表
+ }
+ 
+ // RegisterMigration 版本升级接口，发布后不可修改
+diff --git a/domain/explore_rule/v1/explore_rule.go b/domain/explore_rule/v1/explore_rule.go
+index 76f4e1cb..6a3e8221 100644
+--- a/domain/explore_rule/v1/explore_rule.go
++++ b/domain/explore_rule/v1/explore_rule.go
+@@ -2,6 +2,9 @@ package v1
+ 
+ import (
+ 	"context"
++	"encoding/json"
++	"time"
++
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/GoCommon/interception"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/GoCommon/middleware"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/adapter/driven/gorm/explore_rule_config"
+@@ -14,8 +17,6 @@ import (
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/infrastructure/db/model"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/go-frame/core/enum"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/go-frame/core/telemetry/log"
+-	"encoding/json"
+-	"time"
+ )
+ 
+ type exploreRuleUseCase struct {
+@@ -345,7 +346,14 @@ func (e *exploreRuleUseCase) NameRepeat(ctx context.Context, req *explore_rule.N
+ 			return false, err
+ 		}
+ 	}
+-	repeat, err := e.exploreRuleRepo.NameRepeat(ctx, req.FormViewId, req.FieldId, req.RuleId, req.RuleName)
++	repeat, err := e.templateRuleRepo.CheckSysRuleNameRepeat(ctx, req.RuleName)
++	if err != nil {
++		return false, err
++	}
++	if repeat {
++		return true, nil
++	}
++	repeat, err = e.exploreRuleRepo.NameRepeat(ctx, req.FormViewId, req.FieldId, req.RuleId, req.RuleName)
+ 	return repeat, err
+ }
+ 
+diff --git a/domain/explore_task/interface.go b/domain/explore_task/interface.go
+index cf7311e6..ccc9fe2a 100644
+--- a/domain/explore_task/interface.go
++++ b/domain/explore_task/interface.go
+@@ -24,6 +24,33 @@ type ExploreTaskUseCase interface {
+ 	DeleteRule(ctx context.Context, req *DeleteRuleReq) (*RuleIDResp, error)
+ 	GetInternalRule(ctx context.Context) ([]*GetInternalRuleResp, error)
+ 	CreateWorkOrderTask(ctx context.Context, req *CreateWorkOrderTaskReq) (*CreateWorkOrderTaskResp, error)
++
++	GetWorkOrderExploreProgress(ctx context.Context, req *WorkOrderExploreProgressReq) (*WorkOrderExploreProgressResp, error)
++}
++
++type WorkOrderExploreProgressReq struct {
++	ListExploreProgressReq `param_type:"query"`
++}
++
++type ListExploreProgressReq struct {
++	WorkOrderIds string `form:"work_order_ids" binding:"TrimSpace,required"` // 工单IDs，多个工单ID用逗号分隔
++}
++
++type ExploreTaskStatusEntity struct {
++	DataSourceID string `json:"data_source_id"` // 数据源ID
++	FormViewID   string `json:"form_view_id"`   // 视图ID
++	Status       string `json:"status"`         // 任务状态，1：queuing（等待中）；2：running（进行中）；3：finished（已完成）；4：canceled（已取消）；5：failed（异常）；
++}
++
++type WorkOrderExploreProgressEntity struct {
++	WorkOrderId     string                     `json:"work_order_id"`     // 工单ID
++	TotalTaskNum    int64                      `json:"total_task_num"`    // 总任务数
++	FinishedTaskNum int64                      `json:"finished_task_num"` // 已完成任务数
++	Entries         []*ExploreTaskStatusEntity `json:"entries"`           // 视图探查状态信息
++}
++
++type WorkOrderExploreProgressResp struct {
++	Entries []*WorkOrderExploreProgressEntity `json:"entries"` // 工单探查任务进度
+ }
+ 
+ //region CreateTask
+@@ -645,16 +672,16 @@ var (
+ )
+ 
+ var (
+-	RuleViewDescription  = "表注释检查"     // 表注释检查
+-	RuleFieldDescription = "字段注释检查"   // 字段注释检查
+-	RuleDataType         = "数据类型检查"   // 数据类型检查
+-	RuleNull             = "空值项检查"     // 空值项检查
+-	RuleDict             = "码值检查"       // 码值检查
+-	RuleFormat           = "格式检查"       // 格式检查
++	RuleViewDescription  = "表注释检查"   // 表注释检查
++	RuleFieldDescription = "字段注释检查"  // 字段注释检查
++	RuleDataType         = "数据类型检查"  // 数据类型检查
++	RuleNull             = "空值项检查"   // 空值项检查
++	RuleDict             = "码值检查"    // 码值检查
++	RuleFormat           = "格式检查"    // 格式检查
+ 	RuleRowNull          = "行级空值项检查" // 行级空值项检查
+ 	RuleRowRepeat        = "行级重复值检查" // 行级重复值检查
+-	RuleUpdatePeriod     = "更新周期"       // 更新周期
+-	RuleOther            = "无配置"         // 无配置
++	RuleUpdatePeriod     = "更新周期"    // 更新周期
++	RuleOther            = "无配置"     // 无配置
+ )
+ 
+ var TemplateRuleMap = map[string]string{
+diff --git a/domain/explore_task/v1/explore_task.go b/domain/explore_task/v1/explore_task.go
+index 47afa0b3..e3f8f7ec 100644
+--- a/domain/explore_task/v1/explore_task.go
++++ b/domain/explore_task/v1/explore_task.go
+@@ -4,9 +4,6 @@ import (
+ 	"bytes"
+ 	"context"
+ 	"database/sql"
+-	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/GoCommon/errorcode"
+-	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/adapter/driven/gorm/template_rule"
+-	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/domain/explore_rule"
+ 	"encoding/json"
+ 	"errors"
+ 	"fmt"
+@@ -15,6 +12,10 @@ import (
+ 	"sync"
+ 	"time"
+ 
++	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/GoCommon/errorcode"
++	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/adapter/driven/gorm/template_rule"
++	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/domain/explore_rule"
++
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/GoCommon/interception"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/GoCommon/middleware"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/GoCommon/rest/configuration_center"
+@@ -1995,6 +1996,54 @@ func (e *exploreTaskUseCase) DatasourceExploreTimestamp(ctx context.Context, tas
+ 	return err
+ }
+ 
++func (e *exploreTaskUseCase) GetWorkOrderExploreProgress(ctx context.Context, req *explore_task.WorkOrderExploreProgressReq) (*explore_task.WorkOrderExploreProgressResp, error) {
++	// 解析工单ID列表
++	workOrderIDs := strings.Split(req.WorkOrderIds, ",")
++
++	exploreTasks, err := e.exploreTaskRepo.GetListByWorkOrderIDs(ctx, workOrderIDs)
++	if err != nil {
++		log.WithContext(ctx).Errorf("get explore tasks for work order ids: %s failed, err: %v", req.WorkOrderIds, err)
++		return nil, errorcode.Detail(my_errorcode.DatabaseError, err.Error())
++	}
++
++	var (
++		idx       int
++		isExisted bool
++	)
++	woIDmap := make(map[string]int)
++	resp := &explore_task.WorkOrderExploreProgressResp{
++		Entries: make([]*explore_task.WorkOrderExploreProgressEntity, 0),
++	}
++	for i := range exploreTasks {
++		if idx, isExisted = woIDmap[exploreTasks[i].WorkOrderID]; !isExisted {
++			resp.Entries = append(resp.Entries,
++				&explore_task.WorkOrderExploreProgressEntity{
++					WorkOrderId:     exploreTasks[i].WorkOrderID,
++					TotalTaskNum:    0,
++					FinishedTaskNum: 0,
++					Entries:         make([]*explore_task.ExploreTaskStatusEntity, 0),
++				},
++			)
++			idx = len(resp.Entries) - 1
++			woIDmap[exploreTasks[i].WorkOrderID] = idx
++		}
++		resp.Entries[idx].TotalTaskNum++
++		if exploreTasks[i].Status == explore_task.TaskStatusFinished.Integer.Int32() ||
++			exploreTasks[i].Status == explore_task.TaskStatusCanceled.Integer.Int32() ||
++			exploreTasks[i].Status == explore_task.TaskStatusFailed.Integer.Int32() {
++			resp.Entries[idx].FinishedTaskNum++
++		}
++		resp.Entries[idx].Entries = append(resp.Entries[idx].Entries,
++			&explore_task.ExploreTaskStatusEntity{
++				DataSourceID: exploreTasks[i].DatasourceID,
++				FormViewID:   exploreTasks[i].FormViewID,
++				Status:       enum.ToString[explore_task.TaskStatus](exploreTasks[i].Status),
++			},
++		)
++	}
++	return resp, err
++}
++
+ func (e *exploreTaskUseCase) List(ctx context.Context, req *explore_task.ListExploreTaskReq) (*explore_task.ListExploreTaskResp, error) {
+ 	exploreTaskInfos := make([]*explore_task.ExploreTaskInfo, 0)
+ 	userInfo, _ := util.GetUserInfo(ctx)
+-- 
+2.51.1.windows.1
+

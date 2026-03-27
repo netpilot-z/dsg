@@ -1,0 +1,28 @@
+From 3411b0c3683bf7d70cf28f0a4f047bd2cbef24a7 Mon Sep 17 00:00:00 2001
+From: "zhou.yu" <zhou.yu@aishu.cn>
+Date: Mon, 2 Feb 2026 13:58:12 +0800
+Subject: [PATCH 29/37] fix
+
+---
+ domain/form_view/v1/internal.go | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/domain/form_view/v1/internal.go b/domain/form_view/v1/internal.go
+index 3839d2cc..6a3ca4c9 100644
+--- a/domain/form_view/v1/internal.go
++++ b/domain/form_view/v1/internal.go
+@@ -580,11 +580,6 @@ func (f *formViewUseCase) updateFormView(ctx context.Context, formView *model.Fo
+ 		if formView.Status == constant.FormViewUniformity.Integer.Int32() || formView.Status == constant.FormViewNew.Integer.Int32() {
+ 			formViewUpdate = true
+ 		}
+-	} else { //表的字段无变化
+-		if formView.Status == constant.FormViewNew.Integer.Int32() || formView.Status == constant.FormViewModify.Integer.Int32() {
+-			formViewUpdate = true
+-		}
+-		//草稿状态视图保持扫描状态
+ 	}
+ 	if formView.Status == constant.FormViewDelete.Integer.Int32() { //删除状态又找到
+ 		log.WithContext(ctx).Infof("FormViewDelete status Reversal", zap.String("formView ID", formView.ID))
+-- 
+2.51.1.windows.1
+

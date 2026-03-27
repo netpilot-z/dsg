@@ -1,0 +1,41 @@
+From ae30101668c8761dcf3d3f768598faff8fd5a246 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=E9=83=AD=E6=99=93=E6=A2=85=EF=BC=88Rachel=EF=BC=89?=
+ <guo.xiaomei@aishu.cn>
+Date: Thu, 29 Jan 2026 06:57:18 +0000
+Subject: [PATCH 20/37] =?UTF-8?q?=E6=9B=B4=E6=96=B0=E4=BA=8E=2028-form-vie?=
+ =?UTF-8?q?w-attributes.sql?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ .../mariadb/0.1.0/pre/28-form-view-attributes.sql  | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/migrations/mariadb/0.1.0/pre/28-form-view-attributes.sql b/migrations/mariadb/0.1.0/pre/28-form-view-attributes.sql
+index ce1dee5d..8da63b1b 100644
+--- a/migrations/mariadb/0.1.0/pre/28-form-view-attributes.sql
++++ b/migrations/mariadb/0.1.0/pre/28-form-view-attributes.sql
+@@ -1,12 +1,12 @@
+ USE af_main;
+ 
+ 
+-ALTER TABLE `form_view` ADD COLUMN IF NOT EXISTS `update_cycle` INT(11) DEFAULT 0 COMMENT '更新周期' AFTER `mdl_id`;
+-ALTER TABLE `form_view` ADD COLUMN IF NOT EXISTS `shared_type` INT(11) DEFAULT 0 COMMENT '共享属性' AFTER `update_cycle`;
+-ALTER TABLE `form_view` ADD COLUMN IF NOT EXISTS `open_type` INT(11) DEFAULT 0 COMMENT '开放属性' AFTER `shared_type`;
++-- ALTER TABLE `form_view` ADD COLUMN IF NOT EXISTS `update_cycle` INT(11) DEFAULT 0 COMMENT '更新周期' AFTER `mdl_id`;
++-- ALTER TABLE `form_view` ADD COLUMN IF NOT EXISTS `shared_type` INT(11) DEFAULT 0 COMMENT '共享属性' AFTER `update_cycle`;
++-- ALTER TABLE `form_view` ADD COLUMN IF NOT EXISTS `open_type` INT(11) DEFAULT 0 COMMENT '开放属性' AFTER `shared_type`;
+ 
+ 
+-ALTER TABLE `form_view_field` ADD COLUMN IF NOT EXISTS `shared_type` INT(11) DEFAULT 0 COMMENT '共享属性' AFTER `grade_type`;
+-ALTER TABLE `form_view_field` ADD COLUMN IF NOT EXISTS `open_type` INT(11) DEFAULT 0 COMMENT '开放属性' AFTER `shared_type`;
+-ALTER TABLE `form_view_field` ADD COLUMN IF NOT EXISTS `sensitive_type` INT(11) DEFAULT 0 COMMENT '敏感属性' AFTER `open_type`;
+-ALTER TABLE `form_view_field` ADD COLUMN IF NOT EXISTS `secret_type` INT(11) DEFAULT 0 COMMENT '涉密属性' AFTER `sensitive_type`;
++-- ALTER TABLE `form_view_field` ADD COLUMN IF NOT EXISTS `shared_type` INT(11) DEFAULT 0 COMMENT '共享属性' AFTER `grade_type`;
++-- ALTER TABLE `form_view_field` ADD COLUMN IF NOT EXISTS `open_type` INT(11) DEFAULT 0 COMMENT '开放属性' AFTER `shared_type`;
++-- ALTER TABLE `form_view_field` ADD COLUMN IF NOT EXISTS `sensitive_type` INT(11) DEFAULT 0 COMMENT '敏感属性' AFTER `open_type`;
++-- ALTER TABLE `form_view_field` ADD COLUMN IF NOT EXISTS `secret_type` INT(11) DEFAULT 0 COMMENT '涉密属性' AFTER `sensitive_type`;
+-- 
+2.51.1.windows.1
+

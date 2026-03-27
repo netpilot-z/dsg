@@ -1,0 +1,70 @@
+From 9b88109753840573874d10145d11b75245e678be Mon Sep 17 00:00:00 2001
+From: "zhou.yu" <zhou.yu@aishu.cn>
+Date: Tue, 20 Jan 2026 16:45:38 +0800
+Subject: [PATCH 06/37] fix
+
+---
+ adapter/driven/gorm/form_view/impl/form_view.go |  2 +-
+ domain/form_view/interface.go                   |  3 ---
+ domain/form_view/v1/form_view.go                | 11 +----------
+ 3 files changed, 2 insertions(+), 14 deletions(-)
+
+diff --git a/adapter/driven/gorm/form_view/impl/form_view.go b/adapter/driven/gorm/form_view/impl/form_view.go
+index 7ab6678d..083ab9ac 100644
+--- a/adapter/driven/gorm/form_view/impl/form_view.go
++++ b/adapter/driven/gorm/form_view/impl/form_view.go
+@@ -414,7 +414,7 @@ func (r *formViewRepo) UpdateDatasourceViewTransaction(ctx context.Context, view
+ 			}
+ 		}
+ 
+-		if err = tx.Select("business_name", "publish_at", "edit_status", "info_system_id", "update_cycle", "shared_type", "open_type").Updates(formView).Error; err != nil {
++		if err = tx.Select("business_name", "publish_at", "edit_status", "info_system_id").Updates(formView).Error; err != nil {
+ 			return err
+ 		}
+ 		formViewFields := make([]*model.FormViewField, 0)
+diff --git a/domain/form_view/interface.go b/domain/form_view/interface.go
+index 9a3e172c..fcd89c23 100644
+--- a/domain/form_view/interface.go
++++ b/domain/form_view/interface.go
+@@ -406,9 +406,6 @@ type UpdateReqParamBody struct {
+ 	BusinessName        string    `json:"business_name" binding:"required,min=1,max=255" example:"xxxx"`
+ 	BusinessTimestampID string    `json:"business_timestamp_id" binding:"omitempty,uuid" example:"99f78432-ee4e-43df-804c-4ccc4ff17f15"` // 业务时间字段id
+ 	InfoSystemID        string    `json:"info_system_id" binding:"omitempty,uuid"`                                                       // 关联信息系统ID
+-	UpdateCycle         *int32    `json:"update_cycle" binding:"omitempty"`                                                              // 更新周期
+-	SharedType          *int32    `json:"shared_type" binding:"omitempty"`                                                               // 共享属性
+-	OpenType            *int32    `json:"open_type" binding:"omitempty"`                                                                 // 开放属性
+ 	Fields              []*Fields `json:"fields"  binding:"required,dive"`
+ }
+ type Fields struct {
+diff --git a/domain/form_view/v1/form_view.go b/domain/form_view/v1/form_view.go
+index da4aa214..cad3fd0a 100644
+--- a/domain/form_view/v1/form_view.go
++++ b/domain/form_view/v1/form_view.go
+@@ -913,15 +913,6 @@ func (f *formViewUseCase) UpdateDatasourceView(ctx context.Context, req *form_vi
+ 	}
+ 
+ 	formView.InfoSystemID = req.InfoSystemID
+-	if req.UpdateCycle != nil {
+-		formView.UpdateCycle = *req.UpdateCycle
+-	}
+-	if req.SharedType != nil {
+-		formView.SharedType = *req.SharedType
+-	}
+-	if req.OpenType != nil {
+-		formView.OpenType = *req.OpenType
+-	}
+ 	clearSyntheticData, err := f.repo.UpdateDatasourceViewTransaction(ctx, formView, req.BusinessTimestampID, fieldReqMap)
+ 	if err != nil {
+ 		//f.RollbackModifyView(ctx, datasource, formView, viewSQL)
+@@ -3073,7 +3064,7 @@ func (f *formViewUseCase) UpdateFormViewDetails(ctx context.Context, req *form_v
+ 	if err != nil {
+ 		return err
+ 	}
+-	
++
+ 	updateFields := []string{"business_name", "description", "subject_id", "department_id", "owner_id", "updated_by_uid"}
+ 	if formViewUpdate.SourceSign.Valid {
+ 		updateFields = append(updateFields, "source_sign")
+-- 
+2.51.1.windows.1
+

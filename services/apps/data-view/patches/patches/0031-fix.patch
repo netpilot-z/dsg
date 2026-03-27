@@ -1,0 +1,42 @@
+From f23c2530f40154e10190397fd46f3bae0a07c52d Mon Sep 17 00:00:00 2001
+From: "zhou.yu" <zhou.yu@aishu.cn>
+Date: Mon, 9 Feb 2026 09:47:52 +0800
+Subject: [PATCH 31/37] fix
+
+---
+ domain/form_view/v1/internal.go | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/domain/form_view/v1/internal.go b/domain/form_view/v1/internal.go
+index 6a3ca4c9..5dab2e1a 100644
+--- a/domain/form_view/v1/internal.go
++++ b/domain/form_view/v1/internal.go
+@@ -338,10 +338,9 @@ func (f *formViewUseCase) buildFormViewSyncMaps(syncList []*form_view_repo.FormV
+ 		flag := &SyncFormViewFlag{FormViewID: item.ID, UniformCatalogCode: item.UniformCatalogCode, flag: 1}
+ 		if item.MdlID != "" {
+ 			formViewsMap[item.MdlID] = flag
+-		} else {
+-			tmp := fmt.Sprintf("%s %s", item.DatasourceID, item.TechnicalName)
+-			formViewInfosMap[tmp] = flag
+ 		}
++		tmp := fmt.Sprintf("%s %s", item.DatasourceID, item.TechnicalName)
++		formViewInfosMap[tmp] = flag
+ 	}
+ 	return formViewsMap, formViewInfosMap
+ }
+@@ -367,10 +366,9 @@ func (f *formViewUseCase) buildFormViewSyncMapsPaged(ctx context.Context, dataso
+ 			flag := &SyncFormViewFlag{FormViewID: item.ID, UniformCatalogCode: item.UniformCatalogCode, flag: 1}
+ 			if item.MdlID != "" {
+ 				formViewsMap[item.MdlID] = flag
+-			} else {
+-				tmp := fmt.Sprintf("%s %s", item.DatasourceID, item.TechnicalName)
+-				formViewInfosMap[tmp] = flag
+ 			}
++			tmp := fmt.Sprintf("%s %s", item.DatasourceID, item.TechnicalName)
++			formViewInfosMap[tmp] = flag
+ 		}
+ 		if len(page) < syncListPageSize {
+ 			break
+-- 
+2.51.1.windows.1
+

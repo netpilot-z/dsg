@@ -1,0 +1,26 @@
+From 0524d1cb3678986ea7ba2318f75c3a33f934dee6 Mon Sep 17 00:00:00 2001
+From: "David.chen02" <David.chen02@aishu.cn>
+Date: Mon, 26 Jan 2026 16:54:18 +0800
+Subject: [PATCH 13/37] modify
+
+---
+ domain/form_view/interface.go | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/domain/form_view/interface.go b/domain/form_view/interface.go
+index 08cb012b..9c160f6a 100644
+--- a/domain/form_view/interface.go
++++ b/domain/form_view/interface.go
+@@ -186,6 +186,9 @@ type PageListFormViewReqQueryParam struct {
+ 	AuthedViewID              []string `json:"-"`                                                                                                         //授权的视图ID
+ 	MyDepartmentResource      bool     `json:"my_department_resource" form:"my_department_resource"`                                                      //本部门资源
+ 	IncludeDWHDataAuthRequest bool     `json:"include_dwh_data_auth_request" form:"include_dwh_data_auth_request"`
++	UpdateCycle               *int32   `json:"update_cycle" form:"update_cycle" binding:"omitempty"` //更新周期筛选
++	SharedType                *int32   `json:"shared_type" form:"shared_type" binding:"omitempty"`   //共享属性筛选
++	OpenType                  *int32   `json:"open_type" form:"open_type" binding:"omitempty"`       //开放属性筛选
+ }
+ 
+ type PageListFormViewReqQueryParamBase struct {
+-- 
+2.51.1.windows.1
+

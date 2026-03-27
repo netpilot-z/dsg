@@ -1,0 +1,36 @@
+From c104e10b21f7ed02b74fb415b35f20a57b8c728f Mon Sep 17 00:00:00 2001
+From: "yuliang.tian" <yuliang.tian@aishu.cn>
+Date: Thu, 12 Mar 2026 10:35:27 +0800
+Subject: [PATCH 34/37] =?UTF-8?q?feat:=E4=BF=AE=E5=A4=8D=E7=A9=BA=E6=8C=87?=
+ =?UTF-8?q?=E9=92=88=E6=8A=A5=E9=94=99=E9=97=AE=E9=A2=98?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ domain/data_lineage/processor/processor.go | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/domain/data_lineage/processor/processor.go b/domain/data_lineage/processor/processor.go
+index 5dcaab6c..d9ada465 100644
+--- a/domain/data_lineage/processor/processor.go
++++ b/domain/data_lineage/processor/processor.go
+@@ -97,6 +97,7 @@ func (f FormViewInfoFetcher) getDepartmentInfo(ctx context.Context, id string) (
+ 		return nil, err
+ 	}
+ 	if len(result.Departments) <= 0 {
++		err := fmt.Errorf("empty department info %v", id)
+ 		log.Errorf("empty department info %v", id)
+ 		return nil, err
+ 	}
+@@ -112,6 +113,7 @@ func (f FormViewInfoFetcher) getInfoSystem(ctx context.Context, id string) (*dat
+ 		return nil, err
+ 	}
+ 	if len(infoSystems) <= 0 {
++		err := fmt.Errorf("empty infosystem info %v", id)
+ 		log.Errorf("empty infosystem info %v", id)
+ 		return nil, err
+ 	}
+-- 
+2.51.1.windows.1
+

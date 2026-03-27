@@ -1,0 +1,354 @@
+From 33902735ee6f7b8fe35752abab49707a6a8e47d2 Mon Sep 17 00:00:00 2001
+From: "zhou.yu" <zhou.yu@aishu.cn>
+Date: Wed, 28 Jan 2026 16:16:12 +0800
+Subject: [PATCH 15/37] =?UTF-8?q?=E5=A2=9E=E9=87=8F=E5=90=8C=E6=AD=A5?=
+ =?UTF-8?q?=E8=A7=86=E5=9B=BE?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ .../mdl_data_model/impl/mdl_data_model.go     |  36 +++--
+ .../driven/rest/mdl_data_model/interface.go   |   2 +-
+ common/constant/redis_key.go                  |   2 +
+ domain/form_view/v1/form_view.go              |   4 +-
+ domain/form_view/v1/internal.go               | 150 +++++++++++++-----
+ 5 files changed, 138 insertions(+), 56 deletions(-)
+
+diff --git a/adapter/driven/rest/mdl_data_model/impl/mdl_data_model.go b/adapter/driven/rest/mdl_data_model/impl/mdl_data_model.go
+index f180b445..bf6f4493 100644
+--- a/adapter/driven/rest/mdl_data_model/impl/mdl_data_model.go
++++ b/adapter/driven/rest/mdl_data_model/impl/mdl_data_model.go
+@@ -7,6 +7,8 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"net/http"
++	"net/url"
++	"strconv"
+ 	"time"
+ 
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/GoCommon/errorcode"
+@@ -35,9 +37,23 @@ func NewMdlDataModel(conf *my_config.Bootstrap, httpClient *http.Client) mdl_dat
+ 	}
+ }
+ 
+-func (m *MdlDataModel) GetDataViews(ctx context.Context) (*mdl_data_model.GetDataViewsResp, error) {
++func (m *MdlDataModel) GetDataViews(ctx context.Context, updateTimeStart int64) (*mdl_data_model.GetDataViewsResp, error) {
+ 	drivenMsg := "DrivenMdlDataModel GetDataViews "
+-	urlStr := fmt.Sprintf("%s/api/mdl-data-model/in/v1/data-views?type=atomic&limit=-1", m.baseURL)
++	base := fmt.Sprintf("%s/api/mdl-data-model/in/v1/data-views", m.baseURL)
++	u, err := url.Parse(base)
++	if err != nil {
++		log.WithContext(ctx).Error(drivenMsg+"url.Parse error", zap.Error(err))
++		return nil, errorcode.Detail(my_errorcode.MdlGetViewsError, err.Error())
++	}
++	q := u.Query()
++	q.Set("type", "atomic")
++	q.Set("limit", "-1")
++	if updateTimeStart > 0 {
++		q.Set("update_time_start", strconv.FormatInt(updateTimeStart, 10))
++	}
++	u.RawQuery = q.Encode()
++	urlStr := u.String()
++
+ 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, urlStr, nil)
+ 	if err != nil {
+ 		log.WithContext(ctx).Error(drivenMsg+"http.NewRequest error", zap.Error(err))
+@@ -45,13 +61,14 @@ func (m *MdlDataModel) GetDataViews(ctx context.Context) (*mdl_data_model.GetDat
+ 	}
+ 	request.Header.Add("x-account-id", "266c6a42-6131-4d62-8f39-853e7093701c")
+ 	request.Header.Add("x-account-type", "user")
++
+ 	resp, err := m.HttpClient.Do(request)
+ 	if err != nil {
+ 		log.WithContext(ctx).Error(drivenMsg+"client.Do error", zap.Error(err))
+ 		return nil, errorcode.Detail(my_errorcode.MdlGetViewsError, err.Error())
+ 	}
+-
+ 	defer resp.Body.Close()
++
+ 	body, err := io.ReadAll(resp.Body)
+ 	if err != nil {
+ 		log.WithContext(ctx).Error(drivenMsg+" io.ReadAll error", zap.Error(err))
+@@ -64,14 +81,13 @@ func (m *MdlDataModel) GetDataViews(ctx context.Context) (*mdl_data_model.GetDat
+ 			return nil, errorcode.Detail(my_errorcode.MdlGetViewsError, err.Error())
+ 		}
+ 		return &res, nil
+-	} else {
+-		if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError || resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
+-			return nil, Unmarshal(ctx, body, drivenMsg)
+-		} else {
+-			log.WithContext(ctx).Error(drivenMsg+"http status error", zap.String("status", resp.Status), zap.String("body", string(body)))
+-			return nil, errorcode.Desc(my_errorcode.MdlGetViewsError, resp.StatusCode)
+-		}
+ 	}
++
++	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError || resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
++		return nil, Unmarshal(ctx, body, drivenMsg)
++	}
++	log.WithContext(ctx).Error(drivenMsg+"http status error", zap.String("status", resp.Status), zap.String("body", string(body)))
++	return nil, errorcode.Desc(my_errorcode.MdlGetViewsError, resp.StatusCode)
+ }
+ 
+ func (m *MdlDataModel) GetDataView(ctx context.Context, viewIds []string) ([]*mdl_data_model.GetDataViewResp, error) {
+diff --git a/adapter/driven/rest/mdl_data_model/interface.go b/adapter/driven/rest/mdl_data_model/interface.go
+index ad4039ad..d2c3dff1 100644
+--- a/adapter/driven/rest/mdl_data_model/interface.go
++++ b/adapter/driven/rest/mdl_data_model/interface.go
+@@ -7,7 +7,7 @@ import (
+ )
+ 
+ type DrivenMdlDataModel interface {
+-	GetDataViews(ctx context.Context) (*GetDataViewsResp, error)
++	GetDataViews(ctx context.Context, updateTimeStart int64) (*GetDataViewsResp, error)
+ 	GetDataView(ctx context.Context, viewIds []string) ([]*GetDataViewResp, error)
+ 	UpdateDataView(ctx context.Context, viewId string, view *UpdateDataView) ([]*GetDataViewResp, error)
+ 	DeleteDataView(ctx context.Context, viewId string) error
+diff --git a/common/constant/redis_key.go b/common/constant/redis_key.go
+index 8bc54154..c1f91ff9 100644
+--- a/common/constant/redis_key.go
++++ b/common/constant/redis_key.go
+@@ -2,6 +2,8 @@ package constant
+ 
+ const (
+ 	SyntheticDataKey = "af:data-view:synthetic-data:%s:string"
++	// MdlDataModelSyncTimeKey 存储 mdl-data-model 同步的上次同步时间（毫秒时间戳）
++	MdlDataModelSyncTimeKey = "af:data-view:mdl-sync-time"
+ )
+ 
+ //lock
+diff --git a/domain/form_view/v1/form_view.go b/domain/form_view/v1/form_view.go
+index 69eb7732..27952e80 100644
+--- a/domain/form_view/v1/form_view.go
++++ b/domain/form_view/v1/form_view.go
+@@ -2304,7 +2304,7 @@ func (f *formViewUseCase) GetUsersAllFormViews(ctx context.Context, req *form_vi
+ 	ownerReq.Offset = 0
+ 	total1, formViews1, err := f.repo.GetByOwnerOrIdsPages(ctx, &ownerReq)
+ 	//日志打印total1的值
+-	log.Infof("------------------>total1----------------------->:", total1)
++	log.Infof("------------------>total1----------------------->: %d", total1)
+ 
+ 	if err != nil {
+ 		return nil, errorcode.Detail(my_errorcode.DatabaseError, err.Error())
+@@ -2393,7 +2393,7 @@ func (f *formViewUseCase) GetUsersAllFormViews(ctx context.Context, req *form_vi
+ 	}
+ 	sort.Strings(permReq.ViewIds)
+ 	total2, formViews2, err := f.repo.GetByOwnerOrIdsPages(ctx, &permReq)
+-	log.Infof("------------------>total2----------------------->:", total2)
++	log.Infof("------------------>total2----------------------->: %d", total2)
+ 	if err != nil {
+ 		return nil, errorcode.Detail(my_errorcode.DatabaseError, err.Error())
+ 	}
+diff --git a/domain/form_view/v1/internal.go b/domain/form_view/v1/internal.go
+index 7d76d312..3c687b16 100644
+--- a/domain/form_view/v1/internal.go
++++ b/domain/form_view/v1/internal.go
+@@ -14,7 +14,9 @@ import (
+ 	"github.com/google/uuid"
+ 	"github.com/samber/lo"
+ 	"go.uber.org/zap"
++	"strconv"
+ 	"strings"
++	"time"
+ 
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/GoCommon/rest/data_view"
+ 	"devops.aishu.cn/AISHUDevOps/AnyFabric/_git/data-view/common/constant"
+@@ -159,31 +161,84 @@ func (f *formViewUseCase) QueryAuthedSubView(ctx context.Context, req *form_view
+ 
+ func (f *formViewUseCase) Sync(ctx context.Context) {
+ 	ctx = context.Background()
+-	views, err := f.DrivenMdlDataModel.GetDataViews(ctx)
++
++	// 1) 从 Redis 获取上次同步时间（如果存在）
++	lastSyncTimeMs := int64(0)
++	syncTimeKey := constant.MdlDataModelSyncTimeKey
++	lastSyncTimeStr, err := f.redis.GetClient().Get(ctx, syncTimeKey).Result()
++	if err == nil && lastSyncTimeStr != "" {
++		lastSyncTimeMs, err = strconv.ParseInt(lastSyncTimeStr, 10, 64)
++		if err != nil {
++			log.WithContext(ctx).Warn("parse last sync time from redis fail, will do full sync", zap.Error(err))
++			lastSyncTimeMs = 0
++		} else {
++			log.WithContext(ctx).Infof("incremental sync: using last sync time from redis: %d", lastSyncTimeMs)
++		}
++	} else {
++		// Redis 中没有记录，执行全量同步（首次同步或 Redis 数据丢失的情况）
++		log.WithContext(ctx).Infof("incremental sync: redis has no record, will do full sync")
++		lastSyncTimeMs = 0
++	}
++
++	// 记录本次同步开始时间（用于下次同步）
++	syncStartTimeMs := time.Now().UnixMilli()
++
++	// 2) 计算增量同步的起始时间（使用时间缓冲窗口，避免漏数据）
++	fullSync := lastSyncTimeMs == 0
++	updateStart := int64(0)
++	if !fullSync {
++		// 使用时间缓冲窗口（减去5分钟），避免因时间边界、时间戳精度不一致或同步过程中的数据更新导致漏数据
++		const bufferMinutes = 5
++		updateStart = lastSyncTimeMs - int64(bufferMinutes*60*1000)
++		if updateStart < 0 {
++			updateStart = 0
++		}
++		log.WithContext(ctx).Infof("incremental sync: lastSyncTimeMs=%d, adjusted=%d (minus %d minutes)",
++			lastSyncTimeMs, updateStart, bufferMinutes)
++	}
++
++	views, err := f.DrivenMdlDataModel.GetDataViews(ctx, updateStart)
+ 	if err != nil {
++		log.WithContext(ctx).Error("get data views from mdl-data-model fail", zap.Error(err))
+ 		return
+ 	}
+ 	viewMap := make(map[string]*mdl_data_model.DataViewInfo)
+-	viewIds := make([]string, 0)
+-	for _, view := range views.Entries {
+-		viewMap[view.Id] = view
+-		viewIds = append(viewIds, view.Id)
+-	}
+-	viewInfos, err := f.DrivenMdlDataModel.GetDataView(ctx, viewIds)
++
++	formViews, err := f.repo.GetAllFormView(ctx)
+ 	if err != nil {
++		log.WithContext(ctx).Error("get all form_view fail", zap.Error(err))
+ 		return
+ 	}
+-	err = f.CompareFormView(ctx, viewMap, viewInfos)
+-	if err != nil {
++
++	needSyncIDs := make([]string, 0)
++	for _, v := range views.Entries {
++		viewMap[v.Id] = v
++		needSyncIDs = append(needSyncIDs, v.Id)
++	}
++	
++	viewInfos := make([]*mdl_data_model.GetDataViewResp, 0)
++	if len(needSyncIDs) > 0 {
++		viewInfos, err = f.DrivenMdlDataModel.GetDataView(ctx, needSyncIDs)
++		if err != nil {
++			log.WithContext(ctx).Error("get data view detail from mdl-data-model fail", zap.Error(err))
++			return
++		}
++	}
++	if err = f.CompareFormView(ctx, viewMap, viewInfos, fullSync, formViews); err != nil {
++		log.WithContext(ctx).Error("compare/sync form_view from mdl-data-model fail", zap.Error(err))
+ 		return
+ 	}
+-}
+ 
+-func (f *formViewUseCase) CompareFormView(ctx context.Context, viewMap map[string]*mdl_data_model.DataViewInfo, tables []*mdl_data_model.GetDataViewResp) error {
+-	formViews, err := f.repo.GetAllFormView(ctx)
+-	if err != nil {
+-		return errorcode.Detail(my_errorcode.DatabaseError, err.Error())
++	// 同步完成后，将本次同步开始时间保存到 Redis，作为下次增量同步的起点
++	if err = f.redis.GetClient().Set(ctx, syncTimeKey, syncStartTimeMs, 0).Err(); err != nil {
++		log.WithContext(ctx).Error("save sync time to redis fail", zap.Error(err), zap.Int64("syncStartTimeMs", syncStartTimeMs))
++		// 不返回错误，因为同步已经完成，只是记录失败
++	} else {
++		log.WithContext(ctx).Infof("sync completed, saved sync time to redis: %d (next sync will start from this time)", syncStartTimeMs)
+ 	}
++}
++
++func (f *formViewUseCase) CompareFormView(ctx context.Context, viewMap map[string]*mdl_data_model.DataViewInfo, tables []*mdl_data_model.GetDataViewResp, fullSync bool, formViews []*model.FormView) error {
+ 	formViewsMap := make(map[string]*FormViewFlag)
+ 	formViewInfosMap := make(map[string]*FormViewFlag)
+ 	for _, formView := range formViews {
+@@ -198,58 +253,67 @@ func (f *formViewUseCase) CompareFormView(ctx context.Context, viewMap map[strin
+ 	// 需要的逻辑视图编码的数量
+ 	var uniformCatalogCodeCount int
+ 	for _, table := range tables {
+-		if flag := formViewsMap[table.Id]; flag != nil && flag.UniformCatalogCode != "" {
++		if flag := formViewsMap[table.Id]; flag != nil && flag.FormView != nil && flag.UniformCatalogCode != "" {
+ 			continue
+ 		}
+ 		uniformCatalogCodeCount++
+ 	}
+ 
+ 	// 生成逻辑视图的编码
+-	codeList, err := f.configurationCenterDrivenNG.Generate(ctx, CodeGenerationRuleUUIDDataView, uniformCatalogCodeCount)
+-	if agerrors.Code(err).GetErrorCode() == "ConfigurationCenter.CodeGenerationRule.NotFound" {
+-		// 找不到对应编码生成规则，说明 configuration-center 可能没有升级，兼容
+-		// 处理，逻辑视图的编码设置为空。当 configuration-center 完成升级后可再
+-		// 次设置编码
+-		//
+-		// 兼容处理仅限于 2.0.0.1 一个版本，2.0.0.2 时移除这此兼容处理
+-		log.WithContext(ctx).Warn("generate code for data view fail", zap.Error(err), zap.Stringer("rule", CodeGenerationRuleUUIDDataView), zap.Int("count", len(tables)))
+-		codeList = &configuration_center.CodeList{Entries: make([]string, len(tables))}
+-	} else if err != nil {
+-		log.WithContext(ctx).Error("generate code for data view fail", zap.Error(err), zap.Stringer("rule", CodeGenerationRuleUUIDDataView), zap.Int("count", len(tables)))
+-		return err
++	codeList := &configuration_center.CodeList{Entries: make([]string, 0)}
++	if uniformCatalogCodeCount > 0 {
++		var genErr error
++		codeList, genErr = f.configurationCenterDrivenNG.Generate(ctx, CodeGenerationRuleUUIDDataView, uniformCatalogCodeCount)
++		if agerrors.Code(genErr).GetErrorCode() == "ConfigurationCenter.CodeGenerationRule.NotFound" {
++			// 找不到对应编码生成规则，说明 configuration-center 可能没有升级，兼容处理
++			log.WithContext(ctx).Warn("generate code for data view fail", zap.Error(genErr), zap.Stringer("rule", CodeGenerationRuleUUIDDataView), zap.Int("count", uniformCatalogCodeCount))
++			codeList = &configuration_center.CodeList{Entries: make([]string, uniformCatalogCodeCount)}
++		} else if genErr != nil {
++			log.WithContext(ctx).Error("generate code for data view fail", zap.Error(genErr), zap.Stringer("rule", CodeGenerationRuleUUIDDataView), zap.Int("count", uniformCatalogCodeCount))
++			return genErr
++		}
+ 	}
+ 
+ 	var codeListIndex int
+ 	for _, table := range tables {
+ 		tmp := fmt.Sprintf("%s %s", table.DataSourceId, table.TechnicalName)
+-		if formViewsMap[table.Id] == nil && formViewInfosMap[tmp] == nil {
+-			if err = f.newFormView(ctx, codeList.Entries[codeListIndex], viewMap, table); err != nil {
++		var fvFlag *FormViewFlag
++		if formViewsMap[table.Id] != nil {
++			fvFlag = formViewsMap[table.Id]
++		} else if formViewInfosMap[tmp] != nil {
++			fvFlag = formViewInfosMap[tmp]
++		}
++
++		if fvFlag == nil || fvFlag.FormView == nil {
++			var code string
++			if codeListIndex < len(codeList.Entries) {
++				code = codeList.Entries[codeListIndex]
++			}
++			if err := f.newFormView(ctx, code, viewMap, table); err != nil {
+ 				return err
+ 			}
+ 			codeListIndex++
+ 		} else {
+ 			//exist , form update or not form update (by field)
+-			var newUniformCatalogCode bool
+-			if newUniformCatalogCode = formViewsMap[table.Id].FormView.UniformCatalogCode == ""; newUniformCatalogCode {
+-				formViewsMap[table.Id].FormView.UniformCatalogCode = codeList.Entries[codeListIndex]
++			newUniformCatalogCode := fvFlag.FormView.UniformCatalogCode == ""
++			if newUniformCatalogCode {
++				if codeListIndex < len(codeList.Entries) {
++					fvFlag.FormView.UniformCatalogCode = codeList.Entries[codeListIndex]
++				}
+ 				codeListIndex++
+ 			}
+-			var formView *model.FormView
+-			if formViewsMap[table.Id] != nil {
+-				formView = formViewsMap[table.Id].FormView
+-			} else {
+-				formView = formViewInfosMap[tmp].FormView
+-			}
+-			if err = f.updateFormView(ctx, formView, table, newUniformCatalogCode); err != nil {
++			if err := f.updateFormView(ctx, fvFlag.FormView, table, newUniformCatalogCode); err != nil {
+ 				return err
+ 			}
+-			formViewsMap[table.Id].flag = 2
++			fvFlag.flag = 2
+ 		}
+ 	}
+ 
+-	err = f.deleteFormView(ctx, formViewsMap)
+-	if err != nil {
+-		return err
++	// 增量同步时不进行删除比对，避免只处理部分 tables 导致误删
++	if fullSync {
++		if err := f.deleteFormView(ctx, formViewsMap); err != nil {
++			return err
++		}
+ 	}
+ 	return nil
+ }
+-- 
+2.51.1.windows.1
+

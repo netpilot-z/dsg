@@ -1,0 +1,37 @@
+From 692b3f43f82a62be1e6404d9eff99d0684decc83 Mon Sep 17 00:00:00 2001
+From: "yuliang.tian" <yuliang.tian@aishu.cn>
+Date: Fri, 16 Jan 2026 09:45:21 +0800
+Subject: [PATCH 03/37] =?UTF-8?q?feat:=E4=BF=AE=E6=94=B9805388bug?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ adapter/driver/mq/datasource/entity.go | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/adapter/driver/mq/datasource/entity.go b/adapter/driver/mq/datasource/entity.go
+index aef4ecea..50d75b80 100644
+--- a/adapter/driver/mq/datasource/entity.go
++++ b/adapter/driver/mq/datasource/entity.go
+@@ -35,7 +35,7 @@ type DatasourcePayload struct {
+ }
+ 
+ func ToModel(p *DatasourcePayload) *model.Datasource {
+-	return &model.Datasource{
++	datasource := &model.Datasource{
+ 		ID:             p.ID,
+ 		InfoSystemID:   p.InfoSystemID,
+ 		Name:           p.Name,
+@@ -52,4 +52,8 @@ func ToModel(p *DatasourcePayload) *model.Datasource {
+ 		TypeName:       p.Type,
+ 		DepartmentId:   p.DepartmentId,
+ 	}
++	if p.Schema != "" {
++		datasource.DataViewSource = p.CatalogName + "." + p.Schema
++	}
++	return datasource
+ }
+-- 
+2.51.1.windows.1
+

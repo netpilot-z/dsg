@@ -1,0 +1,232 @@
+From f4875fc0354783e25a8ca345fb9060083022d9ed Mon Sep 17 00:00:00 2001
+From: "David.chen02" <David.chen02@aishu.cn>
+Date: Tue, 20 Jan 2026 14:20:18 +0800
+Subject: [PATCH 12/37] =?UTF-8?q?=E5=A2=9E=E5=8A=A0=E4=BB=85=E8=8E=B7?=
+ =?UTF-8?q?=E5=8F=96=E5=8F=91=E5=B8=83=E8=A7=86=E5=9B=BE=E5=88=97=E8=A1=A8?=
+ =?UTF-8?q?=E6=8E=A5=E5=8F=A3?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ adapter/driver/form_view/v1/form_view.go | 125 +++++++++++++++++++++++
+ adapter/driver/route.go                  |   3 +-
+ domain/form_view/interface.go            |  52 ++++++++++
+ 3 files changed, 179 insertions(+), 1 deletion(-)
+
+diff --git a/adapter/driver/form_view/v1/form_view.go b/adapter/driver/form_view/v1/form_view.go
+index fd3a217f..85092f9e 100644
+--- a/adapter/driver/form_view/v1/form_view.go
++++ b/adapter/driver/form_view/v1/form_view.go
+@@ -157,6 +157,131 @@ func (f *FormViewService) PageList(c *gin.Context) {
+ 	ginx.ResOKJson(c, resp)
+ }
+ 
++// PublishPageList 获取已发布逻辑视图列表
++//
++//	@Description	获取已发布逻辑视图列表,包括元数据视图、自定义视图、逻辑实体视图
++//	@Tags			逻辑视图
++//	@Summary		获取已发布逻辑视图列表
++//	@Accept			application/json
++//	@Produce		application/json
++//	@Param			Authorization	header		string					        true	"token"
++//	@Param			query			query		form_view.PageListFormViewReqQueryParamBase	true	"查询参数"
++//	@Success		200				{object}	form_view.PageListFormViewResp	    "成功响应参数"
++//	@Failure		400				{object}	rest.HttpError			        "失败响应参数"
++//	@Router			/form-view/published [get]
++func (f *FormViewService) PublishPageList(c *gin.Context) {
++	req := form_validator.Valid[form_view.PageListFormViewReq](c)
++	if req == nil {
++		return
++	}
++	if (req.CreatedAtEnd != 0 && req.CreatedAtStart >= req.CreatedAtEnd) || (req.UpdatedAtEnd != 0 && req.UpdatedAtStart >= req.UpdatedAtEnd) {
++		ginx.ResBadRequestJson(c, errorcode.Desc(my_errorcode.StartTimeMustBigEndTime))
++		return
++	}
++	//if (len(req.DatasourceType) != 0 && req.DatasourceId != "") || (len(req.DatasourceIds) != 0 && req.DatasourceId != "") {
++	if (req.DatasourceType != "" && req.DatasourceId != "") ||
++		(len(req.DatasourceIds) != 0 && req.DatasourceId != "") {
++		ginx.ResBadRequestJson(c, errorcode.Desc(my_errorcode.DataSourceIDAndDataSourceTypeExclude))
++		return
++	}
++	if req.InfoSystemID != nil {
++		if *req.InfoSystemID != "" && (req.DatasourceId != "" && req.DataSourceSourceType != "") {
++			ginx.ResBadRequestJson(c, errorcode.Desc(my_errorcode.InfoSystemIDAndDataSourceIDAndDataSourceTypeExclude))
++			return
++		}
++	}
++
++	if req.DataSourceSourceType != "" && req.DatasourceId != "" {
++		ginx.ResBadRequestJson(c, errorcode.Desc(my_errorcode.DataSourceSourceTypeAndDataSourceIDExclude))
++		return
++	}
++	// kylin 要求不能传数组改为逗号分割
++	if req.DatasourceIdString != "" {
++		split := strings.Split(req.DatasourceIdString, ",")
++		if len(split) > 0 {
++			regexPattern := regexp.MustCompile(constant.UUIDRegexString)
++			req.DatasourceIds = make([]string, len(split))
++			for i, s := range split {
++				if !regexPattern.MatchString(s) {
++					ginx.ResBadRequestJson(c, errorcode.WithDetail(errorcode.PublicInvalidParameter, map[string]any{"datasource_ids": "must be uuid"}))
++					return
++				}
++				req.DatasourceIds[i] = s
++			}
++		}
++	}
++	if req.FormViewIdsString != "" {
++		split := strings.Split(req.FormViewIdsString, ",")
++		if len(split) > 0 {
++			regexPattern := regexp.MustCompile(constant.UUIDRegexString)
++			req.FormViewIds = make([]string, len(split))
++			for i, s := range split {
++				if !regexPattern.MatchString(s) {
++					ginx.ResBadRequestJson(c, errorcode.WithDetail(errorcode.PublicInvalidParameter, map[string]any{"form_view_id": "must be uuid"}))
++					return
++				}
++				req.FormViewIds[i] = s
++			}
++		}
++	}
++	if req.OwnerIDString != "" {
++		split := strings.Split(req.OwnerIDString, ",")
++		if len(split) > 0 {
++			regexPattern := regexp.MustCompile(constant.UUIDRegexString)
++			req.OwnerIDs = make([]string, len(split))
++			for i, s := range split {
++				if s == constant.UnallocatedId {
++					req.NotHaveOwner = true
++					continue
++				}
++				if !regexPattern.MatchString(s) {
++					ginx.ResBadRequestJson(c, errorcode.WithDetail(errorcode.PublicInvalidParameter, map[string]any{"owner_id": "must be uuid"}))
++					return
++				}
++				req.OwnerIDs[i] = s
++			}
++		}
++	}
++
++	if req.StatusListString != "" {
++		split := strings.Split(req.StatusListString, ",")
++		if len(split) > 0 {
++			req.StatusList = make([]int32, len(split))
++			for i, s := range split {
++				statusInt := enum.ToInteger[constant.FormViewScanStatus](s).Int32()
++				if statusInt == 0 {
++					ginx.ResBadRequestJson(c, errorcode.WithDetail(errorcode.PublicInvalidParameter, map[string]any{"status_list": "must in uniformity new modify delete"}))
++					return
++				}
++				req.StatusList[i] = statusInt
++			}
++		}
++	}
++
++	if req.OnlineStatusListString != "" {
++		split := strings.Split(req.OnlineStatusListString, ",")
++		if len(split) > 0 {
++			req.OnlineStatusList = make([]string, len(split))
++			for i, s := range split {
++				if _, exist := constant.LineStatusMap[s]; !exist {
++					ginx.ResBadRequestJson(c, errorcode.WithDetail(errorcode.PublicInvalidParameter, map[string]any{"online_status_list": "must in notline online offline up-auditing down-auditing up-reject down-reject"}))
++					return
++				}
++				req.OnlineStatusList[i] = s
++			}
++		}
++	}
++	req.PublishStatus = constant.FormViewReleased.String
++
++	resp, err := util.TraceA1R2(c, req, f.uc.PageList)
++	if err != nil {
++		ginx.ResBadRequestJson(c, err)
++		return
++	}
++
++	ginx.ResOKJson(c, resp)
++}
++
+ // Scan 扫描数据源
+ //
+ //	@Description	扫描数据源
+diff --git a/adapter/driver/route.go b/adapter/driver/route.go
+index 1b8057de..41aae791 100644
+--- a/adapter/driver/route.go
++++ b/adapter/driver/route.go
+@@ -86,7 +86,8 @@ func (r *Router) Register(engine *gin.Engine) {
+ 		//formViewRouter with access_control.FormView
+ 		{
+ 			formViewRouter := dataViewRouter.Group("/form-view")
+-			formViewRouter.GET("", r.FormViewDomainApi.PageList) // 获取逻辑视图列表
++			formViewRouter.GET("", r.FormViewDomainApi.PageList)                  // 获取逻辑视图列表
++			formViewRouter.GET("/published", r.FormViewDomainApi.PublishPageList) // 获取发布的逻辑视图列表
+ 			//formViewRouter.POST("/scan", r.middleware.AuditLogger(), r.FormViewDomainApi.Scan)                        // 扫描数据源
+ 			formViewRouter.GET("/repeat", r.FormViewDomainApi.NameRepeat)                                             // 逻辑视图重名校验
+ 			formViewRouter.PUT("/:id", r.middleware.AuditLogger(), r.FormViewDomainApi.UpdateFormView)                // 编辑元数据视图
+diff --git a/domain/form_view/interface.go b/domain/form_view/interface.go
+index fcd89c23..08cb012b 100644
+--- a/domain/form_view/interface.go
++++ b/domain/form_view/interface.go
+@@ -169,6 +169,58 @@ type PageListFormViewReqQueryParam struct {
+ 
+ 	BusinessModelID string `json:"business_model_id" form:"business_model_id" binding:"omitempty,uuid"  example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"` //业务模型ID，查询当前也的视图ID有没有在这个数据模型生成数据原始表用
+ 
++	NotHaveOwner              bool     `json:"-"`                                             // 未分配数据Owner
++	OwnerIDString             string   `json:"owner_id"  form:"owner_id" binding:"omitempty"` // 数据Owner id 逗号分隔
++	OwnerIDs                  []string `json:"-"`                                             // 数据Owner id
++	OwnerID                   string   `json:"-"`
++	Type                      string   `json:"type"  form:"type" binding:"omitempty,oneof=datasource custom logic_entity"`
++	OnlineStatus              string   `json:"online_status"  form:"online_status" binding:"omitempty,oneof=notline online offline up-auditing down-auditing up-reject down-reject"` //上线状态
++	OnlineStatusListString    string   `json:"online_status_list"  form:"online_status_list" binding:"omitempty"`                                                                    //上线状态 多选逗号分割
++	OnlineStatusList          []string `json:"-"`
++	AuditStatus               string   `json:"audit_status"  form:"audit_status" binding:"omitempty,oneof=unpublished auditing pass reject"`
++	ExcelFileName             string   `json:"excel_file_name"  form:"excel_file_name"`
++	TechnicalName             string   `json:"technical_name" form:"technical_name"`                                                                      // 表技术名称
++	InfoSystemID              *string  `json:"info_system_id" form:"info_system_id" binding:"omitempty"`                                                  // 信息系统id
++	DataSourceSourceType      string   `json:"datasource_source_type" form:"datasource_source_type" binding:"omitempty,oneof=records analytical sandbox"` // 数据源来源类型 records 信息系统 analytical 数据仓库   sandbox 数据沙箱
++	QueryAuthed               bool     `json:"query_authed"  form:"query_authed" binding:"omitempty"`                                                     //是否查询授权的
++	AuthedViewID              []string `json:"-"`                                                                                                         //授权的视图ID
++	MyDepartmentResource      bool     `json:"my_department_resource" form:"my_department_resource"`                                                      //本部门资源
++	IncludeDWHDataAuthRequest bool     `json:"include_dwh_data_auth_request" form:"include_dwh_data_auth_request"`
++}
++
++type PageListFormViewReqQueryParamBase struct {
++	request.PageInfo3
++	request.KeywordInfo
++	Direction        string  `json:"direction" form:"direction,default=desc" binding:"oneof=asc desc" default:"desc"`                                                                 // 排序方向，枚举：asc：正序；desc：倒序。默认倒序
++	Sort             string  `json:"sort" form:"sort,default=created_at" binding:"oneof=created_at updated_at name type publish_at online_time technical_name"  default:"created_at"` // 排序类型，枚举：created_at：按创建时间排序；updated_at：按更新时间排序；name：按名称排序。默认按创建时间排序
++	Status           string  `json:"status" form:"status" binding:"omitempty,oneof=uniformity new modify delete"`                                                                     //状态
++	StatusListString string  `json:"status_list" form:"status_list" binding:"omitempty"`                                                                                              //状态  多选逗号分割
++	StatusList       []int32 `json:"-"`
++
++	EditStatus         string   `json:"edit_status" form:"edit_status" binding:"omitempty,oneof=draft latest"` //编辑状态
++	CreatedAtStart     int64    `json:"created_at_start" form:"created_at_start" binding:"omitempty,gt=0"`     //创建开始时间
++	CreatedAtEnd       int64    `json:"created_at_end" form:"created_at_end" binding:"omitempty,gt=0"`         // 创建结束时间
++	UpdatedAtStart     int64    `json:"updated_at_start" form:"updated_at_start" binding:"omitempty,gt=0"`     //编辑开始时间
++	UpdatedAtEnd       int64    `json:"updated_at_end" form:"updated_at_end" binding:"omitempty,gt=0"`         //编辑结束时间
++	DatasourceType     string   `json:"datasource_type" form:"datasource_type" binding:"omitempty"`            // 数据源类型
++	DatasourceIdString string   `json:"datasource_ids" form:"datasource_ids" binding:"omitempty"`              //数据源id 逗号分隔
++	DatasourceIds      []string `json:"-" `
++	DatasourceId       string   `json:"datasource_id" form:"datasource_id" binding:"omitempty,uuid"` //数据源id
++	//TaskId             string   `json:"task_id" form:"task_id" binding:"omitempty,uuid" example:"4a5a3cc0-0169-4d62-9442-62214d8fcd8d"`        // 任务id，uuid（36）
++	//ProjectID          string   `json:"project_id"  form:"project_id" binding:"omitempty,uuid" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"` //项目id
++	FormViewIdsString string   `json:"form_view_ids" form:"form_view_ids" binding:"omitempty"` //逗号分隔
++	FormViewIds       []string `json:"-" `
++
++	SubjectID         string   `json:"subject_id" form:"subject_id" binding:"omitempty,uuid" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"` // 主题id
++	IncludeSubSubject bool     `json:"include_sub_subject"  form:"include_sub_subject" binding:"omitempty"`                                  //包含子主题
++	SubSubSubjectIDs  []string `json:"-"`                                                                                                    // 子主题域名id
++
++	DepartmentID         string   `json:"department_id" form:"department_id" binding:"omitempty,uuid" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"` // 部门id
++	IncludeSubDepartment bool     `json:"include_sub_department"  form:"include_sub_department" binding:"omitempty"`                                  //包含子部门
++	SubDepartmentIDs     []string `json:"-"`                                                                                                          // 部门的子部门id 	// 未分配部门
++
++	BusinessModelID string `json:"business_model_id" form:"business_model_id" binding:"omitempty,uuid"  example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"` //业务模型ID，查询当前也的视图ID有没有在这个数据模型生成数据原始表用
++
+ 	NotHaveOwner              bool     `json:"-"`                                             // 未分配数据Owner
+ 	OwnerIDString             string   `json:"owner_id"  form:"owner_id" binding:"omitempty"` // 数据Owner id 逗号分隔
+ 	OwnerIDs                  []string `json:"-"`                                             // 数据Owner id
+-- 
+2.51.1.windows.1
+

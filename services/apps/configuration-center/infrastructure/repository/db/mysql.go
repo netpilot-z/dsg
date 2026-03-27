@@ -121,7 +121,7 @@ func initDBData(ctx context.Context, DB *gorm.DB) error {
 	if err = json.Unmarshal(data, &menuReq); err != nil {
 		return err
 	}
-	if err = menuUseCase.SetMenus(ctx, &menuReq); err != nil {
+	if err = menuUseCase.SetMenus(ctx, menuReq); err != nil {
 		return err
 	}
 	return nil

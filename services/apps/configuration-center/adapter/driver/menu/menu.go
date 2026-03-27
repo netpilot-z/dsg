@@ -6,7 +6,6 @@ import (
 	"github.com/kweaver-ai/dsg/services/apps/configuration-center/common/form_validator"
 	"github.com/kweaver-ai/dsg/services/apps/configuration-center/common/util"
 	"github.com/kweaver-ai/dsg/services/apps/configuration-center/domain/menu"
-	"github.com/kweaver-ai/idrm-go-common/built_in"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/rest/ginx"
 )
 
@@ -19,8 +18,8 @@ func NewService(uc menu.UseCase) *Service {
 }
 
 func (s *Service) SetMenus(c *gin.Context) {
-	req := &menu.SetMenusReq{}
-	if _, err := form_validator.BindJsonAndValid(c, req); err != nil {
+	req := menu.SetMenusReq{}
+	if _, err := form_validator.BindJsonAndValid(c, &req); err != nil {
 		ginx.ResBadRequestJson(c, errorcode.Detail(errorcode.PublicInvalidParameter, err))
 		return
 	}
@@ -44,7 +43,13 @@ func (s *Service) SetMenus(c *gin.Context) {
 // @Failure     400 {object} rest.HttpError     "失败响应参数"
 // @Router      /menus [get]
 func (s *Service) GetMenus(c *gin.Context) {
-	res, err := util.TraceA0R2(c, s.uc.GetMenus)
+	req := menu.GetMenusReq{}
+	if _, err := form_validator.BindQueryAndValid(c, &req); err != nil {
+		ginx.ResBadRequestJson(c, errorcode.Detail(errorcode.PublicInvalidParameter, err))
+		return
+	}
+	req.Platform = menu.ResourceToPlatform(req.ResourceType)
+	res, err := util.TraceA1R2(c, &req, s.uc.GetMenus)
 	if err != nil {
 		ginx.ResBadRequestJson(c, err)
 		return
@@ -64,13 +69,13 @@ func (s *Service) GetMenus(c *gin.Context) {
 // @Failure     400 {object} rest.HttpError     "失败响应参数"
 // @Router      /menus [get]
 func (s *Service) PermissionMenus(c *gin.Context) {
-	sessionId, _ := c.Cookie(built_in.SessionId)
 	req := menu.PermissionMenusReq{}
 	if _, err := form_validator.BindQueryAndValid(c, &req); err != nil {
 		ginx.ResBadRequestJson(c, errorcode.Detail(errorcode.PublicInvalidParameter, err))
 		return
 	}
-	res, err := util.TraceA2R2(c, sessionId, &req, s.uc.GetPermissionMenus)
+	req.Platform = menu.ResourceToPlatform(req.ResourceType)
+	res, err := util.TraceA1R2(c, &req, s.uc.GetPermissionMenus)
 	if err != nil {
 		ginx.ResBadRequestJson(c, err)
 		return
@@ -78,8 +83,8 @@ func (s *Service) PermissionMenus(c *gin.Context) {
 	ginx.ResOKJson(c, res)
 }
 
-// GetMenuKeys  获取菜单的key的中英文
-func (s *Service) GetMenuKeys(c *gin.Context) {
+// GetAllMenus  获取所有菜单
+func (s *Service) GetAllMenus(c *gin.Context) {
 	res, err := util.TraceA0R2(c, s.uc.GetResourceMenuKeys)
 	if err != nil {
 		ginx.ResBadRequestJson(c, err)

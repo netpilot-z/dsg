@@ -26,7 +26,7 @@ type BusinessMatter struct {
 	Name              string                `gorm:"column:name;not null" json:"name"`                                              // 业务事项名称
 	TypeKey           string                `gorm:"column:type_key;not null" json:"type_key"`                                      // 业务事项类型key
 	DepartmentID      string                `gorm:"column:department_id;not null" json:"department_id"`                            // 所属部门
-	MaterialsNumber   sql.NullInt32         `gorm:"column:materials_number;not null" json:"materials_number"`                      // 材料数
+	MaterialsNumber   sql.NullInt64         `gorm:"column:materials_number;not null" json:"materials_number"`                      // 材料数
 	CreatedAt         time.Time             `gorm:"column:created_at;not null;default:current_timestamp(3)" json:"created_at"`     // 创建时间
 	CreatorUID        string                `gorm:"column:creator_uid;not null" json:"creator_uid"`                                // 创建用户ID
 	UpdatedAt         time.Time             `gorm:"column:updated_at;not null;autoUpdateTime" json:"updated_at"`     // 更新时间
@@ -41,7 +41,7 @@ type CssjjBusinessMatter struct {
 	TypeKey           string                `gorm:"column:type_key;not null" json:"type_key"`                                      // 业务事项类型key
 	DepartmentID      string                `gorm:"column:department_id;not null" json:"department_id"`                            // 所属部门
 	DepartmentName    string                `gorm:"column:department_name;not null" json:"department_name"`                        // 所属部门
-	MaterialsNumber   sql.NullInt32         `gorm:"column:materials_number;not null" json:"materials_number"`                      // 材料数
+	MaterialsNumber   sql.NullInt64         `gorm:"column:materials_number;not null" json:"materials_number"`                      // 材料数
 	CreatedAt         time.Time             `gorm:"column:created_at;not null;default:current_timestamp(3)" json:"created_at"`     // 创建时间
 	CreatorUID        string                `gorm:"column:creator_uid;not null" json:"creator_uid"`                                // 创建用户ID
 	UpdatedAt         time.Time             `gorm:"column:updated_at;not null;autoUpdateTime;default:current_timestamp(3)" json:"updated_at"`     // 更新时间

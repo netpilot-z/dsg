@@ -26,7 +26,7 @@ type InfoSystem struct {
 	Description       sql.NullString        `gorm:"column:description" json:"description"`                                       // 信息系统描述
 	DepartmentId      sql.NullString        `gorm:"column:department_id" json:"department_id"`                                   // 信息系统部门ID
 	AcceptanceAt      sql.NullInt64         `gorm:"column:acceptance_at" json:"acceptance_at"`                                   // 验收日期
-	IsRegisterGateway sql.NullInt32         `gorm:"column:is_register_gateway;not null" json:"is_register_gateway"`              // 是否必填，bool：0：不是；1：是
+	IsRegisterGateway sql.NullInt32         `gorm:"column:is_register_gateway;not null" json:"is_register_gateway"`              // 是否注册，bool：0：不是；1：是
 	SystemIdentifier  string                `gorm:"column:system_identifier" json:"system_identifier"`                           // 系统标识·
 	RegisterAt        time.Time             `gorm:"column:register_at;not null;default:current_timestamp(3)" json:"register_at"` // 注册时间
 	CreatedAt         time.Time             `gorm:"column:created_at;autoCreateTime:milli;" json:"created_at"`                                // 创建时间
@@ -35,7 +35,7 @@ type InfoSystem struct {
 	UpdatedByUID      string                `gorm:"column:updated_by_uid;not null" json:"updated_by_uid"`                        // 更新用户ID
 	DeletedAt         soft_delete.DeletedAt `gorm:"column:deleted_at;not null" json:"deleted_at"`                                // 删除时间
 	JsDepartmentId sql.NullString  `json:"js_department_id" gorm:"js_department_id" ` // 建设部门ID
-	Status         int    `json:"status" gorm:"status"`                                      // 状态1已建、2拟建、3在建
+	Status         int    `json:"status" gorm:"status"`                                      // 建设状态1已建、2拟建、3在建
 }
 
 func (m *InfoSystem) UniqueKey() string {

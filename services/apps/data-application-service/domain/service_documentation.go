@@ -195,7 +195,7 @@ class HTTPClient:
         """
         try:
             # 构建请求头
-    headers = {
+            headers = {
                 'Authorization': f"Bearer {access_token}",
                 'Content-Type': 'application/json'
             }
@@ -210,7 +210,7 @@ class HTTPClient:
                 response = self.session.get(api_url, headers=headers, params={})
             elif method.upper() == "POST":
                 response = self.session.post(api_url, headers=headers, json=data)
-    else:
+            else:
                 raise Exception(f"不支持的HTTP方法: {method}")
             
             # 检查响应状态
@@ -238,7 +238,7 @@ def main():
         print(f"发生错误: {str(e)}")
 
 if __name__ == "__main__":
-main()`
+    main()`
 
 	// Java模板
 	javaTemplate = `import java.io.*;
@@ -901,7 +901,7 @@ func (u *ServiceDomain) ServiceGetExampleCode(ctx context.Context, serviceId str
 		return nil, err
 	}
 
-	// 判断是否为xx数据局项目
+	// 判断是否为长沙数据局项目
 	cssjj, err := u.IsCSSJJ(ctx)
 	if err != nil {
 		return nil, err
@@ -1062,7 +1062,7 @@ func generateJavaExample(data TemplateData, cssjj bool) string {
 
 // ExportAPIDoc 生成接口文档 PDF（增强错误处理）
 func (d *ServiceDomain) ExportAPIDoc(ctx context.Context, req *dto.ExportAPIDocReq) (*dto.ExportAPIDocResp, error) {
-	// 判断是否为xx数据局项目
+	// 判断是否为长沙数据局项目
 	cssjj, err := d.IsCSSJJ(ctx)
 	if err != nil {
 		return nil, err

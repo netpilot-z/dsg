@@ -641,7 +641,7 @@ func (d *catalogRepo) GetCatalogList(ctx context.Context, req *domain.GetDataCat
 			keyword = strings.Replace(keyword, "_", "\\_", -1)
 		}
 		keyword = "%" + keyword + "%"
-		db.Where("title like ? or code like ? ", keyword, keyword)
+		db.Where("t_data_catalog.title like ? or t_data_catalog.code like ? ", keyword, keyword)
 	}
 	//if req.ResourceType != nil {
 	//	db.Where("type =?", *req.ResourceType)
@@ -659,10 +659,10 @@ func (d *catalogRepo) GetCatalogList(ctx context.Context, req *domain.GetDataCat
 	}
 
 	if req.UpdatedAtStart != 0 {
-		db.Where("UNIX_TIMESTAMP(updated_at)*1000 >= ?", req.UpdatedAtStart)
+		db.Where("UNIX_TIMESTAMP(t_data_catalog.updated_at)*1000 >= ?", req.UpdatedAtStart)
 	}
 	if req.UpdatedAtEnd != 0 {
-		db.Where("UNIX_TIMESTAMP(updated_at)*1000 <= ?", req.UpdatedAtEnd)
+		db.Where("UNIX_TIMESTAMP(t_data_catalog.updated_at)*1000 <= ?", req.UpdatedAtEnd)
 	}
 	if len(req.MountType) != 0 {
 		var condition string
@@ -674,6 +674,17 @@ func (d *catalogRepo) GetCatalogList(ctx context.Context, req *domain.GetDataCat
 	}
 	if req.SharedType != 0 {
 		db.Where("shared_type = ?", req.SharedType)
+	}
+	if req.UpdateCycle != nil {
+		if *req.UpdateCycle == 0 {
+			// 未分类：值为 0 或 NULL
+			db.Where("update_cycle = 0 or update_cycle is null")
+		} else {
+			db.Where("update_cycle = ?", *req.UpdateCycle)
+		}
+	}
+	if req.OpenType != nil {
+		db.Where("open_type = ?", *req.OpenType)
 	}
 	if req.ColumnUnshared == true {
 		db.Where("column_unshared = 1")
@@ -703,7 +714,12 @@ func (d *catalogRepo) GetCatalogList(ctx context.Context, req *domain.GetDataCat
 	if *req.Sort == "name" {
 		db.Order(fmt.Sprintf(" title %s", *req.Direction))
 	} else {
-		db.Order(fmt.Sprintf("%s %s", *req.Sort, *req.Direction))
+		// 需要为 updated_at 添加表前缀，避免与 JOIN 的数据理解表字段冲突
+		sortField := *req.Sort
+		if sortField == "updated_at" {
+			sortField = "t_data_catalog." + sortField
+		}
+		db.Order(fmt.Sprintf("%s %s", sortField, *req.Direction))
 	}
 	db = db.Select("t_data_catalog.id", "t_data_catalog.*")
 	catalogs, err = gormx.RawScan[*model.TDataCatalog](db)

@@ -14,8 +14,8 @@ const TableNameCategoryNodeExt = "category_node_ext"
 // CategoryNode mapped from table <category_node>
 type CategoryNode struct {
 	ID             uint64                `gorm:"column:id;primaryKey" json:"id"`                                            // 唯一id，雪花算法
-	CategoryNodeID string                `gorm:"column:category_node_id;not null;default:uuid()" json:"category_node_id"`   // 类目树节点ID
-	CategoryID     string                `gorm:"column:category_id;not null;default:uuid()" json:"category_id"`             // 类目ID
+	CategoryNodeID string                `gorm:"column:category_node_id;not null" json:"category_node_id"`                  // 类目树节点ID
+	CategoryID     string                `gorm:"column:category_id;not null" json:"category_id"`                            // 类目ID
 	ParentID       string                `gorm:"column:parent_id;not null" json:"parent_id"`                                // 类目树父节点id
 	Name           string                `gorm:"column:name;not null" json:"name"`                                          // 类目树节点名称
 	Owner          string                `gorm:"column:owner" json:"owner"`                                                 // 类目树节点所有者

@@ -9,9 +9,9 @@ USE af_data_catalog;
 
 CREATE TABLE IF NOT EXISTS `category_node_ext` (
     `id` bigint(20) NOT NULL COMMENT '唯一id，雪花算法',
-    `category_node_id` char(36) NOT NULL DEFAULT UUID() COMMENT '类目树节点ID',
-    `category_id` char(36) NOT NULL DEFAULT UUID() COMMENT '所属类目ID',
-    `parent_id` char(36) NOT NULL DEFAULT UUID() COMMENT '父类别节点id，为0表示没有父id',
+    `category_node_id` char(36) NOT NULL COMMENT '类目树节点ID',
+    `category_id` char(36) NOT NULL  COMMENT '所属类目ID',
+    `parent_id` char(36) NOT NULL  COMMENT '父类别节点id，为0表示没有父id',
     `name` varchar(128) NOT NULL COMMENT '类目节点名称',
     `owner` varchar(128) NOT NULL DEFAULT '' COMMENT '类目节点所有者的名称',
     `owner_uid` varchar(36) DEFAULT NULL COMMENT '类目节点所有者的ID',

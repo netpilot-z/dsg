@@ -2,11 +2,12 @@ package dto
 
 import (
 	"encoding/json"
+	"strings"
+	"time"
+
 	"github.com/kweaver-ai/dsg/services/apps/auth-service/common/util"
 	"github.com/kweaver-ai/idrm-go-common/rest/authorization"
 	"github.com/samber/lo"
-	"strings"
-	"time"
 
 	"github.com/kweaver-ai/dsg/services/apps/auth-service/common/util/sets"
 	audit_v1 "github.com/kweaver-ai/idrm-go-common/api/audit/v1"
@@ -346,8 +347,9 @@ func NewAllowMenuResourceEnforceEffect() *MenuResourceEnforceEffect {
 }
 
 type MenuResourceActionsArg struct {
-	UserID     string `json:"user_id" form:"user_id" binding:"omitempty,uuid"`    // 用户ID
-	ResourceID string `json:"resource_id" form:"resource_id" binding:"omitempty"` //菜单的key
+	UserID       string `json:"user_id" form:"user_id" binding:"omitempty,uuid"`        // 用户ID
+	ResourceID   string `json:"resource_id" form:"resource_id" binding:"omitempty"`     //菜单的key
+	ResourceType string `json:"resource_type" form:"resource_type" binding:"omitempty"` //菜单的类型，数据语义治理，智能找数，智能问数
 }
 
 type MenuResourceActionsResp struct {

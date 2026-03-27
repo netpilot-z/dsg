@@ -331,7 +331,7 @@ func (a *auth) MenuResourceActions(ctx context.Context, req *dto.MenuResourceAct
 		Resources: []authorization.ResourceObject{
 			{
 				ID:   req.ResourceID,
-				Type: authorization.RESOURCE_TYPE_MENUS,
+				Type: req.ResourceType,
 			},
 		},
 	}

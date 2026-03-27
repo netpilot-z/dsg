@@ -9,13 +9,13 @@ import (
 )
 
 var obligationTypeReq = &authorization.ObligationTypeReq{
-	Name: "iDRM数据义务",
+	Name: "语义治理义务",
 	Schema: authorization.Schema{
 		Type: "object",
 		Properties: authorization.SchemaProperties{
 			Scope: authorization.ScopeSchema{
 				Type:        "string",
-				Description: "iDRM菜单调用的接口的数据范围的义务类型",
+				Description: "语义治理调用的接口的数据范围的义务类型",
 				Title:       "接口数据范围",
 				Enum: []string{
 					middleware.SCOPE_DEPARTMENT,
@@ -48,6 +48,17 @@ var obligationTypeReq = &authorization.ObligationTypeReq{
 					},
 				},
 			},
+			{
+				ID: authorization.RESOURCE_SMART_DATA_FIND,
+				ApplicableOperations: authorization.ApplicableOperations{
+					Unlimited: false,
+					Operations: []any{
+						*lo.ToPtr(map[string]any{
+							"id": auth_service.ActionRead.String,
+						}),
+					},
+				},
+			},
 		},
 	},
 	Description: "string",
@@ -65,7 +76,37 @@ var policyConfigReq = []*authorization.CreatePolicyReq{
 		Resource: authorization.ResourceObject{
 			ID:   "*",
 			Type: authorization.RESOURCE_TYPE_MENUS,
-			Name: "iDRM菜单",
+			Name: "语义治理",
+		},
+		Operation: authorization.AuthOperation{
+			Allow: []*authorization.OperationObject{
+				{
+					ID:          auth_service.ActionRead.String,
+					Name:        "展示",
+					Description: "展示资源实例",
+					Obligations: []authorization.ObligationItem{
+						{
+							TypeId: authorization.OBLIGATION_TYPE_IDRM_DATA,
+							Value: map[string]any{
+								interception.PermissionScope: middleware.SCOPE_ALL,
+							},
+						},
+					},
+				},
+			},
+			Deny: []*authorization.OperationObject{},
+		},
+		ExpiresAt: "1970-01-01T08:00:00+08:00",
+	},
+	{
+		Accessor: authorization.Accessor{
+			ID:   "00000000-0000-0000-0000-000000000000",
+			Type: "department",
+		},
+		Resource: authorization.ResourceObject{
+			ID:   "*",
+			Type: authorization.RESOURCE_SMART_DATA_FIND,
+			Name: "智能找数",
 		},
 		Operation: authorization.AuthOperation{
 			Allow: []*authorization.OperationObject{

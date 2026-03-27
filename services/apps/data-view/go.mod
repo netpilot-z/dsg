@@ -19,8 +19,8 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/jung-kurt/gofpdf v1.16.2
 	github.com/kweaver-ai/TelemetrySDK-Go/exporter/v2 v2.10.2
-	github.com/kweaver-ai/idrm-go-common v0.1.4-0.20260119010937-2456e402a095
-	github.com/kweaver-ai/idrm-go-frame v0.1.3
+	github.com/kweaver-ai/idrm-go-common v0.1.4-0.20260327084443-e5490d7d9995
+	github.com/kweaver-ai/idrm-go-frame v0.1.4-0.20260227065704-e2e78cd5f96e
 	github.com/samber/lo v1.52.0
 	github.com/schollz/progressbar/v3 v3.14.5
 	github.com/shopspring/decimal v1.3.1

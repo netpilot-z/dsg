@@ -59,8 +59,16 @@ type FormViewRepo interface {
 	GetViewByKey(ctx context.Context, key string) (formView *model.FormView, err error)
 	GetFormViewIDByOwnerID(ctx context.Context, OwnerId string) (formViewID []string, err error)
 	GetDatabaseTableCount(ctx context.Context, departmentId string) (total int64, err error)
-	GetAllFormView(ctx context.Context) (formView []*model.FormView, err error)
+	GetFormViewSyncList(ctx context.Context, offset, limit int, datasourceId string) ([]*FormViewSyncItem, error)
 	GetList(ctx context.Context, departmentId, ownerIds, keyword string) (formViews []*model.FormView, err error)
+}
+
+type FormViewSyncItem struct {
+	ID                 string `gorm:"column:id"`
+	MdlID              string `gorm:"column:mdl_id"`
+	DatasourceID       string `gorm:"column:datasource_id"`
+	TechnicalName      string `gorm:"column:technical_name"`
+	UniformCatalogCode string `gorm:"column:uniform_catalog_code"`
 }
 
 type UpdateTransactionArgs struct {

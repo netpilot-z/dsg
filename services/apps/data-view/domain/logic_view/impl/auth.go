@@ -2,14 +2,13 @@ package impl
 
 import (
 	"context"
-	"sort"
-	"strings"
-
 	"github.com/google/uuid"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/auth_service"
 	"github.com/kweaver-ai/idrm-go-common/interception"
 	"github.com/kweaver-ai/idrm-go-common/util/sets"
 	"github.com/samber/lo"
+	"sort"
+	"strings"
 )
 
 func (l *logicViewUseCase) GetUserAuthedViews(ctx context.Context) ([]string, error) {

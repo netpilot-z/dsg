@@ -7,18 +7,25 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strconv"
 	"time"
 
-	jsoniter "github.com/json-iterator/go"
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
+	"github.com/kweaver-ai/idrm-go-common/interception"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/mdl_data_model"
 	my_errorcode "github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
 	my_config "github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/config"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
-	"github.com/kweaver-ai/idrm-go-common/interception"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 	af_trace "github.com/kweaver-ai/idrm-go-frame/core/telemetry/trace"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/rest"
+	jsoniter "github.com/json-iterator/go"
 	"go.uber.org/zap"
+)
+
+const (
+	// getDataViewsPageSize 单次拉取视图列表条数
+	getDataViewsPageSize = 1000
 )
 
 type MdlDataModel struct {
@@ -35,9 +42,36 @@ func NewMdlDataModel(conf *my_config.Bootstrap, httpClient *http.Client) mdl_dat
 	}
 }
 
-func (m *MdlDataModel) GetDataViews(ctx context.Context) (*mdl_data_model.GetDataViewsResp, error) {
+// GetDataViews 按页获取 mdl-data-model 视图列表，可按 data_source_id 过滤
+func (m *MdlDataModel) GetDataViews(ctx context.Context, updateTimeStart int64, dataSourceId string, offset, limit int) (*mdl_data_model.GetDataViewsResp, error) {
 	drivenMsg := "DrivenMdlDataModel GetDataViews "
-	urlStr := fmt.Sprintf("%s/api/mdl-data-model/in/v1/data-views?type=atomic&limit=-1", m.baseURL)
+	base := fmt.Sprintf("%s/api/mdl-data-model/in/v1/data-views", m.baseURL)
+	if m.HttpClient == nil {
+		log.WithContext(ctx).Error(drivenMsg + "http client is nil")
+		return nil, errorcode.Detail(my_errorcode.MdlGetViewsError, "http client is nil")
+	}
+	if limit <= 0 || limit > getDataViewsPageSize {
+		limit = getDataViewsPageSize
+	}
+
+	u, err := url.Parse(base)
+	if err != nil {
+		log.WithContext(ctx).Error(drivenMsg+"url.Parse error", zap.Error(err))
+		return nil, errorcode.Detail(my_errorcode.MdlGetViewsError, err.Error())
+	}
+	q := u.Query()
+	q.Set("type", "atomic")
+	q.Set("limit", strconv.Itoa(limit))
+	q.Set("offset", strconv.Itoa(offset))
+	//if updateTimeStart > 0 {
+	//	q.Set("update_time_start", strconv.FormatInt(updateTimeStart, 10))
+	//}
+	if dataSourceId != "" {
+		q.Set("data_source_id", dataSourceId)
+	}
+	u.RawQuery = q.Encode()
+	urlStr := u.String()
+
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, urlStr, nil)
 	if err != nil {
 		log.WithContext(ctx).Error(drivenMsg+"http.NewRequest error", zap.Error(err))
@@ -45,33 +79,36 @@ func (m *MdlDataModel) GetDataViews(ctx context.Context) (*mdl_data_model.GetDat
 	}
 	request.Header.Add("x-account-id", "266c6a42-6131-4d62-8f39-853e7093701c")
 	request.Header.Add("x-account-type", "user")
+
 	resp, err := m.HttpClient.Do(request)
 	if err != nil {
 		log.WithContext(ctx).Error(drivenMsg+"client.Do error", zap.Error(err))
 		return nil, errorcode.Detail(my_errorcode.MdlGetViewsError, err.Error())
 	}
-
-	defer resp.Body.Close()
+	if resp == nil || resp.Body == nil {
+		log.WithContext(ctx).Error(drivenMsg + "response or response body is nil")
+		return nil, errorcode.Detail(my_errorcode.MdlGetViewsError, "response or response body is nil")
+	}
 	body, err := io.ReadAll(resp.Body)
+	resp.Body.Close()
 	if err != nil {
 		log.WithContext(ctx).Error(drivenMsg+" io.ReadAll error", zap.Error(err))
 		return nil, errorcode.Detail(my_errorcode.MdlGetViewsError, err.Error())
 	}
-	if resp.StatusCode == http.StatusOK {
-		var res mdl_data_model.GetDataViewsResp
-		if err = jsoniter.Unmarshal(body, &res); err != nil {
-			log.WithContext(ctx).Error(drivenMsg+" jsoniter.Unmarshal error", zap.Error(err))
-			return nil, errorcode.Detail(my_errorcode.MdlGetViewsError, err.Error())
-		}
-		return &res, nil
-	} else {
+	if resp.StatusCode != http.StatusOK {
 		if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError || resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
 			return nil, Unmarshal(ctx, body, drivenMsg)
-		} else {
-			log.WithContext(ctx).Error(drivenMsg+"http status error", zap.String("status", resp.Status), zap.String("body", string(body)))
-			return nil, errorcode.Desc(my_errorcode.MdlGetViewsError, resp.StatusCode)
 		}
+		log.WithContext(ctx).Error(drivenMsg+"http status error", zap.String("status", resp.Status), zap.String("body", string(body)))
+		return nil, errorcode.Desc(my_errorcode.MdlGetViewsError, resp.StatusCode)
 	}
+
+	var page mdl_data_model.GetDataViewsResp
+	if err = jsoniter.Unmarshal(body, &page); err != nil {
+		log.WithContext(ctx).Error(drivenMsg+" jsoniter.Unmarshal error", zap.Error(err))
+		return nil, errorcode.Detail(my_errorcode.MdlGetViewsError, err.Error())
+	}
+	return &page, nil
 }
 
 func (m *MdlDataModel) GetDataView(ctx context.Context, viewIds []string) ([]*mdl_data_model.GetDataViewResp, error) {
@@ -85,7 +122,7 @@ func (m *MdlDataModel) GetDataView(ctx context.Context, viewIds []string) ([]*md
 		log.WithContext(ctx).Error(drivenMsg+" jsoniter.Marshal error", zap.Error(err))
 		return nil, err
 	}
-	log.WithContext(ctx).Infof("drivenMsg :%s,urlStr :%s,jsonReq :%s,", drivenMsg, urlStr, jsonReq)
+	log.WithContext(ctx).Infof("%s url=%s, viewIdsLen=%d", drivenMsg, urlStr, len(viewIds))
 	request, err := http.NewRequestWithContext(ctx, http.MethodPost, urlStr, bytes.NewReader(jsonReq))
 	if err != nil {
 		log.WithContext(ctx).Error(drivenMsg+"http.NewRequest error", zap.Error(err))
@@ -95,12 +132,19 @@ func (m *MdlDataModel) GetDataView(ctx context.Context, viewIds []string) ([]*md
 	request.Header.Add("x-account-id", "266c6a42-6131-4d62-8f39-853e7093701c")
 	request.Header.Add("x-account-type", "user")
 	request.Header.Set("Content-Type", "application/json")
+	if m.HttpClient == nil {
+		log.WithContext(ctx).Error(drivenMsg + "http client is nil")
+		return nil, errorcode.Detail(my_errorcode.MdlGetViewsError, "http client is nil")
+	}
 	resp, err := m.HttpClient.Do(request)
 	if err != nil {
 		log.WithContext(ctx).Error(drivenMsg+"client.Do error", zap.Error(err))
 		return nil, errorcode.Detail(my_errorcode.MdlGetViewsError, err.Error())
 	}
-
+	if resp == nil || resp.Body == nil {
+		log.WithContext(ctx).Error(drivenMsg + "response or response body is nil")
+		return nil, errorcode.Detail(my_errorcode.MdlGetViewsError, "response or response body is nil")
+	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

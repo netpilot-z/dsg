@@ -2,6 +2,8 @@ package v1
 
 import (
 	"context"
+	common_middleware "github.com/kweaver-ai/idrm-go-common/middleware"
+	commonUtil "github.com/kweaver-ai/idrm-go-common/util"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,9 +12,6 @@ import (
 	"strings"
 	"time"
 
-	common_middleware "github.com/kweaver-ai/idrm-go-common/middleware"
-	commonUtil "github.com/kweaver-ai/idrm-go-common/util"
-
 	"github.com/google/uuid"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/samber/lo"
@@ -20,6 +19,12 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 
+	api_audit_v1 "github.com/kweaver-ai/idrm-go-common/api/audit/v1"
+	"github.com/kweaver-ai/idrm-go-common/audit"
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
+	"github.com/kweaver-ai/idrm-go-common/interception"
+	"github.com/kweaver-ai/idrm-go-common/middleware"
+	configuration_center_gocommon "github.com/kweaver-ai/idrm-go-common/rest/configuration_center"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/auth_service"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/virtualization_engine"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/constant"
@@ -28,12 +33,6 @@ import (
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/form_view"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	api_audit_v1 "github.com/kweaver-ai/idrm-go-common/api/audit/v1"
-	"github.com/kweaver-ai/idrm-go-common/audit"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
-	"github.com/kweaver-ai/idrm-go-common/interception"
-	"github.com/kweaver-ai/idrm-go-common/middleware"
-	configuration_center_gocommon "github.com/kweaver-ai/idrm-go-common/rest/configuration_center"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 )
 

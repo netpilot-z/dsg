@@ -2,18 +2,17 @@ package impl
 
 import (
 	"context"
-	"errors"
-	"strings"
-
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/explore_rule_config"
 	my_errorcode "github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/explore_task"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/idrm-go-frame/core/enum"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
+	"errors"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
+	"strings"
 )
 
 func NewExploreRuleConfigRepo(db *gorm.DB) explore_rule_config.ExploreRuleConfigRepo {
@@ -180,6 +179,18 @@ func (r *exploreRuleConfigRepo) GetByFieldId(ctx context.Context, fieldId string
 	return exploreRules, err
 }
 
+func (r *exploreRuleConfigRepo) GetByFieldIds(ctx context.Context, fieldIds []string) ([]*model.ExploreRuleConfig, error) {
+	var exploreRules []*model.ExploreRuleConfig
+	if len(fieldIds) == 0 {
+		return exploreRules, nil
+	}
+	err := r.db.WithContext(ctx).
+		Model(&model.ExploreRuleConfig{}).
+		Where("field_id in ? and deleted_at = 0", fieldIds).
+		Find(&exploreRules).Error
+	return exploreRules, err
+}
+
 func (r *exploreRuleConfigRepo) GetRulesByFormViewIds(ctx context.Context, ids []string) ([]*model.ExploreRuleConfig, error) {
 	var exploreRules []*model.ExploreRuleConfig
 	err := r.db.WithContext(ctx).Model(&model.ExploreRuleConfig{}).Where("rule_id is not null and form_view_id in ? and enable = 1 and deleted_at = 0", ids).Find(&exploreRules).Error
@@ -220,4 +231,19 @@ func (r *exploreRuleConfigRepo) GetConfiguredViewsByFormViewIds(ctx context.Cont
 func (r *exploreRuleConfigRepo) GetRulesByFormViewIdAndLevel(ctx context.Context, id string, ruleLevel int32) (exploreRules []*model.ExploreRuleConfig, err error) {
 	err = r.db.WithContext(ctx).Model(&model.ExploreRuleConfig{}).Where("rule_id is not null and form_view_id = ? and rule_level = ? and deleted_at = 0", id, ruleLevel).Find(&exploreRules).Error
 	return exploreRules, err
+}
+
+func (r *exploreRuleConfigRepo) CheckSysRuleNameRepeat(ctx context.Context, name string) (bool, error) {
+	var exploreRule *model.ExploreRuleConfig
+	var err error
+	db := r.db.WithContext(ctx).Model(&model.ExploreRuleConfig{}).Where("template_id is not null and rule_id is null and rule_name = ? and deleted_at = 0", name)
+
+	err = db.Take(&exploreRule).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }

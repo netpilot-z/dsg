@@ -2,23 +2,22 @@ package processor
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"sync"
-
-	"github.com/jinzhu/copier"
+	"github.com/kweaver-ai/idrm-go-common/database_callback/callback"
+	"github.com/kweaver-ai/idrm-go-common/database_callback/data_lineage"
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
+	"github.com/kweaver-ai/idrm-go-common/rest/configuration_center"
 	datasourceRpoo "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/datasource"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/form_view"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/user"
 	scene_analysis "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/scene_analysis"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	"github.com/kweaver-ai/idrm-go-common/database_callback/callback"
-	"github.com/kweaver-ai/idrm-go-common/database_callback/data_lineage"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
-	"github.com/kweaver-ai/idrm-go-common/rest/configuration_center"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
+	"encoding/json"
+	"fmt"
+	"github.com/jinzhu/copier"
 	"github.com/samber/lo"
 	"gorm.io/gorm"
+	"sync"
 )
 
 type FormViewInfoFetcher struct {
@@ -108,7 +107,7 @@ func (f FormViewInfoFetcher) getDepartmentInfo(ctx context.Context, id string) (
 }
 
 func (f FormViewInfoFetcher) getInfoSystem(ctx context.Context, id string) (*data_lineage.InfoSystemInfo, error) {
-	infoSystems, err := f.cc.GetInfoSystemsPrecision(ctx, []string{id}, nil)
+	infoSystems, err := f.cc.GetInfoSystemsPrecision(ctx, []string{id},nil)
 	if err != nil {
 		log.Errorf("query infosystem info %v error %v", id, err.Error())
 		return nil, err

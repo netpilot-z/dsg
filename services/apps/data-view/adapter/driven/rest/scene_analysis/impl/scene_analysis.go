@@ -2,20 +2,19 @@ package impl
 
 import (
 	"context"
-	"fmt"
-	"io"
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-	jsoniter "github.com/json-iterator/go"
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
+	"github.com/kweaver-ai/idrm-go-common/interception"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/scene_analysis"
 	my_errorcode "github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
 	my_config "github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/config"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
-	"github.com/kweaver-ai/idrm-go-common/interception"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/rest"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	jsoniter "github.com/json-iterator/go"
 	"go.uber.org/zap"
+	"io"
+	"net/http"
 )
 
 type SceneAnalysisDriven struct {

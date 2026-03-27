@@ -2,7 +2,6 @@ package logic_view
 
 import (
 	"context"
-
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
 	wf_common "github.com/kweaver-ai/idrm-go-common/workflow/common"
 )

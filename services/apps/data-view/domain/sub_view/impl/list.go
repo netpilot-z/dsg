@@ -2,7 +2,6 @@ package impl
 
 import (
 	"context"
-
 	"github.com/google/uuid"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/sub_view"

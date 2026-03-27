@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"strings"
 
-	virtualization_engine "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/virtualization_engine"
 	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/idrm-go-common/rest/configuration_center"
+	virtualization_engine "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/virtualization_engine"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 
@@ -377,7 +377,7 @@ func (f *dataPrivacyPolicyUseCase) GetDetailByFormViewId(ctx context.Context, re
 	policy, err := f.repo.GetByFormViewId(ctx, id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, nil
+            return nil, nil
 		}
 		return nil, err
 	}

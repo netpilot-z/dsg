@@ -83,6 +83,7 @@ func (f *GradeRuleService) Create(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					true	"token"
+//	@Param			id				path		string					true    "id"
 //	@Param			body			body		grade_rule.UpdateGradeRuleReq	true	"请求参数"
 //	@Success		200				{object}	grade_rule.UpdateGradeRuleResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
@@ -110,7 +111,7 @@ func (f *GradeRuleService) Update(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					true	"token"
-//	@Param			id				query		string					true	"分级规则ID"
+//	@Param			id				path		string					true	"分级规则ID"
 //	@Success		200				{object}	grade_rule.GradeRuleDetailResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
 //	@Router			/grade-rule/{id} [get]
@@ -137,7 +138,7 @@ func (f *GradeRuleService) GetDetailById(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					true	"token"
-//	@Param			id				query		string					true	"分级规则ID"
+//	@Param			id				path		string					true	"分级规则ID"
 //	@Success		200				{object}	grade_rule.DeleteGradeRuleResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
 //	@Router			/grade-rule/{id} [delete]
@@ -164,7 +165,7 @@ func (f *GradeRuleService) Delete(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					true	"token"
-//	@Param			id				query		string					true	"分级规则ID"
+//	@Param			id				path		string					true	"分级规则ID"
 //	@Success		200				{object}	grade_rule.StartGradeRuleResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
 //	@Router			/grade-rule/{id}/start [post]
@@ -191,7 +192,7 @@ func (f *GradeRuleService) Start(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					true	"token"
-//	@Param			id				query		string					true	"分级规则ID"
+//	@Param			id				path		string					true	"分级规则ID"
 //	@Success		200				{object}	grade_rule.StopGradeRuleResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
 //	@Router			/grade-rule/{id}/stop [post]

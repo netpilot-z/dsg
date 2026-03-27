@@ -12,10 +12,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/template_rule"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/explore_rule"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
 
+	"github.com/kweaver-ai/idrm-go-common/interception"
+	"github.com/kweaver-ai/idrm-go-common/middleware"
+	"github.com/kweaver-ai/idrm-go-common/rest/configuration_center"
 	dvcc "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/configuration_center"
 	dataClassifyAttrBlacklistRepo "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/data_classify_attribute_blacklist"
 	datasourceRpoo "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/datasource"
@@ -40,9 +43,6 @@ import (
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/explore_task"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/form_view"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	"github.com/kweaver-ai/idrm-go-common/interception"
-	"github.com/kweaver-ai/idrm-go-common/middleware"
-	"github.com/kweaver-ai/idrm-go-common/rest/configuration_center"
 	"github.com/kweaver-ai/idrm-go-frame/core/enum"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 	af_trace "github.com/kweaver-ai/idrm-go-frame/core/telemetry/trace"
@@ -1994,6 +1994,54 @@ func (e *exploreTaskUseCase) DatasourceExploreTimestamp(ctx context.Context, tas
 		err = e.exploreTimestamp(ctx, blacklistMap, taskId, view, userId, userName, catalogName, schema)
 	}
 	return err
+}
+
+func (e *exploreTaskUseCase) GetWorkOrderExploreProgress(ctx context.Context, req *explore_task.WorkOrderExploreProgressReq) (*explore_task.WorkOrderExploreProgressResp, error) {
+	// 解析工单ID列表
+	workOrderIDs := strings.Split(req.WorkOrderIds, ",")
+
+	exploreTasks, err := e.exploreTaskRepo.GetListByWorkOrderIDs(ctx, workOrderIDs)
+	if err != nil {
+		log.WithContext(ctx).Errorf("get explore tasks for work order ids: %s failed, err: %v", req.WorkOrderIds, err)
+		return nil, errorcode.Detail(my_errorcode.DatabaseError, err.Error())
+	}
+
+	var (
+		idx       int
+		isExisted bool
+	)
+	woIDmap := make(map[string]int)
+	resp := &explore_task.WorkOrderExploreProgressResp{
+		Entries: make([]*explore_task.WorkOrderExploreProgressEntity, 0),
+	}
+	for i := range exploreTasks {
+		if idx, isExisted = woIDmap[exploreTasks[i].WorkOrderID]; !isExisted {
+			resp.Entries = append(resp.Entries,
+				&explore_task.WorkOrderExploreProgressEntity{
+					WorkOrderId:     exploreTasks[i].WorkOrderID,
+					TotalTaskNum:    0,
+					FinishedTaskNum: 0,
+					Entries:         make([]*explore_task.ExploreTaskStatusEntity, 0),
+				},
+			)
+			idx = len(resp.Entries) - 1
+			woIDmap[exploreTasks[i].WorkOrderID] = idx
+		}
+		resp.Entries[idx].TotalTaskNum++
+		if exploreTasks[i].Status == explore_task.TaskStatusFinished.Integer.Int32() ||
+			exploreTasks[i].Status == explore_task.TaskStatusCanceled.Integer.Int32() ||
+			exploreTasks[i].Status == explore_task.TaskStatusFailed.Integer.Int32() {
+			resp.Entries[idx].FinishedTaskNum++
+		}
+		resp.Entries[idx].Entries = append(resp.Entries[idx].Entries,
+			&explore_task.ExploreTaskStatusEntity{
+				DataSourceID: exploreTasks[i].DatasourceID,
+				FormViewID:   exploreTasks[i].FormViewID,
+				Status:       enum.ToString[explore_task.TaskStatus](exploreTasks[i].Status),
+			},
+		)
+	}
+	return resp, err
 }
 
 func (e *exploreTaskUseCase) List(ctx context.Context, req *explore_task.ListExploreTaskReq) (*explore_task.ListExploreTaskResp, error) {

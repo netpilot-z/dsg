@@ -3,10 +3,13 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/form_validator"
+	"github.com/kweaver-ai/dsg/services/apps/data-view/common/models/response"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/explore_rule"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/rest/ginx"
 )
+
+var _ = new(response.BoolResp)
 
 type ExploreRuleService struct {
 	uc explore_rule.ExploreRuleUseCase
@@ -101,7 +104,7 @@ func (f *ExploreRuleService) GetTemplateRule(c *gin.Context) {
 // @Produce		application/json
 // @Param		Authorization	header		string	true	"token"
 // @Param       _     query       explore_rule.TemplateRuleNameRepeatReq true 	"请求参数"
-// @Success		200				bool	      true    "成功响应参数"
+// @Success		200				{object}	response.BoolResp "成功响应参数"
 // @Failure		400				{object}	rest.HttpError			    "失败响应参数"
 // @Router		/template-rule/repeat [get]
 func (f *ExploreRuleService) TemplateRuleNameRepeat(c *gin.Context) {
@@ -154,7 +157,7 @@ func (f *ExploreRuleService) UpdateTemplateRule(c *gin.Context) {
 // @Produce		json
 // @Param		Authorization 	header 		string	true	"token"
 // @Param		_     			body      	explore_rule.UpdateTemplateRuleStatusReqBody true 	"请求参数"
-// @Success		200				bool	      true    "成功响应参数"
+// @Success		200				{object}	response.BoolResp "成功响应参数"
 // @Failure		400				{object}	rest.HttpError					"失败响应参数"
 // @Router		/template-rule/status [put]
 func (f *ExploreRuleService) UpdateTemplateRuleStatus(c *gin.Context) {
@@ -308,7 +311,7 @@ func (f *ExploreRuleService) GetRule(c *gin.Context) {
 // @Produce		application/json
 // @Param		Authorization	header		string	true	"token"
 // @Param       _     query       explore_rule.NameRepeatReq true 	"请求参数"
-// @Success		200				bool	      true    "成功响应参数"
+// @Success		200				{object}	response.BoolResp "成功响应参数"
 // @Failure		400				{object}	rest.HttpError			    "失败响应参数"
 // @Router		/explore-rule/repeat [get]
 func (f *ExploreRuleService) NameRepeat(c *gin.Context) {
@@ -361,7 +364,7 @@ func (f *ExploreRuleService) UpdateRule(c *gin.Context) {
 // @Produce		json
 // @Param		Authorization 	header 		string	true	"token"
 // @Param		_     			body      	explore_rule.UpdateRuleStatusReqBody true 	"请求参数"
-// @Success		200				bool	      true    "成功响应参数"
+// @Success		200				{object}	response.BoolResp "成功响应参数"
 // @Failure		400				{object}	rest.HttpError					"失败响应参数"
 // @Router		/explore-rule/status [put]
 func (f *ExploreRuleService) UpdateRuleStatus(c *gin.Context) {

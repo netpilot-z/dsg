@@ -2,14 +2,13 @@ package data_lineage
 
 import (
 	"fmt"
-	"sort"
-	"strings"
-
 	"github.com/google/uuid"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/sailor_service"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 	"github.com/samber/lo"
+	"sort"
+	"strings"
 )
 
 /////////////////// GetBase ///////////////////

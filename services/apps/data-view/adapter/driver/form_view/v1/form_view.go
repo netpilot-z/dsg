@@ -10,17 +10,20 @@ import (
 
 	"github.com/xuri/excelize/v2"
 
-	"github.com/gin-gonic/gin"
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/constant"
 	my_errorcode "github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/form_validator"
+	"github.com/kweaver-ai/dsg/services/apps/data-view/common/models/response"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/form_view"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/idrm-go-frame/core/enum"
 	"github.com/kweaver-ai/idrm-go-frame/core/errorx/agerrors"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/rest/ginx"
+	"github.com/gin-gonic/gin"
 )
+
+var _ = new(response.BoolResp)
 
 type FormViewService struct {
 	uc form_view.FormViewUseCase
@@ -154,6 +157,131 @@ func (f *FormViewService) PageList(c *gin.Context) {
 	ginx.ResOKJson(c, resp)
 }
 
+// PublishPageList 获取已发布逻辑视图列表
+//
+//	@Description	获取已发布逻辑视图列表,包括元数据视图、自定义视图、逻辑实体视图
+//	@Tags			逻辑视图
+//	@Summary		获取已发布逻辑视图列表
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Param			Authorization	header		string					        true	"token"
+//	@Param			query			query		form_view.PageListFormViewReqQueryParamBase	true	"查询参数"
+//	@Success		200				{object}	form_view.PageListFormViewResp	    "成功响应参数"
+//	@Failure		400				{object}	rest.HttpError			        "失败响应参数"
+//	@Router			/form-view/published [get]
+func (f *FormViewService) PublishPageList(c *gin.Context) {
+	req := form_validator.Valid[form_view.PageListFormViewReq](c)
+	if req == nil {
+		return
+	}
+	if (req.CreatedAtEnd != 0 && req.CreatedAtStart >= req.CreatedAtEnd) || (req.UpdatedAtEnd != 0 && req.UpdatedAtStart >= req.UpdatedAtEnd) {
+		ginx.ResBadRequestJson(c, errorcode.Desc(my_errorcode.StartTimeMustBigEndTime))
+		return
+	}
+	//if (len(req.DatasourceType) != 0 && req.DatasourceId != "") || (len(req.DatasourceIds) != 0 && req.DatasourceId != "") {
+	if (req.DatasourceType != "" && req.DatasourceId != "") ||
+		(len(req.DatasourceIds) != 0 && req.DatasourceId != "") {
+		ginx.ResBadRequestJson(c, errorcode.Desc(my_errorcode.DataSourceIDAndDataSourceTypeExclude))
+		return
+	}
+	if req.InfoSystemID != nil {
+		if *req.InfoSystemID != "" && (req.DatasourceId != "" && req.DataSourceSourceType != "") {
+			ginx.ResBadRequestJson(c, errorcode.Desc(my_errorcode.InfoSystemIDAndDataSourceIDAndDataSourceTypeExclude))
+			return
+		}
+	}
+
+	if req.DataSourceSourceType != "" && req.DatasourceId != "" {
+		ginx.ResBadRequestJson(c, errorcode.Desc(my_errorcode.DataSourceSourceTypeAndDataSourceIDExclude))
+		return
+	}
+	// kylin 要求不能传数组改为逗号分割
+	if req.DatasourceIdString != "" {
+		split := strings.Split(req.DatasourceIdString, ",")
+		if len(split) > 0 {
+			regexPattern := regexp.MustCompile(constant.UUIDRegexString)
+			req.DatasourceIds = make([]string, len(split))
+			for i, s := range split {
+				if !regexPattern.MatchString(s) {
+					ginx.ResBadRequestJson(c, errorcode.WithDetail(errorcode.PublicInvalidParameter, map[string]any{"datasource_ids": "must be uuid"}))
+					return
+				}
+				req.DatasourceIds[i] = s
+			}
+		}
+	}
+	if req.FormViewIdsString != "" {
+		split := strings.Split(req.FormViewIdsString, ",")
+		if len(split) > 0 {
+			regexPattern := regexp.MustCompile(constant.UUIDRegexString)
+			req.FormViewIds = make([]string, len(split))
+			for i, s := range split {
+				if !regexPattern.MatchString(s) {
+					ginx.ResBadRequestJson(c, errorcode.WithDetail(errorcode.PublicInvalidParameter, map[string]any{"form_view_id": "must be uuid"}))
+					return
+				}
+				req.FormViewIds[i] = s
+			}
+		}
+	}
+	if req.OwnerIDString != "" {
+		split := strings.Split(req.OwnerIDString, ",")
+		if len(split) > 0 {
+			regexPattern := regexp.MustCompile(constant.UUIDRegexString)
+			req.OwnerIDs = make([]string, len(split))
+			for i, s := range split {
+				if s == constant.UnallocatedId {
+					req.NotHaveOwner = true
+					continue
+				}
+				if !regexPattern.MatchString(s) {
+					ginx.ResBadRequestJson(c, errorcode.WithDetail(errorcode.PublicInvalidParameter, map[string]any{"owner_id": "must be uuid"}))
+					return
+				}
+				req.OwnerIDs[i] = s
+			}
+		}
+	}
+
+	if req.StatusListString != "" {
+		split := strings.Split(req.StatusListString, ",")
+		if len(split) > 0 {
+			req.StatusList = make([]int32, len(split))
+			for i, s := range split {
+				statusInt := enum.ToInteger[constant.FormViewScanStatus](s).Int32()
+				if statusInt == 0 {
+					ginx.ResBadRequestJson(c, errorcode.WithDetail(errorcode.PublicInvalidParameter, map[string]any{"status_list": "must in uniformity new modify delete"}))
+					return
+				}
+				req.StatusList[i] = statusInt
+			}
+		}
+	}
+
+	if req.OnlineStatusListString != "" {
+		split := strings.Split(req.OnlineStatusListString, ",")
+		if len(split) > 0 {
+			req.OnlineStatusList = make([]string, len(split))
+			for i, s := range split {
+				if _, exist := constant.LineStatusMap[s]; !exist {
+					ginx.ResBadRequestJson(c, errorcode.WithDetail(errorcode.PublicInvalidParameter, map[string]any{"online_status_list": "must in notline online offline up-auditing down-auditing up-reject down-reject"}))
+					return
+				}
+				req.OnlineStatusList[i] = s
+			}
+		}
+	}
+	req.PublishStatus = constant.FormViewReleased.String
+
+	resp, err := util.TraceA1R2(c, req, f.uc.PageList)
+	if err != nil {
+		ginx.ResBadRequestJson(c, err)
+		return
+	}
+
+	ginx.ResOKJson(c, resp)
+}
+
 // Scan 扫描数据源
 //
 //	@Description	扫描数据源
@@ -189,7 +317,7 @@ func (f *FormViewService) Scan(c *gin.Context) {
 // @Produce     json
 // @Param       Authorization header string true "token"
 // @Param       _           body  form_view.NameRepeatParam true "请求参数"
-// @Success     200         bool  true "成功响应参数"
+// @Success     200         {object}	response.BoolResp "成功响应参数"
 // @Failure     400         {object} rest.HttpError "失败响应参数"
 // @Router      /form-view/repeat [get]
 func (f *FormViewService) NameRepeat(c *gin.Context) {
@@ -226,7 +354,7 @@ func (f *FormViewService) NameRepeat(c *gin.Context) {
 // @Param       _           body  form_view.UpdateReq true "请求参数"
 // @Success     200         {object} form_view.UpdateRes "成功响应参数"
 // @Failure     400         {object} rest.HttpError "失败响应参数"
-// @Router      /form-view/:id [put]
+// @Router      /form-view/{id} [put]
 func (f *FormViewService) UpdateFormView(c *gin.Context) {
 	req := form_validator.Valid[form_view.UpdateReq](c)
 	if req == nil {
@@ -317,11 +445,11 @@ func (f *FormViewService) ExcelBatchPublish(c *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Param       Authorization header string true "token"
-// @Param       id          path  string true "视图ID"
+// @Param       id          path  string true "视图ID" Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 // @Param       keyword     query string false "名称"
 // @Success     200         {object} form_view.UpdateRes "成功响应参数"
 // @Failure     400         {object} rest.HttpError      "失败响应参数"
-// @Router      /form-view/:id [delete]
+// @Router      /form-view/{id} [delete]
 func (f *FormViewService) DeleteFormView(c *gin.Context) {
 	req := form_validator.Valid[form_view.DeleteReq](c)
 	if req == nil {
@@ -337,19 +465,6 @@ func (f *FormViewService) DeleteFormView(c *gin.Context) {
 	ginx.ResOKJson(c, true)
 }
 
-// GetFields 查看逻辑视图字段
-//
-// @Description 查看逻辑视图字段
-// @Tags        open逻辑视图
-// @Summary     查看逻辑视图字段
-// @Accept      json
-// @Produce     json
-// @Param       Authorization header string true "token"
-// @Param       id          path  string true "视图ID"
-// @Param       keyword     query string false "请求参数"
-// @Success     200         {object} form_view.GetFieldsRes "成功响应参数"
-// @Failure     400         {object} rest.HttpError       "失败响应参数"
-// @Router      /form-view/:id [get]
 func (f *FormViewService) GetFields(c *gin.Context) {
 	req := form_validator.Valid[form_view.GetFieldsReq](c)
 	if req == nil {
@@ -438,18 +553,6 @@ func (f *FormViewService) GetRelatedFieldInfo(c *gin.Context) {
 	ginx.ResOKJson(c, resp)
 }
 
-// GetFormViewDetails 获取逻辑视图基本信息
-//
-// @Description 获取逻辑视图基本信息
-// @Tags        open逻辑视图
-// @Summary     获取逻辑视图基本信息
-// @Accept      json
-// @Produce     json
-// @Param       Authorization header string true "token"
-// @Param       id          path  string true "视图ID"
-// @Success     200         {object} form_view.GetFormViewDetailsRes "成功响应参数"
-// @Failure     400         {object} rest.HttpError                "失败响应参数"
-// @Router      /:id/details [GET]
 func (f *FormViewService) GetFormViewDetails(c *gin.Context) {
 	req := form_validator.Valid[form_view.GetFormViewDetailsReq](c)
 	if req == nil {
@@ -473,11 +576,11 @@ func (f *FormViewService) GetFormViewDetails(c *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Param       Authorization header string true "token"
-// @Param       id          path  string true "视图ID"
+// @Param       id          path  string true "视图ID" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 // @Param       _           body  form_view.UpdateFormViewDetailsReq true "请求参数"
 // @Success     200         {object} form_view.UpdateFormViewDetailsRes "成功响应参数"
 // @Failure     400         {object} rest.HttpError                 "失败响应参数"
-// @Router      /:id/details [PUT]
+// @Router      /form-view/{id}/details [PUT]
 func (f *FormViewService) UpdateFormViewDetails(c *gin.Context) {
 	req := form_validator.Valid[form_view.UpdateFormViewDetailsReq](c)
 	if req == nil {
@@ -531,7 +634,7 @@ func (f *FormViewService) GetUsersFormViews(c *gin.Context) {
 // @Param       query         query  form_view.GetUsersFormViewsReq true "请求参数"
 // @Success     200           {object} form_view.GetUsersFormViewsPageRes "成功响应参数"
 // @Failure     400           {object} rest.HttpError                 "失败响应参数"
-// @Router      /user/form-view [get]
+// @Router      /user/form-all-view [get]
 func (f *FormViewService) GetUsersAllFormViews(c *gin.Context) {
 	req := form_validator.Valid[form_view.GetUsersFormViewsReq](c)
 	if req == nil {
@@ -555,10 +658,11 @@ func (f *FormViewService) GetUsersAllFormViews(c *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Param       Authorization header string true "token"
-// @Param       query         query  form_view.GetUsersFormViewsFieldsReq true "请求参数"
+// @Param       id            path   string true "视图ID" Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
+// @Param       query         query  form_view.GetUsersFormViewsFieldsReq false "请求参数"
 // @Success     200           {object} form_view.GetFieldsRes "成功响应参数"
 // @Failure     400           {object} rest.HttpError       "失败响应参数"
-// @Router      /user/form-view/:id [get]
+// @Router      /user/form-view/{id} [get]
 func (f *FormViewService) GetUsersFormViewsFields(c *gin.Context) {
 	req := form_validator.Valid[form_view.GetUsersFormViewsFieldsReq](c)
 	if req == nil {
@@ -636,11 +740,10 @@ func (f *FormViewService) GetMultiViewsFields(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string					            true	"token"
-//	@Param          id path string true "视图ID"
 //	@Param			body			body		form_view.FormViewFilterReq	true	"请求参数"
 //	@Success		200		{object}	form_view.FormViewFilterResp "成功响应参数"
 //	@Failure		400		{object}	rest.HttpError			            "失败响应参数"
-//	@Router			/api/data-view/v1/form-view/filter [POST]
+//	@Router			/form-view/filter [POST]
 func (f *FormViewService) FormViewFilter(c *gin.Context) {
 	req := form_validator.Valid[form_view.FormViewFilterReq](c)
 	if req == nil {
@@ -841,7 +944,7 @@ func (f *FormViewService) GetFieldExploreReport(c *gin.Context) {
 // @Param       id path string true "视图ID"
 // @Success		200				{object}	form_view.GetFilterRuleResp          "成功响应参数"
 // @Failure		400				{object}	rest.HttpError			            "失败响应参数"
-// @Router		/form-view/:id/filter-rule [get]
+// @Router		/form-view/{id}/filter-rule [get]
 func (f *FormViewService) GetFilterRule(c *gin.Context) {
 	req := form_validator.Valid[form_view.GetFilterRuleReq](c)
 	if req == nil {
@@ -868,7 +971,7 @@ func (f *FormViewService) GetFilterRule(c *gin.Context) {
 // @Param		_				body		form_view.UpdateFilterRuleReqParamBody	true	"请求参数"
 // @Success		200				{object}	form_view.UpdateFilterRuleResp          "成功响应参数"
 // @Failure		400				{object}	rest.HttpError			            "失败响应参数"
-// @Router		/form-view/:id/filter-rule [put]
+// @Router		/form-view/{id}/filter-rule [put]
 func (f *FormViewService) UpdateFilterRule(c *gin.Context) {
 	req := form_validator.Valid[form_view.UpdateFilterRuleReq](c)
 	if req == nil {
@@ -894,7 +997,7 @@ func (f *FormViewService) UpdateFilterRule(c *gin.Context) {
 // @Param       id path string true "视图ID"
 // @Success		200				{object}	form_view.DeleteFilterRuleResp          "成功响应参数"
 // @Failure		400				{object}	rest.HttpError			            "失败响应参数"
-// @Router		/form-view/:id/filter-rule [delete]
+// @Router		/form-view/{id}/filter-rule [delete]
 func (f *FormViewService) DeleteFilterRule(c *gin.Context) {
 	req := form_validator.Valid[form_view.DeleteFilterRuleReq](c)
 	if req == nil {
@@ -921,7 +1024,7 @@ func (f *FormViewService) DeleteFilterRule(c *gin.Context) {
 // @Param		_				body		form_view.ExecFilterRuleReqParamBody	true	"请求参数"
 // @Success		200				{object}	form_view.ExecFilterRuleResp          "成功响应参数"
 // @Failure		400				{object}	rest.HttpError			            "失败响应参数"
-// @Router		/form-view/:id/filter-rule/test [post]
+// @Router		/form-view/{id}/filter-rule/test [post]
 func (f *FormViewService) ExecFilterRule(c *gin.Context) {
 	req := form_validator.Valid[form_view.ExecFilterRuleReq](c)
 	if req == nil {
@@ -948,7 +1051,7 @@ func (f *FormViewService) ExecFilterRule(c *gin.Context) {
 // @Param		_				body		form_view.CreateCompletionReqParamBody	true	"请求参数"
 // @Success		201				{object}	form_view.CreateCompletionResp          "成功响应参数"
 // @Failure		400				{object}	rest.HttpError			            "失败响应参数"
-// @Router		/form-view/:id/completion/task [post]
+// @Router		/form-view/{id}/completion/task [post]
 func (f *FormViewService) CreateCompletion(c *gin.Context) {
 	req := form_validator.Valid[form_view.CreateCompletionReq](c)
 	if req == nil {
@@ -974,7 +1077,7 @@ func (f *FormViewService) CreateCompletion(c *gin.Context) {
 // @Success		202				{object}	form_view.GetCompletionResp          "成功响应参数"
 // @Failure		400				{object}	rest.HttpError			            "失败响应参数"
 // @Failure		404				{object}	rest.HttpError			            "失败响应参数"
-// @Router		/form-view/:id/completion [get]
+// @Router		/form-view/{id}/completion [get]
 func (f *FormViewService) GetCompletion(c *gin.Context) {
 	req := form_validator.Valid[form_view.GetCompletionReq](c)
 	if req == nil {
@@ -1008,7 +1111,7 @@ func (f *FormViewService) GetCompletion(c *gin.Context) {
 // @Param		_				body		form_view.UpdateCompletionReqParamBody	true	"请求参数"
 // @Success		200				{object}	form_view.UpdateCompletionResp          "成功响应参数"
 // @Failure		400				{object}	rest.HttpError			            "失败响应参数"
-// @Router		/form-view/:id/completion [put]
+// @Router		/form-view/{id}/completion [put]
 func (f *FormViewService) UpdateCompletion(c *gin.Context) {
 	req := form_validator.Valid[form_view.UpdateCompletionReq](c)
 	if req == nil {
@@ -1033,7 +1136,7 @@ func (f *FormViewService) UpdateCompletion(c *gin.Context) {
 // @Param       id          path  string true "视图ID"
 // @Success     200         {object} form_view.GetBusinessUpdateTimeResp "成功响应参数"
 // @Failure     400         {object} rest.HttpError "失败响应参数"
-// @Router      /form-view/:id/business-update-time [get]
+// @Router      /form-view/{id}/business-update-time [get]
 func (f *FormViewService) GetBusinessUpdateTime(c *gin.Context) {
 	req := form_validator.Valid[form_view.GetBusinessUpdateTimeReq](c)
 	if req == nil {
@@ -1107,9 +1210,8 @@ func (f *FormViewService) DataTypeMapping(c *gin.Context) {
 // @Accept		json
 // @Produce		json
 // @Param		Authorization	header		string true	"token"
-// @Param       id path string true "视图ID"
 // @Param		_				body		form_view.CreateExcelViewReq	true	"请求参数"
-// @Success		200	{object}	bool	"成功响应参数"
+// @Success		200	{object}	response.BoolResp "成功响应参数"
 // @Failure		400	 {object}	rest.HttpError "失败响应参数"
 // @Router		/form-view/excel-view [post]
 func (f *FormViewService) CreateExcelView(c *gin.Context) {
@@ -1135,7 +1237,7 @@ func (f *FormViewService) CreateExcelView(c *gin.Context) {
 // @Produce		json
 // @Param		Authorization	header		string true	"token"
 // @Param		_				body		form_view.UpdateExcelViewReq	true	"请求参数"
-// @Success		200	{object}	bool	"成功响应参数"
+// @Success		200	{object}	response.BoolResp "成功响应参数"
 // @Failure		400	 {object}	rest.HttpError "失败响应参数"
 // @Router		/form-view/excel-view [put]
 func (f *FormViewService) UpdateExcelView(c *gin.Context) {

@@ -16,4 +16,5 @@ type TemplateRuleRepo interface {
 	GetList(ctx context.Context, req *explore_rule.GetTemplateRuleListReq) ([]*model.TemplateRule, error)
 	GetInternalRules(ctx context.Context) ([]*model.TemplateRule, error)
 	NameRepeat(ctx context.Context, ruleId, name string) (bool, error)
+	CheckSysRuleNameRepeat(ctx context.Context, name string) (bool, error)
 }

@@ -23,4 +23,6 @@ type ExploreTaskRepo interface {
 	GetConfigsByDatasourceId(ctx context.Context, datasourceId string) ([]*model.ExploreTask, error)
 	GetList(ctx context.Context, req *domain.ListExploreTaskReq, userId string) (total int64, tasks []*domain.TaskInfo, err error)
 	GetDetail(ctx context.Context, taskId string) (exploreTask *domain.TaskInfo, err error)
+
+	GetListByWorkOrderIDs(ctx context.Context, workOrderIDs []string) ([]*model.ExploreTask, error)
 }

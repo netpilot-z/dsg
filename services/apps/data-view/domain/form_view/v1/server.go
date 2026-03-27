@@ -3,14 +3,13 @@ package v1
 import (
 	"context"
 	"fmt"
-	"sync"
-	"time"
-
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/tmp_completion"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/form_view"
 	conf "github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/config"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/trace"
+	"sync"
+	"time"
 )
 
 type Server struct {

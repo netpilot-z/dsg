@@ -2,11 +2,7 @@ package v1
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"strings"
-	"time"
-
+	code "github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/configuration_center"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/datasource"
 	repo "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/form_view"
@@ -18,10 +14,13 @@ import (
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/cache"
 	my_config "github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/config"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	code "github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
+	"encoding/json"
+	"fmt"
 	"github.com/samber/lo"
 	"go.uber.org/zap"
+	"strings"
+	"time"
 )
 
 const (

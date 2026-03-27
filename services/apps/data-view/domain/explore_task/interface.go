@@ -24,6 +24,33 @@ type ExploreTaskUseCase interface {
 	DeleteRule(ctx context.Context, req *DeleteRuleReq) (*RuleIDResp, error)
 	GetInternalRule(ctx context.Context) ([]*GetInternalRuleResp, error)
 	CreateWorkOrderTask(ctx context.Context, req *CreateWorkOrderTaskReq) (*CreateWorkOrderTaskResp, error)
+
+	GetWorkOrderExploreProgress(ctx context.Context, req *WorkOrderExploreProgressReq) (*WorkOrderExploreProgressResp, error)
+}
+
+type WorkOrderExploreProgressReq struct {
+	ListExploreProgressReq `param_type:"query"`
+}
+
+type ListExploreProgressReq struct {
+	WorkOrderIds string `form:"work_order_ids" binding:"TrimSpace,required"` // 工单IDs，多个工单ID用逗号分隔
+}
+
+type ExploreTaskStatusEntity struct {
+	DataSourceID string `json:"data_source_id"` // 数据源ID
+	FormViewID   string `json:"form_view_id"`   // 视图ID
+	Status       string `json:"status"`         // 任务状态，1：queuing（等待中）；2：running（进行中）；3：finished（已完成）；4：canceled（已取消）；5：failed（异常）；
+}
+
+type WorkOrderExploreProgressEntity struct {
+	WorkOrderId     string                     `json:"work_order_id"`     // 工单ID
+	TotalTaskNum    int64                      `json:"total_task_num"`    // 总任务数
+	FinishedTaskNum int64                      `json:"finished_task_num"` // 已完成任务数
+	Entries         []*ExploreTaskStatusEntity `json:"entries"`           // 视图探查状态信息
+}
+
+type WorkOrderExploreProgressResp struct {
+	Entries []*WorkOrderExploreProgressEntity `json:"entries"` // 工单探查任务进度
 }
 
 //region CreateTask
@@ -117,14 +144,14 @@ type ListExploreTaskReq struct {
 }
 
 type ListExploreTask struct {
-	Offset      *int   `json:"offset" form:"offset" binding:"omitempty"`                                             // 页码，默认1
-	Limit       *int   `json:"limit" form:"limit" binding:"omitempty"`                                               // 每页大小，默认10
-	Direction   string `json:"direction" form:"direction,default=desc" binding:"oneof=asc desc" default:"desc"`      // 排序方向，枚举：asc：正序；desc：倒序。默认倒序
-	Sort        string `json:"sort" form:"sort,default=created_at" binding:"oneof=created_at"  default:"created_at"` // 排序类型，枚举：created_at：按创建时间排序
-	Keyword     string `json:"keyword" form:"keyword" binding:"KeywordTrimSpace,omitempty,min=1,max=255"`            // 关键字查询，字符无限制
-	Status      string `json:"status" form:"status" binding:"omitempty,VerifyMultiTaskStatus"`                       // 任务状态，枚举 "queuing" "running" "finished" "canceled" "failed"可以多选，逗号分隔
-	Type        string `json:"type" form:"type" binding:"omitempty"`                                                 // 探查类型，"explore_data","explore_timestamp","explore_classification"
-	WorkOrderId string `json:"work_order_id" form:"work_order_id" binding:"omitempty,uuid"`                          // 工单id
+	Offset      *int   `json:"offset" form:"offset" binding:"omitempty"`                                                         // 页码，默认1
+	Limit       *int   `json:"limit" form:"limit" binding:"omitempty"`                                                           // 每页大小，默认10
+	Direction   string `json:"direction" form:"direction,default=desc" binding:"oneof=asc desc" default:"desc"`                  // 排序方向，枚举：asc：正序；desc：倒序。默认倒序
+	Sort        string `json:"sort" form:"sort,default=created_at" binding:"oneof=created_at finished_at"  default:"created_at"` // 排序类型，枚举：created_at：按创建时间排序
+	Keyword     string `json:"keyword" form:"keyword" binding:"KeywordTrimSpace,omitempty,min=1,max=255"`                        // 关键字查询，字符无限制
+	Status      string `json:"status" form:"status" binding:"omitempty,VerifyMultiTaskStatus"`                                   // 任务状态，枚举 "queuing" "running" "finished" "canceled" "failed"可以多选，逗号分隔
+	Type        string `json:"type" form:"type" binding:"omitempty"`                                                             // 探查类型，"explore_data","explore_timestamp","explore_classification"
+	WorkOrderId string `json:"work_order_id" form:"work_order_id" binding:"omitempty,uuid"`                                      // 工单id
 }
 
 type ListExploreTaskResp struct {

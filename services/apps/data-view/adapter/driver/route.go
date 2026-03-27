@@ -1,11 +1,13 @@
 package driver
 
 import (
-	"github.com/gin-gonic/gin"
 	data_set "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/data_set/v1"
 	explore_rule "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/explore_rule/v1"
 	graph_model "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/graph_model/v1"
+	"github.com/gin-gonic/gin"
 
+	"github.com/kweaver-ai/idrm-go-common/middleware"
+	common_form_view "github.com/kweaver-ai/idrm-go-common/rest/data_view"
 	classification_rule "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/classification_rule/v1"
 	data_lineage "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/data_lineage/v1"
 	data_privacy_policy "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/data_privacy_policy/v1"
@@ -16,8 +18,6 @@ import (
 	logic_view "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/logic_view/v1"
 	recognition_algorithm "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/recognition_algorithm/v1"
 	sub_view "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/sub_view/v1"
-	"github.com/kweaver-ai/idrm-go-common/middleware"
-	common_form_view "github.com/kweaver-ai/idrm-go-common/rest/data_view"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/trace"
 )
 
@@ -86,7 +86,8 @@ func (r *Router) Register(engine *gin.Engine) {
 		//formViewRouter with access_control.FormView
 		{
 			formViewRouter := dataViewRouter.Group("/form-view")
-			formViewRouter.GET("", r.FormViewDomainApi.PageList) // 获取逻辑视图列表
+			formViewRouter.GET("", r.FormViewDomainApi.PageList)                  // 获取逻辑视图列表
+			formViewRouter.GET("/published", r.FormViewDomainApi.PublishPageList) // 获取发布的逻辑视图列表
 			//formViewRouter.POST("/scan", r.middleware.AuditLogger(), r.FormViewDomainApi.Scan)                        // 扫描数据源
 			formViewRouter.GET("/repeat", r.FormViewDomainApi.NameRepeat)                                             // 逻辑视图重名校验
 			formViewRouter.PUT("/:id", r.middleware.AuditLogger(), r.FormViewDomainApi.UpdateFormView)                // 编辑元数据视图
@@ -416,6 +417,8 @@ func (r *Router) RegisterInternal(engine *gin.Engine) {
 	internalRouter.POST("/form-view/sync", r.FormViewDomainApi.Sync)                                                                              // 同步统一视图服务视图信息
 	internalRouter.GET("/explore-task", r.ExploreTaskDomainApi.GetList)                                                                           // 探查任务列表
 	internalRouter.POST("/department/explore-reports", r.FormViewDomainApi.CreateExploreReports)                                                  // 定时更新探查报告表
+
+	internalRouter.GET("/explore-task/progress", r.ExploreTaskDomainApi.GetWorkOrderExploreProgress) // 获取工单探查进度                                                                          // 探查任务列表
 }
 
 // RegisterMigration 版本升级接口，发布后不可修改

@@ -2,17 +2,16 @@ package processor
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"strings"
-
-	local_util "github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
-	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
 	"github.com/kweaver-ai/idrm-go-common/database_callback/callback"
 	"github.com/kweaver-ai/idrm-go-common/database_callback/data_lineage"
 	"github.com/kweaver-ai/idrm-go-common/util"
+	local_util "github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
+	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
+	"encoding/json"
+	"fmt"
 	"github.com/samber/lo"
+	"strings"
 )
 
 type FieldStruct struct {

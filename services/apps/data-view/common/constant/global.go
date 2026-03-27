@@ -2,10 +2,9 @@ package constant
 
 import (
 	"database/sql/driver"
+	data_subject_common "github.com/kweaver-ai/idrm-go-common/rest/data_subject"
 	"strconv"
 	"time"
-
-	data_subject_common "github.com/kweaver-ai/idrm-go-common/rest/data_subject"
 
 	"github.com/google/uuid"
 

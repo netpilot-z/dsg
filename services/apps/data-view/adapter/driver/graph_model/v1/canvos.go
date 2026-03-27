@@ -45,10 +45,10 @@ func (s *Service) SaveCanvas(c *gin.Context) {
 //	@Accept			plain/text
 //	@Produce		application/json
 //	@Param			Authorization	header		string					true	"token"
-//	@Param			_			    path		request.IDReq	true	"请求参数"
+//	@Param			id			    path		string					true	"画布ID" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Success		200				{object}	domain.CanvasContent	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
-//	@Router			/graph-model/canvas/:id [GET]
+//	@Router			/graph-model/canvas/{id} [GET]
 func (s *Service) GetCanvas(c *gin.Context) {
 	req := form_validator.Valid[request.IDPathReq](c)
 	if req == nil {

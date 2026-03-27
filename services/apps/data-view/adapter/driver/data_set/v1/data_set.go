@@ -1,14 +1,13 @@
 package v1
 
 import (
-	"strconv"
-	"time"
-
-	"github.com/gin-gonic/gin"
+	"github.com/kweaver-ai/idrm-go-common/util"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/form_validator"
 	domainDataSet "github.com/kweaver-ai/dsg/services/apps/data-view/domain/data_set"
-	"github.com/kweaver-ai/idrm-go-common/util"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/rest/ginx"
+	"github.com/gin-gonic/gin"
+	"strconv"
+	"time"
 )
 
 type DataSetService struct {
@@ -54,6 +53,7 @@ func (s *DataSetService) Create(c *gin.Context) {
 // @Accept      application/json
 // @Produce     application/json
 // @Param       Authorization header string true "token"
+// @Param       id             path   string true "数据集ID"
 // @Param       body          body   domainDataSet.UpdateDataSetReq true "请求参数"
 // @Success     200           {object} domainDataSet.UpdateDataSetResp "成功响应参数"
 // @Failure     400           {object} rest.HttpError "失败响应参数"
@@ -135,15 +135,8 @@ func (s *DataSetService) PageList(c *gin.Context) {
 // @Accept      application/json
 // @Produce     application/json
 // @Param       Authorization header string true "token"
-// @Param       id             path   string true "数据集ID"
-// @Param       offset         query  int    false "页码，默认1"
-// @Param       limit          query  int    false "每页大小，默认10"
-// @Param       sort           query  string false "排序字段，默认updated_at"
-// @Param       direction      query  string false "排序方向，默认desc"
-// @Param       subject        query  string false "主题域ID"
-// @Param       Department           query  string false "部门ID"
-// @Param       UpdatedAt           query  string false "更新日期"
-// @Param       query           query domainDataSet.ViewPageListDataSetParam true "请求参数"
+// @Param       id             path   string true "数据集ID" Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
+// @Param       query           query domainDataSet.ViewPageListDataSetReq false "查询参数"
 // @Success     200           {object} domainDataSet.ViewPageListDataSetParam "成功响应参数"
 // @Failure     400           {object} rest.HttpError "失败响应参数"
 // @Router      /data-set/{id} [get]

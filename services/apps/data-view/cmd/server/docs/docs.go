@@ -15,157 +15,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/:id/details": {
-            "get": {
-                "description": "获取逻辑视图基本信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "open逻辑视图"
-                ],
-                "summary": "获取逻辑视图基本信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "视图ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetFormViewDetailsRes"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "编辑逻辑视图基本信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图"
-                ],
-                "summary": "编辑逻辑视图基本信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "视图ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateFormViewDetailsReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateFormViewDetailsRes"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/data-view/v1/form-view/filter": {
-            "post": {
-                "description": "传入视图ID列表，返回未被删除的, 资产全景过滤浏览器本地用户点击记录",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图"
-                ],
-                "summary": "逻辑实体过滤器",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "视图ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FormViewFilterReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FormViewFilterResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
         "/api/data-view/v1/subject-domain/logical-view": {
             "get": {
                 "description": "查询逻辑视图的关联的逻辑实体的路径信息",
@@ -193,7 +42,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.QueryLogicalEntityByViewReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.QueryLogicalEntityByViewReq"
                         }
                     }
                 ],
@@ -201,258 +50,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.QueryLogicalEntityByViewResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/internal/data-view/v1/form-view/explore-report/batch": {
-            "post": {
-                "description": "批量获取多个逻辑视图的质量得分报告（内部接口）",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "数据探查"
-                ],
-                "summary": "批量获取质量得分报告",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.BatchGetExploreReportReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.BatchGetExploreReportResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/internal/data-view/v1/sub-view-ids": {
-            "get": {
-                "description": "获取子视图的 ID 列表",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "子视图"
-                ],
-                "responses": {}
-            }
-        },
-        "/api/internal/data-view/v1/sub-views/:id/logic_view_id": {
-            "put": {
-                "description": "获取子视图（行列规则）的 ID 列表",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "子视图"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "子视图 ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {}
-            }
-        },
-        "/api/v1/data-view/v1/sub-views": {
-            "get": {
-                "description": "获取子视图列表",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "子视图"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "逻辑视图 ID",
-                        "name": "logic_view_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 1,
-                        "description": "页码",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "default": 10,
-                        "description": "每页数量",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "子视图列表",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_sub_view.SubView"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "创建子视图",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "子视图"
-                ],
-                "parameters": [
-                    {
-                        "description": "请求参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_sub_view.SubView"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_sub_view.SubView"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/data-view/v1/sub-views/:id": {
-            "delete": {
-                "description": "删除指定子视图",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "子视图"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "子视图 ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/data-view/v1/sub-views:id": {
-            "put": {
-                "description": "更新指定子视图",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "子视图"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "子视图 ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_sub_view.SubView"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_sub_view.SubView"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.QueryLogicalEntityByViewResp"
                         }
                     },
                     "400": {
@@ -491,7 +89,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.BatchPublishBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.BatchPublishBody"
                         }
                     }
                 ],
@@ -499,7 +97,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.BatchPublishRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.BatchPublishRes"
                         }
                     },
                     "400": {
@@ -591,7 +189,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.PageListClassificationRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.PageListClassificationRuleResp"
                         }
                     },
                     "400": {
@@ -628,7 +226,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.CreateClassificationRuleReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.CreateClassificationRuleReq"
                         }
                     }
                 ],
@@ -636,7 +234,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.CreateClassificationRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.CreateClassificationRuleResp"
                         }
                     },
                     "400": {
@@ -675,7 +273,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.ExportClassificationRuleReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.ExportClassificationRuleReq"
                         }
                     }
                 ],
@@ -683,7 +281,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.ExportClassificationRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.ExportClassificationRuleResp"
                         }
                     },
                     "400": {
@@ -721,7 +319,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.StatisticsClassificationRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.StatisticsClassificationRuleResp"
                         }
                     },
                     "400": {
@@ -758,7 +356,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "分类规则ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -766,7 +364,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.ClassificationRuleDetailResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.ClassificationRuleDetailResp"
                         }
                     },
                     "400": {
@@ -798,12 +396,19 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "分类规则ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.UpdateClassificationRuleReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.UpdateClassificationRuleReq"
                         }
                     }
                 ],
@@ -811,7 +416,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.UpdateClassificationRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.UpdateClassificationRuleResp"
                         }
                     },
                     "400": {
@@ -844,9 +449,10 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "uuid",
                         "description": "分类规则ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -854,7 +460,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.DeleteClassificationRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.DeleteClassificationRuleResp"
                         }
                     },
                     "400": {
@@ -891,7 +497,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "分类规则ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -899,7 +505,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.StartClassificationRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.StartClassificationRuleResp"
                         }
                     },
                     "400": {
@@ -936,7 +542,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "分类规则ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -944,50 +550,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.StopClassificationRuleResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/data-lineage/parser": {
-            "get": {
-                "description": "解析得到视图血缘数据",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "open数据服务超市"
-                ],
-                "summary": "解析得到视图血缘数据",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "name": "table_name",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_lineage.ListLineageResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.StopClassificationRuleResp"
                         }
                     },
                     "400": {
@@ -1011,7 +574,7 @@ const docTemplate = `{
                 "tags": [
                     "open数据服务超市"
                 ],
-                "summary": "前台下的-分页获取指定节点上一度血缘关系",
+                "summary": "前台下的分页获取指定节点上一度血缘关系",
                 "parameters": [
                     {
                         "type": "string",
@@ -1049,7 +612,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_lineage.ListLineageResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_lineage.ListLineageResp"
                         }
                     },
                     "400": {
@@ -1073,7 +636,7 @@ const docTemplate = `{
                 "tags": [
                     "open数据服务超市"
                 ],
-                "summary": "前台下的-获取base节点及相关信息",
+                "summary": "前台下的获取base节点及相关信息",
                 "parameters": [
                     {
                         "type": "string",
@@ -1094,7 +657,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_lineage.GetBaseResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_lineage.GetBaseResp"
                         }
                     },
                     "400": {
@@ -1212,7 +775,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.PageListDataPrivacyPolicyResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.PageListDataPrivacyPolicyResp"
                         }
                     },
                     "400": {
@@ -1249,7 +812,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.CreateDataPrivacyPolicyReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.CreateDataPrivacyPolicyReq"
                         }
                     }
                 ],
@@ -1257,7 +820,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.CreateDataPrivacyPolicyResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.CreateDataPrivacyPolicyResp"
                         }
                     },
                     "400": {
@@ -1294,7 +857,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "数据隐私策略ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -1302,7 +865,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.DataPrivacyPolicyDetailResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.DataPrivacyPolicyDetailResp"
                         }
                     },
                     "400": {
@@ -1334,12 +897,19 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "数据隐私策略ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.UpdateDataPrivacyPolicyReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.UpdateDataPrivacyPolicyReq"
                         }
                     }
                 ],
@@ -1347,7 +917,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.UpdateDataPrivacyPolicyResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.UpdateDataPrivacyPolicyResp"
                         }
                     },
                     "400": {
@@ -1382,7 +952,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "数据隐私策略ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -1390,7 +960,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.DeleteDataPrivacyPolicyResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.DeleteDataPrivacyPolicyResp"
                         }
                     },
                     "400": {
@@ -1427,7 +997,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "表单视图ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -1435,7 +1005,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.DataPrivacyPolicyDetailResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.DataPrivacyPolicyDetailResp"
                         }
                     },
                     "400": {
@@ -1469,61 +1039,18 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "csv",
-                        "description": "脱敏规则id数组",
-                        "name": "desensitization_rule_ids",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "csv",
-                        "description": "字段id数组",
-                        "name": "form_view_field_ids",
-                        "in": "query"
-                    },
-                    {
                         "type": "string",
-                        "description": "表单视图id",
-                        "name": "form_view_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "全部数据还是仅脱敏数据",
-                        "name": "is_all",
-                        "in": "query"
-                    },
-                    {
-                        "maximum": 100,
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 20,
-                        "description": "每页大小，默认10",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 1,
-                        "description": "页码，默认1",
-                        "name": "offset",
-                        "in": "query"
+                        "description": "数据隐私策略ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.GetDesensitizationDataByIdResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.GetDesensitizationDataByIdResp"
                         }
                     },
                     "400": {
@@ -1557,12 +1084,19 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "数据隐私策略ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.GetFormViewIdsByFormViewIdsReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.GetFormViewIdsByFormViewIdsReq"
                         }
                     }
                 ],
@@ -1570,7 +1104,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.GetFormViewIdsByFormViewIdsResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.GetFormViewIdsByFormViewIdsResp"
                         }
                     },
                     "400": {
@@ -1605,9 +1139,9 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "表单视图ID",
-                        "name": "form_view_id",
-                        "in": "query",
+                        "description": "数据隐私策略ID",
+                        "name": "id",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -1615,7 +1149,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.IsExistByFormViewIdResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.IsExistByFormViewIdResp"
                         }
                     },
                     "400": {
@@ -1699,7 +1233,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.PageListDataSetResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.PageListDataSetResp"
                         }
                     },
                     "400": {
@@ -1736,7 +1270,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.CreateDataSetReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.CreateDataSetReq"
                         }
                     }
                 ],
@@ -1744,7 +1278,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.CreateDataSetResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.CreateDataSetResp"
                         }
                     },
                     "400": {
@@ -1783,7 +1317,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.AddDataSetReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.AddDataSetReq"
                         }
                     }
                 ],
@@ -1791,7 +1325,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.UpdateDataSetWithFormViewResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.UpdateDataSetWithFormViewResp"
                         }
                     },
                     "400": {
@@ -1836,7 +1370,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.CreateDataSetByNameResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.CreateDataSetByNameResp"
                         }
                     },
                     "400": {
@@ -1875,7 +1409,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.RemoveFormViewsFromDataSetReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.RemoveFormViewsFromDataSetReq"
                         }
                     }
                 ],
@@ -1883,7 +1417,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.RemoveFormViewsFromDataSetResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.RemoveFormViewsFromDataSetResp"
                         }
                     },
                     "400": {
@@ -1959,52 +1493,11 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "uuid",
                         "description": "数据集ID",
                         "name": "id",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码，默认1",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页大小，默认10",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "排序字段，默认updated_at",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "排序方向，默认desc",
-                        "name": "direction",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "主题域ID",
-                        "name": "subject",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "部门ID",
-                        "name": "Department",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "更新日期",
-                        "name": "UpdatedAt",
-                        "in": "query"
                     },
                     {
                         "maxLength": 255,
@@ -2024,14 +1517,6 @@ const docTemplate = `{
                         "description": "排序方向，枚举：asc：正序；desc：正序。默认正序",
                         "name": "direction",
                         "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
-                        "description": "数据集的id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
                     },
                     {
                         "maxLength": 255,
@@ -2090,7 +1575,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.ViewPageListDataSetParam"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.ViewPageListDataSetParam"
                         }
                     },
                     "400": {
@@ -2122,12 +1607,19 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "数据集ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.UpdateDataSetReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.UpdateDataSetReq"
                         }
                     }
                 ],
@@ -2135,7 +1627,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.UpdateDataSetResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.UpdateDataSetResp"
                         }
                     },
                     "400": {
@@ -2178,7 +1670,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.DeleteDataSetResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.DeleteDataSetResp"
                         }
                     },
                     "400": {
@@ -2222,7 +1714,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetWhiteListPolicyListRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetWhiteListPolicyListRes"
                         }
                     },
                     "400": {
@@ -2317,7 +1809,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetExploreReportsResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetExploreReportsResp"
                         }
                     },
                     "400": {
@@ -2362,7 +1854,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExportExploreReportsReqBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExportExploreReportsReqBody"
                         }
                     }
                 ],
@@ -2413,7 +1905,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetOverviewResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetOverviewResp"
                         }
                     },
                     "400": {
@@ -2457,7 +1949,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetDesensitizationRuleDetailsRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetDesensitizationRuleDetailsRes"
                         }
                     },
                     "400": {
@@ -2499,7 +1991,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetDesensitizationRuleInternalAlgorithmRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetDesensitizationRuleInternalAlgorithmRes"
                         }
                     },
                     "400": {
@@ -2596,7 +2088,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.PageResultNew-DownloadTaskEntry"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.PageResultNew-DownloadTaskEntry"
                         }
                     },
                     "400": {
@@ -2633,7 +2125,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DownloadTaskCreateParams"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DownloadTaskCreateParams"
                         }
                     }
                 ],
@@ -2641,7 +2133,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DownloadTaskIDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DownloadTaskIDResp"
                         }
                     },
                     "400": {
@@ -2686,7 +2178,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DownloadTaskIDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DownloadTaskIDResp"
                         }
                     },
                     "400": {
@@ -2731,7 +2223,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DownloadLinkResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DownloadLinkResp"
                         }
                     },
                     "400": {
@@ -2782,7 +2274,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExcelBatchPublishRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExcelBatchPublishRes"
                         }
                     },
                     "400": {
@@ -2834,7 +2326,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreConfigResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreConfigResp"
                         }
                     },
                     "400": {
@@ -2872,7 +2364,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.GetInternalRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.GetInternalRuleResp"
                         }
                     },
                     "400": {
@@ -2885,100 +2377,6 @@ const docTemplate = `{
             }
         },
         "/explore-config/rule": {
-            "get": {
-                "description": "获取规则列表",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "探查规则"
-                ],
-                "summary": "获取规则列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "completeness",
-                            "standardization",
-                            "uniqueness",
-                            "accuracy",
-                            "consistency",
-                            "timeliness",
-                            "data_statistics"
-                        ],
-                        "type": "string",
-                        "description": "维度，完整性 规范性 唯一性 准确性 一致性 及时性 数据统计",
-                        "name": "dimension",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "启用状态，true为已启用，false为未启用，不传该参数则不跟据启用状态筛选",
-                        "name": "enable",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "962b749f-32e6-41d1-bd79-33ce839a8598",
-                        "description": "字段id",
-                        "name": "field_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "13b8a80b-1914-4896-99d8-51559dba26c4",
-                        "description": "视图id",
-                        "name": "form_view_id",
-                        "in": "query"
-                    },
-                    {
-                        "maxLength": 128,
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "关键字查询",
-                        "name": "keyword",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "metadata",
-                            "field",
-                            "row",
-                            "view"
-                        ],
-                        "type": "string",
-                        "description": "规则级别，元数据级 字段级 行级 视图级",
-                        "name": "rule_level",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.GetRuleResp"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            },
             "post": {
                 "description": "新建规则",
                 "consumes": [
@@ -3005,7 +2403,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.CreateRuleReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.CreateRuleReq"
                         }
                     }
                 ],
@@ -3013,7 +2411,7 @@ const docTemplate = `{
                     "201": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.RuleIDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.RuleIDResp"
                         }
                     },
                     "400": {
@@ -3074,7 +2472,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "type": "bool"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.BoolResp"
                         }
                     },
                     "400": {
@@ -3113,7 +2511,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.UpdateRuleStatusReqBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.UpdateRuleStatusReqBody"
                         }
                     }
                 ],
@@ -3121,7 +2519,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "type": "bool"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.BoolResp"
                         }
                     },
                     "400": {
@@ -3166,7 +2564,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.GetRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.GetRuleResp"
                         }
                     },
                     "400": {
@@ -3210,7 +2608,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.UpdateRuleReqBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.UpdateRuleReqBody"
                         }
                     }
                 ],
@@ -3218,7 +2616,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.RuleIDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.RuleIDResp"
                         }
                     },
                     "400": {
@@ -3261,7 +2659,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.RuleIDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.RuleIDResp"
                         }
                     },
                     "400": {
@@ -3356,7 +2754,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.GetRuleResp"
+                                "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.GetRuleResp"
                             }
                         }
                     },
@@ -3394,7 +2792,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.CreateRuleReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.CreateRuleReq"
                         }
                     }
                 ],
@@ -3402,7 +2800,7 @@ const docTemplate = `{
                     "201": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.RuleIDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.RuleIDResp"
                         }
                     },
                     "400": {
@@ -3441,7 +2839,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.BatchCreateRuleReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.BatchCreateRuleReq"
                         }
                     }
                 ],
@@ -3449,7 +2847,7 @@ const docTemplate = `{
                     "201": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.BatchCreateRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.BatchCreateRuleResp"
                         }
                     },
                     "400": {
@@ -3515,7 +2913,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "type": "bool"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.BoolResp"
                         }
                     },
                     "400": {
@@ -3554,7 +2952,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.UpdateRuleStatusReqBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.UpdateRuleStatusReqBody"
                         }
                     }
                 ],
@@ -3562,7 +2960,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "type": "bool"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.BoolResp"
                         }
                     },
                     "400": {
@@ -3607,7 +3005,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.GetRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.GetRuleResp"
                         }
                     },
                     "400": {
@@ -3651,7 +3049,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.UpdateRuleReqBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.UpdateRuleReqBody"
                         }
                     }
                 ],
@@ -3659,7 +3057,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.RuleIDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.RuleIDResp"
                         }
                     },
                     "400": {
@@ -3702,7 +3100,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.RuleIDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.RuleIDResp"
                         }
                     },
                     "400": {
@@ -3768,7 +3166,8 @@ const docTemplate = `{
                     },
                     {
                         "enum": [
-                            "created_at"
+                            "created_at",
+                            "finished_at"
                         ],
                         "type": "string",
                         "default": "created_at",
@@ -3799,7 +3198,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.ListExploreTaskResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.ListExploreTaskResp"
                         }
                     },
                     "400": {
@@ -3836,7 +3235,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.CreateTaskReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.CreateTaskReq"
                         }
                     }
                 ],
@@ -3844,7 +3243,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.CreateTaskResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.CreateTaskResp"
                         }
                     },
                     "400": {
@@ -3889,7 +3288,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.ExploreTaskResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.ExploreTaskResp"
                         }
                     },
                     "400": {
@@ -3933,7 +3332,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.CancelTaskReqBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.CancelTaskReqBody"
                         }
                     }
                 ],
@@ -3941,7 +3340,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.ExploreTaskIDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.ExploreTaskIDResp"
                         }
                     },
                     "400": {
@@ -3984,7 +3383,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.ExploreTaskIDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.ExploreTaskIDResp"
                         }
                     },
                     "400": {
@@ -4009,6 +3408,1223 @@ const docTemplate = `{
                     "逻辑视图"
                 ],
                 "summary": "获取逻辑视图列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "unpublished",
+                            "auditing",
+                            "pass",
+                            "reject"
+                        ],
+                        "type": "string",
+                        "name": "audit_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
+                        "description": "业务模型ID，查询当前也的视图ID有没有在这个数据模型生成数据原始表用",
+                        "name": "business_model_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建结束时间",
+                        "name": "created_at_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建开始时间",
+                        "name": "created_at_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "数据源id",
+                        "name": "datasource_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "数据源id 逗号分隔",
+                        "name": "datasource_ids",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "records",
+                            "analytical",
+                            "sandbox"
+                        ],
+                        "type": "string",
+                        "description": "数据源来源类型 records 信息系统 analytical 数据仓库   sandbox 数据沙箱",
+                        "name": "datasource_source_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "数据源类型",
+                        "name": "datasource_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
+                        "description": "部门id",
+                        "name": "department_id",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "default": "desc",
+                        "description": "排序方向，枚举：asc：正序；desc：倒序。默认倒序",
+                        "name": "direction",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "draft",
+                            "latest"
+                        ],
+                        "type": "string",
+                        "description": "编辑状态",
+                        "name": "edit_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "excel_file_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "TaskId             string   ` + "`" + `json:\"task_id\" form:\"task_id\" binding:\"omitempty,uuid\" example:\"4a5a3cc0-0169-4d62-9442-62214d8fcd8d\"` + "`" + `        // 任务id，uuid（36）\nProjectID          string   ` + "`" + `json:\"project_id\"  form:\"project_id\" binding:\"omitempty,uuid\" example:\"88f78432-ee4e-43df-804c-4ccc4ff17f15\"` + "`" + ` //项目id",
+                        "name": "form_view_ids",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "include_dwh_data_auth_request",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "包含子部门",
+                        "name": "include_sub_department",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "包含子主题",
+                        "name": "include_sub_subject",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "信息系统id",
+                        "name": "info_system_id",
+                        "in": "query"
+                    },
+                    {
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "关键字查询，字符无限制",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 2000,
+                        "minimum": 0,
+                        "type": "integer",
+                        "default": 100,
+                        "description": "每页大小，默认10",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "统一视图id",
+                        "name": "mdl_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "本部门资源",
+                        "name": "my_department_resource",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码，默认1",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "notline",
+                            "online",
+                            "offline",
+                            "up-auditing",
+                            "down-auditing",
+                            "up-reject",
+                            "down-reject"
+                        ],
+                        "type": "string",
+                        "description": "上线状态",
+                        "name": "online_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "上线状态 多选逗号分割",
+                        "name": "online_status_list",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "开放属性筛选",
+                        "name": "open_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "数据Owner id 逗号分隔",
+                        "name": "owner_id",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "publish",
+                            "unpublished"
+                        ],
+                        "type": "string",
+                        "description": "发布状态",
+                        "name": "publish_status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否查询授权的",
+                        "name": "query_authed",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "共享属性筛选",
+                        "name": "shared_type",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "created_at",
+                            "updated_at",
+                            "name",
+                            "type",
+                            "publish_at",
+                            "online_time",
+                            "technical_name"
+                        ],
+                        "type": "string",
+                        "default": "created_at",
+                        "description": "排序类型，枚举：created_at：按创建时间排序；updated_at：按更新时间排序；name：按名称排序。默认按创建时间排序",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "uniformity",
+                            "new",
+                            "modify",
+                            "delete"
+                        ],
+                        "type": "string",
+                        "description": "状态",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "状态  多选逗号分割",
+                        "name": "status_list",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
+                        "description": "主题id",
+                        "name": "subject_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "表技术名称",
+                        "name": "technical_name",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "datasource",
+                            "custom",
+                            "logic_entity"
+                        ],
+                        "type": "string",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "更新周期筛选",
+                        "name": "update_cycle",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "编辑结束时间",
+                        "name": "updated_at_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "编辑开始时间",
+                        "name": "updated_at_start",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.PageListFormViewResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/basic": {
+            "get": {
+                "description": "根据ID批量查询逻辑视图基本信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图"
+                ],
+                "summary": "根据ID批量查询逻辑视图基本信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "视图id",
+                        "name": "ids",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetBasicViewListResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/by-audit-status": {
+            "get": {
+                "description": "根据稽核状态获取逻辑视图列表,可使用数据源类型或数据源ID筛选",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图"
+                ],
+                "summary": "根据稽核状态获取逻辑视图列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "数据源id",
+                        "name": "datasource_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "数据源类型",
+                        "name": "datasource_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否已稽核",
+                        "name": "is_audited",
+                        "in": "query"
+                    },
+                    {
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "关键字查询，字符无限制",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "publish",
+                            "unpublished"
+                        ],
+                        "type": "string",
+                        "description": "发布状态",
+                        "name": "publish_status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetByAuditStatusResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/by-technical-name-and-hua-ao-id": {
+            "get": {
+                "description": "通过技术名称和华奥ID查询视图",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图"
+                ],
+                "summary": "通过技术名称和华奥ID查询视图",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "hua_ao_123456",
+                        "description": "华奥ID",
+                        "name": "hua_ao_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "user_table",
+                        "description": "视图技术名称",
+                        "name": "technical_name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetViewFieldsResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/convert-rule/verify": {
+            "post": {
+                "description": "转换规则校验",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "元数据视图"
+                ],
+                "summary": "转换规则校验",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ConvertRulesVerifyReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ConvertRulesVerifyResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/data-preview": {
+            "post": {
+                "description": "逻辑视图数据预览",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图数据预览"
+                ],
+                "summary": "逻辑视图数据预览",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DataPreviewReqParamBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DataPreviewResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/data-type/mapping": {
+            "get": {
+                "description": "数据类型映射",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图"
+                ],
+                "summary": "数据类型映射",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DataTypeMapping"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/desensitization-field-data-preview": {
+            "post": {
+                "description": "逻辑视图脱敏字段数据预览",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图数据预览"
+                ],
+                "summary": "逻辑视图脱敏字段数据预览",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DesensitizationFieldDataPreviewReqParamBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DesensitizationFieldDataPreviewResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/excel-view": {
+            "put": {
+                "description": "编辑excel元数据视图",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "元数据视图"
+                ],
+                "summary": "编辑excel元数据视图",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateExcelViewReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.BoolResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "创建excel元数据视图",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "元数据视图"
+                ],
+                "summary": "创建excel元数据视图",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.CreateExcelViewReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.BoolResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/explore-conf/status": {
+            "get": {
+                "description": "获取探查执行状态",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "数据探查"
+                ],
+                "summary": "获取探查执行状态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
+                        "description": "数据源id",
+                        "name": "datasource_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
+                        "description": "逻辑视图id",
+                        "name": "form_view_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreJobStatusResp"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/explore-report": {
+            "get": {
+                "description": "探查报告查询",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "open数据探查"
+                ],
+                "summary": "探查报告查询",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
+                        "description": "逻辑视图id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "第三方报告",
+                        "name": "third_party",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "报告版本",
+                        "name": "version",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreReportResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/explore-report/field": {
+            "get": {
+                "description": "字段探查结果查询",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "open数据探查"
+                ],
+                "summary": "字段探查结果查询",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "视图字段id",
+                        "name": "field_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FieldExploreReportResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/explore-reports": {
+            "get": {
+                "description": "所有部门探查报告列表查询",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "数据探查"
+                ],
+                "summary": "所有部门探查报告列表查询",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "部门id",
+                        "name": "department_id",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "default": "desc",
+                        "description": "排序方向，枚举：asc：正序；desc：倒序。默认倒序",
+                        "name": "direction",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 2000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "description": "每页大小，默认10",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码，默认1",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "f_total_score",
+                            "f_total_completeness",
+                            "f_total_standardization",
+                            "f_total_uniqueness",
+                            "f_total_accuracy",
+                            "f_total_consistency"
+                        ],
+                        "type": "string",
+                        "default": "f_total_score",
+                        "description": "排序类型",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetDepartmentExploreReportsResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/filter": {
+            "post": {
+                "description": "传入视图ID列表，返回未被删除的, 资产全景过滤浏览器本地用户点击记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图"
+                ],
+                "summary": "逻辑实体过滤器",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FormViewFilterReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FormViewFilterResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/is-allow-clear-grade": {
+            "post": {
+                "description": "是否允许清除分级标签",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图"
+                ],
+                "summary": "是否允许清除分级标签",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "视图字段id",
+                        "name": "form_view_field_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.IsAllowClearGradeResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/preview-config": {
+            "get": {
+                "description": "查看逻辑视图数据预览配置",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图数据预览"
+                ],
+                "summary": "查看逻辑视图数据预览配置",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
+                        "description": "逻辑视图id",
+                        "name": "form_view_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetDataPreviewConfigResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "保存逻辑视图数据预览配置",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图数据预览"
+                ],
+                "summary": "保存逻辑视图数据预览配置",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DataPreviewConfigReqParamBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DataPreviewConfigResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/published": {
+            "get": {
+                "description": "获取已发布逻辑视图列表,包括元数据视图、自定义视图、逻辑实体视图",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图"
+                ],
+                "summary": "获取已发布逻辑视图列表",
                 "parameters": [
                     {
                         "type": "string",
@@ -4192,25 +4808,27 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "开放属性筛选",
+                        "name": "open_type",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "description": "数据Owner id 逗号分隔",
                         "name": "owner_id",
                         "in": "query"
                     },
                     {
-                        "enum": [
-                            "publish",
-                            "unpublished"
-                        ],
-                        "type": "string",
-                        "description": "发布状态",
-                        "name": "publish_status",
-                        "in": "query"
-                    },
-                    {
                         "type": "boolean",
                         "description": "是否查询授权的",
                         "name": "query_authed",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "共享属性筛选",
+                        "name": "shared_type",
                         "in": "query"
                     },
                     {
@@ -4272,6 +4890,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
+                        "description": "更新周期筛选",
+                        "name": "update_cycle",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "编辑结束时间",
                         "name": "updated_at_end",
                         "in": "query"
@@ -4287,7 +4911,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.PageListFormViewResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.PageListFormViewResp"
                         }
                     },
                     "400": {
@@ -4299,9 +4923,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/form-view/:id": {
-            "get": {
-                "description": "查看逻辑视图字段",
+        "/form-view/query-stream-next": {
+            "post": {
+                "description": "流式查询下一页",
                 "consumes": [
                     "application/json"
                 ],
@@ -4309,9 +4933,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "open逻辑视图"
+                    "流式查询"
                 ],
-                "summary": "查看逻辑视图字段",
+                "summary": "流式查询下一页",
                 "parameters": [
                     {
                         "type": "string",
@@ -4322,23 +4946,17 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "视图ID",
-                        "name": "id",
-                        "in": "path",
+                        "description": "下一次查询 URI，如 \"queryId/slug/token\"",
+                        "name": "nextUri",
+                        "in": "query",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "请求参数",
-                        "name": "keyword",
-                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetFieldsRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.QueryStreamNextResp"
                         }
                     },
                     "400": {
@@ -4348,7 +4966,148 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/form-view/query-stream-start": {
+            "post": {
+                "description": "流式查询开始",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "流式查询"
+                ],
+                "summary": "流式查询开始",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "查询sql",
+                        "name": "sql",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.QueryStreamStartResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/repeat": {
+            "get": {
+                "description": "逻辑视图重名校验",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图"
+                ],
+                "summary": "逻辑视图重名校验",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.NameRepeatParam"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.BoolResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/scan": {
+            "post": {
+                "description": "扫描数据源",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "元数据视图"
+                ],
+                "summary": "扫描数据源",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ScanReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ScanRes"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/{id}": {
             "put": {
                 "description": "编辑元数据视图",
                 "consumes": [
@@ -4382,7 +5141,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateReq"
                         }
                     }
                 ],
@@ -4390,7 +5149,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateRes"
                         }
                     },
                     "400": {
@@ -4423,6 +5182,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "uuid",
                         "description": "视图ID",
                         "name": "id",
                         "in": "path",
@@ -4439,7 +5199,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateRes"
                         }
                     },
                     "400": {
@@ -4451,7 +5211,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/form-view/:id/business-update-time": {
+        "/form-view/{id}/business-update-time": {
             "get": {
                 "description": "查看逻辑视图业务更新时间",
                 "consumes": [
@@ -4484,7 +5244,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetBusinessUpdateTimeResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetBusinessUpdateTimeResp"
                         }
                     },
                     "400": {
@@ -4496,7 +5256,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/form-view/:id/completion": {
+        "/form-view/{id}/completion": {
             "get": {
                 "description": "获取逻辑视图补全结果",
                 "consumes": [
@@ -4529,13 +5289,13 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetCompletionResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetCompletionResp"
                         }
                     },
                     "202": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetCompletionResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetCompletionResp"
                         }
                     },
                     "400": {
@@ -4585,7 +5345,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateCompletionReqParamBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateCompletionReqParamBody"
                         }
                     }
                 ],
@@ -4593,7 +5353,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateCompletionResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateCompletionResp"
                         }
                     },
                     "400": {
@@ -4605,7 +5365,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/form-view/:id/completion/task": {
+        "/form-view/{id}/completion/task": {
             "post": {
                 "description": "逻辑视图补全",
                 "consumes": [
@@ -4639,7 +5399,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.CreateCompletionReqParamBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.CreateCompletionReqParamBody"
                         }
                     }
                 ],
@@ -4647,7 +5407,7 @@ const docTemplate = `{
                     "201": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.CreateCompletionResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.CreateCompletionResp"
                         }
                     },
                     "400": {
@@ -4659,7 +5419,61 @@ const docTemplate = `{
                 }
             }
         },
-        "/form-view/:id/filter-rule": {
+        "/form-view/{id}/details": {
+            "put": {
+                "description": "编辑逻辑视图基本信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图"
+                ],
+                "summary": "编辑逻辑视图基本信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "视图ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateFormViewDetailsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateFormViewDetailsRes"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/form-view/{id}/filter-rule": {
             "get": {
                 "description": "获取逻辑视图过滤规则",
                 "consumes": [
@@ -4692,7 +5506,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetFilterRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetFilterRuleResp"
                         }
                     },
                     "400": {
@@ -4736,7 +5550,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateFilterRuleReqParamBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateFilterRuleReqParamBody"
                         }
                     }
                 ],
@@ -4744,7 +5558,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateFilterRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateFilterRuleResp"
                         }
                     },
                     "400": {
@@ -4787,7 +5601,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DeleteFilterRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DeleteFilterRuleResp"
                         }
                     },
                     "400": {
@@ -4799,7 +5613,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/form-view/:id/filter-rule/test": {
+        "/form-view/{id}/filter-rule/test": {
             "post": {
                 "description": "预览过滤规则执行结果",
                 "consumes": [
@@ -4833,7 +5647,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExecFilterRuleReqParamBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExecFilterRuleReqParamBody"
                         }
                     }
                 ],
@@ -4841,1042 +5655,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExecFilterRuleResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/basic": {
-            "get": {
-                "description": "根据ID批量查询逻辑视图基本信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图"
-                ],
-                "summary": "根据ID批量查询逻辑视图基本信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "csv",
-                        "description": "视图id",
-                        "name": "ids",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetBasicViewListResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/by-audit-status": {
-            "get": {
-                "description": "根据稽核状态获取逻辑视图列表,可使用数据源类型或数据源ID筛选",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图"
-                ],
-                "summary": "根据稽核状态获取逻辑视图列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "数据源id",
-                        "name": "datasource_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "数据源类型",
-                        "name": "datasource_type",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "是否已稽核",
-                        "name": "is_audited",
-                        "in": "query"
-                    },
-                    {
-                        "maxLength": 255,
-                        "minLength": 1,
-                        "type": "string",
-                        "description": "关键字查询，字符无限制",
-                        "name": "keyword",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "publish",
-                            "unpublished"
-                        ],
-                        "type": "string",
-                        "description": "发布状态",
-                        "name": "publish_status",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetByAuditStatusResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/by-technical-name-and-hua-ao-id": {
-            "get": {
-                "description": "通过技术名称和华奥ID查询视图",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图"
-                ],
-                "summary": "通过技术名称和华奥ID查询视图",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "hua_ao_123456",
-                        "description": "华奥ID",
-                        "name": "hua_ao_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "user_table",
-                        "description": "视图技术名称",
-                        "name": "technical_name",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetViewFieldsResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/convert-rule/verify": {
-            "post": {
-                "description": "转换规则校验",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "元数据视图"
-                ],
-                "summary": "转换规则校验",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ConvertRulesVerifyReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ConvertRulesVerifyResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/data-preview": {
-            "post": {
-                "description": "逻辑视图数据预览",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图数据预览"
-                ],
-                "summary": "逻辑视图数据预览",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DataPreviewReqParamBody"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DataPreviewResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/data-type/mapping": {
-            "get": {
-                "description": "数据类型映射",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图"
-                ],
-                "summary": "数据类型映射",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DataTypeMapping"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/desensitization-field-data-preview": {
-            "post": {
-                "description": "逻辑视图脱敏字段数据预览",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图数据预览"
-                ],
-                "summary": "逻辑视图脱敏字段数据预览",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DesensitizationFieldDataPreviewReqParamBody"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DesensitizationFieldDataPreviewResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/excel-view": {
-            "put": {
-                "description": "编辑excel元数据视图",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "元数据视图"
-                ],
-                "summary": "编辑excel元数据视图",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateExcelViewReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "创建excel元数据视图",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "元数据视图"
-                ],
-                "summary": "创建excel元数据视图",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "视图ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.CreateExcelViewReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/explore-conf/status": {
-            "get": {
-                "description": "获取探查执行状态",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "数据探查"
-                ],
-                "summary": "获取探查执行状态",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
-                        "description": "数据源id",
-                        "name": "datasource_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
-                        "description": "逻辑视图id",
-                        "name": "form_view_id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreJobStatusResp"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/explore-report": {
-            "get": {
-                "description": "探查报告查询",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "open数据探查"
-                ],
-                "summary": "探查报告查询",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
-                        "description": "逻辑视图id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "第三方报告",
-                        "name": "third_party",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "报告版本",
-                        "name": "version",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreReportResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    },
-                    "404": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/explore-report/field": {
-            "get": {
-                "description": "字段探查结果查询",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "open数据探查"
-                ],
-                "summary": "字段探查结果查询",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "视图字段id",
-                        "name": "field_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FieldExploreReportResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/explore-reports": {
-            "get": {
-                "description": "所有部门探查报告列表查询",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "数据探查"
-                ],
-                "summary": "所有部门探查报告列表查询",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "部门id",
-                        "name": "department_id",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "asc",
-                            "desc"
-                        ],
-                        "type": "string",
-                        "default": "desc",
-                        "description": "排序方向，枚举：asc：正序；desc：倒序。默认倒序",
-                        "name": "direction",
-                        "in": "query"
-                    },
-                    {
-                        "maximum": 2000,
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 10,
-                        "description": "每页大小，默认10",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 1,
-                        "description": "页码，默认1",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "f_total_score",
-                            "f_total_completeness",
-                            "f_total_standardization",
-                            "f_total_uniqueness",
-                            "f_total_accuracy",
-                            "f_total_consistency"
-                        ],
-                        "type": "string",
-                        "default": "f_total_score",
-                        "description": "排序类型",
-                        "name": "sort",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetDepartmentExploreReportsResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    },
-                    "404": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/is-allow-clear-grade": {
-            "post": {
-                "description": "是否允许清除分级标签",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图"
-                ],
-                "summary": "是否允许清除分级标签",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "视图字段id",
-                        "name": "form_view_field_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.IsAllowClearGradeResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/preview-config": {
-            "get": {
-                "description": "查看逻辑视图数据预览配置",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图数据预览"
-                ],
-                "summary": "查看逻辑视图数据预览配置",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
-                        "description": "逻辑视图id",
-                        "name": "form_view_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetDataPreviewConfigResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "保存逻辑视图数据预览配置",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图数据预览"
-                ],
-                "summary": "保存逻辑视图数据预览配置",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DataPreviewConfigReqParamBody"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DataPreviewConfigResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/query-stream-next": {
-            "post": {
-                "description": "流式查询下一页",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "流式查询"
-                ],
-                "summary": "流式查询下一页",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "下一次查询 URI，如 \"queryId/slug/token\"",
-                        "name": "nextUri",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.QueryStreamNextResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/query-stream-start": {
-            "post": {
-                "description": "流式查询开始",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "流式查询"
-                ],
-                "summary": "流式查询开始",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "查询sql",
-                        "name": "sql",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.QueryStreamStartResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/repeat": {
-            "get": {
-                "description": "逻辑视图重名校验",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图"
-                ],
-                "summary": "逻辑视图重名校验",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.NameRepeatParam"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "type": "bool"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/form-view/scan": {
-            "post": {
-                "description": "扫描数据源",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "元数据视图"
-                ],
-                "summary": "扫描数据源",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "请求参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ScanReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ScanRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExecFilterRuleResp"
                         }
                     },
                     "400": {
@@ -5980,7 +5759,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.PageListGradeRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.PageListGradeRuleResp"
                         }
                     },
                     "400": {
@@ -6017,7 +5796,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.CreateGradeRuleReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.CreateGradeRuleReq"
                         }
                     }
                 ],
@@ -6025,7 +5804,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.CreateGradeRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.CreateGradeRuleResp"
                         }
                     },
                     "400": {
@@ -6069,7 +5848,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupLimitedResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupLimitedResp"
                         }
                     },
                     "400": {
@@ -6106,7 +5885,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupCreateReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupCreateReq"
                         }
                     }
                 ],
@@ -6114,7 +5893,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupCreateResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupCreateResp"
                         }
                     },
                     "400": {
@@ -6153,7 +5932,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupRepeatReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupRepeatReq"
                         }
                     }
                 ],
@@ -6161,7 +5940,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupRepeatResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupRepeatResp"
                         }
                     },
                     "400": {
@@ -6195,12 +5974,20 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "规则组ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupUpdateReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupUpdateReq"
                         }
                     }
                 ],
@@ -6208,7 +5995,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupUpdateResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupUpdateResp"
                         }
                     },
                     "400": {
@@ -6241,9 +6028,10 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "uuid",
                         "description": "分级规则ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -6251,7 +6039,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupDeleteResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupDeleteResp"
                         }
                     },
                     "400": {
@@ -6290,7 +6078,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.BatchDeleteReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.BatchDeleteReq"
                         }
                     }
                 ],
@@ -6298,7 +6086,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.BatchDeleteResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.BatchDeleteResp"
                         }
                     },
                     "400": {
@@ -6337,7 +6125,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.ExportGradeRuleReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.ExportGradeRuleReq"
                         }
                     }
                 ],
@@ -6345,7 +6133,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.ExportGradeRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.ExportGradeRuleResp"
                         }
                     },
                     "400": {
@@ -6384,7 +6172,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.BindGradeRuleGroupReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.BindGradeRuleGroupReq"
                         }
                     }
                 ],
@@ -6392,7 +6180,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.BindGradeRuleGroupResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.BindGradeRuleGroupResp"
                         }
                     },
                     "400": {
@@ -6430,7 +6218,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.StatisticsGradeRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.StatisticsGradeRuleResp"
                         }
                     },
                     "400": {
@@ -6467,7 +6255,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "分级规则ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -6475,7 +6263,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.GradeRuleDetailResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.GradeRuleDetailResp"
                         }
                     },
                     "400": {
@@ -6507,12 +6295,19 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.UpdateGradeRuleReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.UpdateGradeRuleReq"
                         }
                     }
                 ],
@@ -6520,7 +6315,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.UpdateGradeRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.UpdateGradeRuleResp"
                         }
                     },
                     "400": {
@@ -6555,7 +6350,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "分级规则ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -6563,7 +6358,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.DeleteGradeRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.DeleteGradeRuleResp"
                         }
                     },
                     "400": {
@@ -6600,7 +6395,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "分级规则ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -6608,7 +6403,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.StartGradeRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.StartGradeRuleResp"
                         }
                     },
                     "400": {
@@ -6645,7 +6440,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "分级规则ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -6653,7 +6448,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.StopGradeRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.StopGradeRuleResp"
                         }
                     },
                     "400": {
@@ -6698,7 +6493,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.PageResult-github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model_ModeListItem"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.PageResult-devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model_ModeListItem"
                         }
                     },
                     "400": {
@@ -6735,7 +6530,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.CreateModelReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.CreateModelReq"
                         }
                     }
                 ],
@@ -6743,119 +6538,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.IDResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/graph-model/:id": {
-            "get": {
-                "description": "模型详情",
-                "consumes": [
-                    "plain/text"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "图谱模型"
-                ],
-                "summary": "模型详情",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.ModelDetail"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "更新模型",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "图谱模型"
-                ],
-                "summary": "更新模型",
-                "parameters": [
-                    {
-                        "description": "请求参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.UpdateModelReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.IDResp"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "删除模型",
-                "consumes": [
-                    "plain/text"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "图谱模型"
-                ],
-                "summary": "删除模型",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.IDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.IDResp"
                         }
                     },
                     "400": {
@@ -6894,7 +6577,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.CanvasContent"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.CanvasContent"
                         }
                     }
                 ],
@@ -6902,7 +6585,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.IDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.IDResp"
                         }
                     },
                     "400": {
@@ -6914,7 +6597,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/graph-model/canvas/:id": {
+        "/graph-model/canvas/{id}": {
             "get": {
                 "description": "获取画布",
                 "consumes": [
@@ -6937,7 +6620,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
+                        "description": "画布ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -6947,7 +6630,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.CanvasContent"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.CanvasContent"
                         }
                     },
                     "400": {
@@ -7003,7 +6686,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.CheckRepeatResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.CheckRepeatResp"
                         }
                     },
                     "400": {
@@ -7015,7 +6698,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/graph-model/topic-confidential/:id": {
+        "/graph-model/topic-confidential/{id}": {
             "put": {
                 "description": "设置主题模型密级",
                 "consumes": [
@@ -7030,12 +6713,27 @@ const docTemplate = `{
                 "summary": "设置主题模型密级",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "模型ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "_",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.UpdateTopicModelMjReqParam"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.UpdateTopicModelMjReqParam"
                         }
                     }
                 ],
@@ -7043,7 +6741,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.IDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.IDResp"
                         }
                     },
                     "400": {
@@ -7122,7 +6820,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.PageResult-github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model_ModelLabelRecRelResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.PageResult-devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model_ModelLabelRecRelResp"
                         }
                     },
                     "400": {
@@ -7159,7 +6857,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.CreateModelLabelRecRelReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.CreateModelLabelRecRelReq"
                         }
                     }
                 ],
@@ -7167,7 +6865,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.IDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.IDResp"
                         }
                     },
                     "400": {
@@ -7179,7 +6877,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/graph-model/topic-label-rec/:id": {
+        "/graph-model/topic-label-rec/{id}": {
             "get": {
                 "description": "主题模型标签推荐配置详情",
                 "consumes": [
@@ -7195,7 +6893,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "配置ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -7205,7 +6910,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.ModelLabelRecRelResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.ModelLabelRecRelResp"
                         }
                     },
                     "400": {
@@ -7230,12 +6935,27 @@ const docTemplate = `{
                 "summary": "修改主题模型标签推荐配置",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "配置ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "_",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.UpdateModelLabelRecRelReqParam"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.UpdateModelLabelRecRelReqParam"
                         }
                     }
                 ],
@@ -7243,7 +6963,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.IDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.IDResp"
                         }
                     },
                     "400": {
@@ -7269,7 +6989,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "配置ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -7279,7 +7006,147 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.IDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.IDResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/graph-model/{id}": {
+            "get": {
+                "description": "模型详情",
+                "consumes": [
+                    "plain/text"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱模型"
+                ],
+                "summary": "模型详情",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "模型ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.ModelDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "更新模型",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱模型"
+                ],
+                "summary": "更新模型",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "模型ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.UpdateModelReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.IDResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除模型",
+                "consumes": [
+                    "plain/text"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "图谱模型"
+                ],
+                "summary": "删除模型",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "模型ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.IDResp"
                         }
                     },
                     "400": {
@@ -7303,7 +7170,7 @@ const docTemplate = `{
                 "tags": [
                     "逻辑视图"
                 ],
-                "summary": "编辑自定义视图和逻辑实体视图（字段）",
+                "summary": "编辑自定义视图和逻辑实体视图字段",
                 "parameters": [
                     {
                         "description": "请求参数",
@@ -7311,7 +7178,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.UpdateLogicViewReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.UpdateLogicViewReq"
                         }
                     }
                 ],
@@ -7319,7 +7186,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "type": "boolean"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.BoolResp"
                         }
                     },
                     "400": {
@@ -7341,7 +7208,7 @@ const docTemplate = `{
                 "tags": [
                     "逻辑视图"
                 ],
-                "summary": "创建自定义视图和逻辑实体视图（字段+基本信息）",
+                "summary": "创建自定义视图和逻辑实体视图字段基本信息",
                 "parameters": [
                     {
                         "description": "请求参数",
@@ -7349,7 +7216,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.CreateLogicViewReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.CreateLogicViewReq"
                         }
                     }
                 ],
@@ -7357,139 +7224,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/logic-view/:id/draft": {
-            "put": {
-                "description": "删除草稿(恢复到发布)",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图"
-                ],
-                "summary": "删除草稿(恢复到发布)",
-                "parameters": [
-                    {
-                        "description": "请求参数",
-                        "name": "_",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.UpdateLogicViewReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/logic-view/:id/sample-data": {
-            "get": {
-                "description": "获取样例数据",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图"
-                ],
-                "summary": "获取样例数据",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
-                        "description": "视图id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_adapter_driven_rest_virtualization_engine.FetchDataRes"
-                        }
-                    },
-                    "400": {
-                        "description": "失败响应参数",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/logic-view/:id/synthetic-data": {
-            "get": {
-                "description": "清除合成数据缓存",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "逻辑视图"
-                ],
-                "summary": "清除合成数据缓存",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "88f78432-ee4e-43df-804c-4ccc4ff17f15",
-                        "description": "视图id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "成功响应参数",
-                        "schema": {
-                            "type": "bool"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.BoolResp"
                         }
                     },
                     "400": {
@@ -7521,7 +7256,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.CreateAuditProcessInstanceReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.CreateAuditProcessInstanceReq"
                         }
                     }
                 ],
@@ -7529,7 +7264,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "type": "bool"
+                            "type": "boolean"
                         }
                     },
                     "400": {
@@ -7644,7 +7379,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.AuthorizableViewListResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.AuthorizableViewListResp"
                         }
                     },
                     "400": {
@@ -7683,7 +7418,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetMultiViewsFieldsBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetMultiViewsFieldsBody"
                         }
                     }
                 ],
@@ -7691,7 +7426,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetMultiViewsFieldsRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetMultiViewsFieldsRes"
                         }
                     },
                     "400": {
@@ -7723,7 +7458,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UndoAuditReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UndoAuditReq"
                         }
                     }
                 ],
@@ -7731,7 +7466,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "type": "bool"
+                            "type": "boolean"
                         }
                     },
                     "400": {
@@ -7760,7 +7495,151 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.SubjectDomainListRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.SubjectDomainListRes"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/logic-view/{id}/draft": {
+            "put": {
+                "description": "删除草稿(恢复到发布)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图"
+                ],
+                "summary": "删除草稿恢复到发布",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "视图ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.UpdateLogicViewReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.BoolResp"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/logic-view/{id}/sample-data": {
+            "get": {
+                "description": "获取样例数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图"
+                ],
+                "summary": "获取样例数据",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "视图ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_virtualization_engine.FetchDataRes"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/logic-view/{id}/synthetic-data": {
+            "get": {
+                "description": "获取合成数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "逻辑视图"
+                ],
+                "summary": "获取合成数据",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "视图ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_virtualization_engine.FetchDataRes"
                         }
                     },
                     "400": {
@@ -7806,7 +7685,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DatasourceOverviewResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DatasourceOverviewResp"
                         }
                     },
                     "400": {
@@ -7904,7 +7783,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.PageListRecognitionAlgorithmResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.PageListRecognitionAlgorithmResp"
                         }
                     },
                     "400": {
@@ -7941,7 +7820,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.CreateRecognitionAlgorithmReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.CreateRecognitionAlgorithmReq"
                         }
                     }
                 ],
@@ -7949,7 +7828,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.CreateRecognitionAlgorithmResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.CreateRecognitionAlgorithmResp"
                         }
                     },
                     "400": {
@@ -7988,7 +7867,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.DeleteBatchRecognitionAlgorithmReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.DeleteBatchRecognitionAlgorithmReq"
                         }
                     }
                 ],
@@ -7996,7 +7875,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.DeleteBatchRecognitionAlgorithmResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.DeleteBatchRecognitionAlgorithmResp"
                         }
                     },
                     "400": {
@@ -8035,7 +7914,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.DuplicateCheckReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.DuplicateCheckReq"
                         }
                     }
                 ],
@@ -8043,7 +7922,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.DuplicateCheckResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.DuplicateCheckResp"
                         }
                     },
                     "400": {
@@ -8082,7 +7961,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.ExportRecognitionAlgorithmReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.ExportRecognitionAlgorithmReq"
                         }
                     }
                 ],
@@ -8090,7 +7969,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.ExportRecognitionAlgorithmResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.ExportRecognitionAlgorithmResp"
                         }
                     },
                     "400": {
@@ -8128,7 +8007,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.GetInnerTypeResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.GetInnerTypeResp"
                         }
                     },
                     "400": {
@@ -8167,7 +8046,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.GetSubjectsByIdsReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.GetSubjectsByIdsReq"
                         }
                     }
                 ],
@@ -8175,7 +8054,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.GetSubjectsByIdsResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.GetSubjectsByIdsResp"
                         }
                     },
                     "400": {
@@ -8214,7 +8093,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.GetWorkingAlgorithmIdsReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.GetWorkingAlgorithmIdsReq"
                         }
                     }
                 ],
@@ -8222,7 +8101,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.GetWorkingAlgorithmIdsResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.GetWorkingAlgorithmIdsResp"
                         }
                     },
                     "400": {
@@ -8257,9 +8136,10 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "uuid",
                         "description": "识别算法ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -8267,7 +8147,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.RecognitionAlgorithmDetailResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.RecognitionAlgorithmDetailResp"
                         }
                     },
                     "400": {
@@ -8299,12 +8179,20 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "识别算法ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "请求参数",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.UpdateRecognitionAlgorithmReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.UpdateRecognitionAlgorithmReq"
                         }
                     }
                 ],
@@ -8312,7 +8200,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.UpdateRecognitionAlgorithmResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.UpdateRecognitionAlgorithmResp"
                         }
                     },
                     "400": {
@@ -8345,9 +8233,10 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "uuid",
                         "description": "识别算法ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -8355,7 +8244,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.DeleteRecognitionAlgorithmResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.DeleteRecognitionAlgorithmResp"
                         }
                     },
                     "400": {
@@ -8390,9 +8279,10 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "uuid",
                         "description": "识别算法ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -8400,7 +8290,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.StartRecognitionAlgorithmResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.StartRecognitionAlgorithmResp"
                         }
                     },
                     "400": {
@@ -8435,9 +8325,10 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "format": "uuid",
                         "description": "识别算法ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -8445,8 +8336,217 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.StopRecognitionAlgorithmResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.StopRecognitionAlgorithmResp"
                         }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sub-views": {
+            "get": {
+                "description": "获取子视图列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "子视图"
+                ],
+                "summary": "获取子视图列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "逻辑视图 ID",
+                        "name": "logic_view_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "每页数量",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "子视图列表",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_sub_view.SubView"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "创建子视图",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "子视图"
+                ],
+                "summary": "创建子视图",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_sub_view.SubView"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_sub_view.SubView"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/sub-views/{id}": {
+            "get": {
+                "description": "获取指定子视图",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "子视图"
+                ],
+                "summary": "获取指定子视图",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "子视图 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_sub_view.SubView"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "更新指定子视图",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "子视图"
+                ],
+                "summary": "更新指定子视图",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "子视图 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求参数",
+                        "name": "_",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_sub_view.SubView"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_sub_view.SubView"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除指定子视图",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "子视图"
+                ],
+                "summary": "删除指定子视图",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "子视图 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
                     },
                     "400": {
                         "description": "失败响应参数",
@@ -8563,7 +8663,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.GetTemplateRuleListResp"
+                                "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.GetTemplateRuleListResp"
                             }
                         }
                     },
@@ -8601,7 +8701,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.CreateTemplateRuleReq"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.CreateTemplateRuleReq"
                         }
                     }
                 ],
@@ -8609,7 +8709,7 @@ const docTemplate = `{
                     "201": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.TemplateRuleIDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.TemplateRuleIDResp"
                         }
                     },
                     "400": {
@@ -8662,7 +8762,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "type": "bool"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.BoolResp"
                         }
                     },
                     "400": {
@@ -8701,7 +8801,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.UpdateTemplateRuleStatusReqBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.UpdateTemplateRuleStatusReqBody"
                         }
                     }
                 ],
@@ -8709,7 +8809,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "type": "bool"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.BoolResp"
                         }
                     },
                     "400": {
@@ -8754,7 +8854,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.GetTemplateRuleResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.GetTemplateRuleResp"
                         }
                     },
                     "400": {
@@ -8798,7 +8898,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.CreateTemplateRuleReqBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.CreateTemplateRuleReqBody"
                         }
                     }
                 ],
@@ -8806,7 +8906,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.TemplateRuleIDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.TemplateRuleIDResp"
                         }
                     },
                     "400": {
@@ -8849,7 +8949,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.TemplateRuleIDResp"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.TemplateRuleIDResp"
                         }
                     },
                     "400": {
@@ -8861,7 +8961,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/form-view": {
+        "/user/form-all-view": {
             "get": {
                 "description": "获取用户有权限下的与授权的视图",
                 "consumes": [
@@ -8980,7 +9080,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetUsersFormViewsPageRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetUsersFormViewsPageRes"
                         }
                     },
                     "400": {
@@ -8992,9 +9092,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/form-view/:id": {
+        "/user/form-view": {
             "get": {
-                "description": "获取用户有权限下的视图字段",
+                "description": "获取用户有权限下的视图",
                 "consumes": [
                     "application/json"
                 ],
@@ -9004,7 +9104,7 @@ const docTemplate = `{
                 "tags": [
                     "open逻辑视图"
                 ],
-                "summary": "获取用户有权限下的视图字段",
+                "summary": "获取用户有权限下的视图",
                 "parameters": [
                     {
                         "type": "string",
@@ -9014,9 +9114,96 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "应用ID",
+                        "name": "app_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "数据owner，专门用来过滤的",
+                        "name": "data_owner",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ],
+                        "type": "string",
+                        "default": "desc",
+                        "description": "排序方向，枚举：asc：正序；desc：倒序。默认倒序",
+                        "name": "direction",
+                        "in": "query"
+                    },
+                    {
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "关键字查询，字符无限制",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 2000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 10,
+                        "description": "每页大小，默认10",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码，默认1",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "部门id",
+                        "name": "org_code",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
-                        "description": "是否启用数据查询保护过滤",
-                        "name": "enable_data_protection",
+                        "default": false,
+                        "description": "owner可用资产",
+                        "name": "owner",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "Active",
+                            "Expired"
+                        ],
+                        "type": "string",
+                        "x-enum-varnames": [
+                            "PolicyActive",
+                            "PolicyExpired"
+                        ],
+                        "description": "权限规则状态过滤器，非空时根据滤逻辑视图及其子视图的权限规则状态过滤。\n\n Active：返回所有规则都处于有效期的逻辑视图\n Expired：返回任意规则已过期的逻辑视图",
+                        "name": "policy_status",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "publish_at",
+                            "online_time",
+                            "name"
+                        ],
+                        "type": "string",
+                        "default": "publish_at",
+                        "description": "排序类型，",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "主题域id",
+                        "name": "subject_domain_id",
                         "in": "query"
                     }
                 ],
@@ -9024,7 +9211,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetFieldsRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetUsersFormViewsPageRes"
                         }
                     },
                     "400": {
@@ -9063,7 +9250,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetUsersMultiFormViewsFieldsBody"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetUsersMultiFormViewsFieldsBody"
                         }
                     }
                 ],
@@ -9071,7 +9258,59 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetUsersMultiFormViewsFieldsRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetUsersMultiFormViewsFieldsRes"
+                        }
+                    },
+                    "400": {
+                        "description": "失败响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/form-view/{id}": {
+            "get": {
+                "description": "获取用户有权限下的视图字段",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "open逻辑视图"
+                ],
+                "summary": "获取用户有权限下的视图字段",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "视图ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否启用数据查询保护过滤",
+                        "name": "enable_data_protection",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功响应参数",
+                        "schema": {
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetFieldsRes"
                         }
                     },
                     "400": {
@@ -9115,7 +9354,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetWhiteListPolicyListRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetWhiteListPolicyListRes"
                         }
                     },
                     "400": {
@@ -9157,7 +9396,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetFormViewRelateWhiteListPolicyRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetFormViewRelateWhiteListPolicyRes"
                         }
                     },
                     "400": {
@@ -9199,7 +9438,7 @@ const docTemplate = `{
                     "200": {
                         "description": "成功响应参数",
                         "schema": {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetWhiteListPolicyListRes"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetWhiteListPolicyListRes"
                         }
                     },
                     "400": {
@@ -9254,26 +9493,7 @@ const docTemplate = `{
                 }
             }
         },
-        "ginx.HttpError": {
-            "type": "object",
-            "properties": {
-                "cause": {
-                    "type": "string"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "data": {},
-                "description": {
-                    "type": "string"
-                },
-                "detail": {},
-                "solution": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_adapter_driven_rest_auth_service.Entries": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_auth_service.Entries": {
             "type": "object",
             "properties": {
                 "expired_at": {
@@ -9292,12 +9512,12 @@ const docTemplate = `{
                     "description": "权限",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_adapter_driven_rest_auth_service.Permissions"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_auth_service.Permissions"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_adapter_driven_rest_auth_service.Permissions": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_auth_service.Permissions": {
             "type": "object",
             "properties": {
                 "action": {
@@ -9310,7 +9530,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_adapter_driven_rest_virtualization_engine.Column": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_virtualization_engine.Column": {
             "type": "object",
             "properties": {
                 "name": {
@@ -9321,13 +9541,13 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_adapter_driven_rest_virtualization_engine.FetchDataRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_virtualization_engine.FetchDataRes": {
             "type": "object",
             "properties": {
                 "columns": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_adapter_driven_rest_virtualization_engine.Column"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_virtualization_engine.Column"
                     }
                 },
                 "data": {
@@ -9342,7 +9562,17 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.CheckRepeatResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.BoolResp": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "description": "布尔值",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.CheckRepeatResp": {
             "type": "object",
             "properties": {
                 "name": {
@@ -9357,7 +9587,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.IDResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.IDResp": {
             "type": "object",
             "required": [
                 "id"
@@ -9368,7 +9598,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.PageResult-github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model_ModeListItem": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.PageResult-devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model_ModeListItem": {
             "type": "object",
             "required": [
                 "entries",
@@ -9379,7 +9609,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.ModeListItem"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.ModeListItem"
                     }
                 },
                 "total_count": {
@@ -9390,7 +9620,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_common_models_response.PageResult-github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model_ModelLabelRecRelResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_common_models_response.PageResult-devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model_ModelLabelRecRelResp": {
             "type": "object",
             "required": [
                 "entries",
@@ -9401,7 +9631,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.ModelLabelRecRelResp"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.ModelLabelRecRelResp"
                     }
                 },
                 "total_count": {
@@ -9412,7 +9642,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.Algorithm": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.Algorithm": {
             "type": "object",
             "properties": {
                 "id": {
@@ -9425,14 +9655,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.ClassificationRule": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.ClassificationRule": {
             "type": "object",
             "properties": {
                 "algorithms": {
                     "description": "算法数组，包含算法id和算法名称",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.Algorithm"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.Algorithm"
                     }
                 },
                 "created_at": {
@@ -9473,14 +9703,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.ClassificationRuleDetailResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.ClassificationRuleDetailResp": {
             "type": "object",
             "properties": {
                 "algorithms": {
                     "description": "算法数组，包含算法id和算法名称",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.Algorithm"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.Algorithm"
                     }
                 },
                 "created_at": {
@@ -9542,7 +9772,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.CreateClassificationRuleReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.CreateClassificationRuleReq": {
             "type": "object",
             "required": [
                 "algorithm_ids",
@@ -9593,7 +9823,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.CreateClassificationRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.CreateClassificationRuleResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -9602,7 +9832,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.DeleteClassificationRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.DeleteClassificationRuleResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -9611,7 +9841,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.ExportClassificationRule": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.ExportClassificationRule": {
             "type": "object",
             "properties": {
                 "algorithm": {
@@ -9640,7 +9870,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.ExportClassificationRuleReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.ExportClassificationRuleReq": {
             "type": "object",
             "required": [
                 "ids"
@@ -9655,7 +9885,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.ExportClassificationRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.ExportClassificationRuleResp": {
             "type": "object",
             "required": [
                 "data"
@@ -9665,12 +9895,12 @@ const docTemplate = `{
                     "description": "分类规则数据",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.ExportClassificationRule"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.ExportClassificationRule"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.PageListClassificationRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.PageListClassificationRuleResp": {
             "type": "object",
             "required": [
                 "entries",
@@ -9681,7 +9911,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.ClassificationRule"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.ClassificationRule"
                     }
                 },
                 "total_count": {
@@ -9692,7 +9922,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.StartClassificationRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.StartClassificationRuleResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -9701,18 +9931,18 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.StatisticsClassificationRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.StatisticsClassificationRuleResp": {
             "type": "object",
             "properties": {
                 "statistics": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.SubjectRuleStatistics"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.SubjectRuleStatistics"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.StopClassificationRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.StopClassificationRuleResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -9721,7 +9951,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.SubjectRuleStatistics": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.SubjectRuleStatistics": {
             "type": "object",
             "properties": {
                 "count": {
@@ -9739,7 +9969,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.UpdateClassificationRuleReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.UpdateClassificationRuleReq": {
             "type": "object",
             "required": [
                 "algorithm_ids"
@@ -9770,7 +10000,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_classification_rule.UpdateClassificationRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_classification_rule.UpdateClassificationRuleResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -9779,7 +10009,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_lineage.Field": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_lineage.Field": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -9802,7 +10032,7 @@ const docTemplate = `{
                     "description": "目标字段列表，类型为map，key为目标表id，value为目标字段id列表",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_lineage.TableFieldsMap"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_lineage.TableFieldsMap"
                         }
                     ]
                 },
@@ -9812,7 +10042,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_lineage.GetBaseResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_lineage.GetBaseResp": {
             "type": "object",
             "properties": {
                 "db_name": {
@@ -9827,7 +10057,7 @@ const docTemplate = `{
                     "description": "字段列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_lineage.Field"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_lineage.Field"
                     }
                 },
                 "info_system_name": {
@@ -9855,7 +10085,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_lineage.ListLineageResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_lineage.ListLineageResp": {
             "type": "object",
             "required": [
                 "entries",
@@ -9866,7 +10096,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_lineage.SummaryInfoBase"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_lineage.SummaryInfoBase"
                     }
                 },
                 "total_count": {
@@ -9877,7 +10107,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_lineage.SummaryInfoBase": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_lineage.SummaryInfoBase": {
             "type": "object",
             "properties": {
                 "db_name": {
@@ -9892,7 +10122,7 @@ const docTemplate = `{
                     "description": "字段列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_lineage.Field"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_lineage.Field"
                     }
                 },
                 "info_system_name": {
@@ -9920,7 +10150,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_lineage.TableFieldsMap": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_lineage.TableFieldsMap": {
             "type": "object",
             "additionalProperties": {
                 "type": "array",
@@ -9929,7 +10159,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.CreateDataPrivacyPolicyReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.CreateDataPrivacyPolicyReq": {
             "type": "object",
             "properties": {
                 "description": {
@@ -9960,7 +10190,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.CreateDataPrivacyPolicyResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.CreateDataPrivacyPolicyResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -9969,7 +10199,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.DataPrivacyPolicy": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.DataPrivacyPolicy": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -10038,7 +10268,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.DataPrivacyPolicyDetailResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.DataPrivacyPolicyDetailResp": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -10144,7 +10374,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.DeleteDataPrivacyPolicyResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.DeleteDataPrivacyPolicyResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -10153,13 +10383,13 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.GetDesensitizationDataByIdResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.GetDesensitizationDataByIdResp": {
             "type": "object",
             "properties": {
                 "columns": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_adapter_driven_rest_virtualization_engine.Column"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_virtualization_engine.Column"
                     }
                 },
                 "data": {
@@ -10174,7 +10404,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.GetFormViewIdsByFormViewIdsReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.GetFormViewIdsByFormViewIdsReq": {
             "type": "object",
             "required": [
                 "form_view_ids"
@@ -10189,7 +10419,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.GetFormViewIdsByFormViewIdsResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.GetFormViewIdsByFormViewIdsResp": {
             "type": "object",
             "properties": {
                 "form_view_ids": {
@@ -10201,7 +10431,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.IsExistByFormViewIdResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.IsExistByFormViewIdResp": {
             "type": "object",
             "properties": {
                 "is_exist": {
@@ -10210,7 +10440,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.PageListDataPrivacyPolicyResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.PageListDataPrivacyPolicyResp": {
             "type": "object",
             "required": [
                 "entries",
@@ -10221,7 +10451,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.DataPrivacyPolicy"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.DataPrivacyPolicy"
                     }
                 },
                 "total_count": {
@@ -10232,7 +10462,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.UpdateDataPrivacyPolicyReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.UpdateDataPrivacyPolicyReq": {
             "type": "object",
             "properties": {
                 "description": {
@@ -10257,7 +10487,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_privacy_policy.UpdateDataPrivacyPolicyResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_privacy_policy.UpdateDataPrivacyPolicyResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -10266,7 +10496,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.AddDataSetReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.AddDataSetReq": {
             "type": "object",
             "required": [
                 "form_view_ids",
@@ -10291,7 +10521,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.CreateDataSetByNameResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.CreateDataSetByNameResp": {
             "type": "object",
             "properties": {
                 "exists": {
@@ -10299,7 +10529,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.CreateDataSetReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.CreateDataSetReq": {
             "type": "object",
             "required": [
                 "data_set_name"
@@ -10314,7 +10544,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.CreateDataSetResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.CreateDataSetResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -10322,7 +10552,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.DeleteDataSetResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.DeleteDataSetResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -10330,13 +10560,13 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.PageListDataSetResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.PageListDataSetResp": {
             "type": "object",
             "properties": {
                 "entries": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_infrastructure_db_model.DataSet"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_infrastructure_db_model.DataSet"
                     }
                 },
                 "total_count": {
@@ -10344,7 +10574,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.RemoveFormViewsFromDataSetReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.RemoveFormViewsFromDataSetReq": {
             "type": "object",
             "required": [
                 "data_set_name",
@@ -10369,7 +10599,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.RemoveFormViewsFromDataSetResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.RemoveFormViewsFromDataSetResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -10377,7 +10607,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.UpdateDataSetReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.UpdateDataSetReq": {
             "type": "object",
             "required": [
                 "data_set_name",
@@ -10399,7 +10629,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.UpdateDataSetResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.UpdateDataSetResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -10407,7 +10637,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.UpdateDataSetWithFormViewResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.UpdateDataSetWithFormViewResp": {
             "type": "object",
             "properties": {
                 "data_set_name": {
@@ -10415,7 +10645,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_data_set.ViewPageListDataSetParam": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_data_set.ViewPageListDataSetParam": {
             "type": "object",
             "required": [
                 "id"
@@ -10483,7 +10713,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.BatchCreateRuleReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.BatchCreateRuleReq": {
             "type": "object",
             "required": [
                 "form_view_id",
@@ -10505,7 +10735,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.BatchCreateRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.BatchCreateRuleResp": {
             "type": "object",
             "properties": {
                 "form_view_id": {
@@ -10514,7 +10744,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.CreateRuleReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.CreateRuleReq": {
             "type": "object",
             "required": [
                 "enable"
@@ -10596,7 +10826,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.CreateTemplateRuleReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.CreateTemplateRuleReq": {
             "type": "object",
             "required": [
                 "dimension",
@@ -10662,7 +10892,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.CreateTemplateRuleReqBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.CreateTemplateRuleReqBody": {
             "type": "object",
             "required": [
                 "dimension",
@@ -10728,7 +10958,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.GetRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.GetRuleResp": {
             "type": "object",
             "properties": {
                 "dimension": {
@@ -10777,7 +11007,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.GetTemplateRuleListResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.GetTemplateRuleListResp": {
             "type": "object",
             "properties": {
                 "dimension": {
@@ -10822,7 +11052,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.GetTemplateRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.GetTemplateRuleResp": {
             "type": "object",
             "properties": {
                 "dimension": {
@@ -10867,7 +11097,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.RuleIDResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.RuleIDResp": {
             "type": "object",
             "properties": {
                 "rule_id": {
@@ -10876,7 +11106,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.TemplateRuleIDResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.TemplateRuleIDResp": {
             "type": "object",
             "properties": {
                 "rule_id": {
@@ -10885,7 +11115,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.UpdateRuleReqBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.UpdateRuleReqBody": {
             "type": "object",
             "required": [
                 "rule_name"
@@ -10917,7 +11147,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.UpdateRuleStatusReqBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.UpdateRuleStatusReqBody": {
             "type": "object",
             "required": [
                 "enable",
@@ -10938,7 +11168,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_rule.UpdateTemplateRuleStatusReqBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_rule.UpdateTemplateRuleStatusReqBody": {
             "type": "object",
             "required": [
                 "enable",
@@ -10955,7 +11185,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.CancelTaskReqBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.CancelTaskReqBody": {
             "type": "object",
             "required": [
                 "status"
@@ -10968,7 +11198,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.CreateRuleReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.CreateRuleReq": {
             "type": "object",
             "required": [
                 "enable"
@@ -11033,7 +11263,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.CreateTaskReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.CreateTaskReq": {
             "type": "object",
             "required": [
                 "type"
@@ -11071,7 +11301,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.CreateTaskResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.CreateTaskResp": {
             "type": "object",
             "properties": {
                 "task_id": {
@@ -11080,7 +11310,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.ExploreTaskIDResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.ExploreTaskIDResp": {
             "type": "object",
             "properties": {
                 "task_id": {
@@ -11089,7 +11319,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.ExploreTaskInfo": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.ExploreTaskInfo": {
             "type": "object",
             "properties": {
                 "config": {
@@ -11150,7 +11380,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.ExploreTaskResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.ExploreTaskResp": {
             "type": "object",
             "properties": {
                 "config": {
@@ -11211,7 +11441,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.GetInternalRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.GetInternalRuleResp": {
             "type": "object",
             "properties": {
                 "dimension": {
@@ -11244,7 +11474,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.GetRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.GetRuleResp": {
             "type": "object",
             "properties": {
                 "dimension": {
@@ -11289,14 +11519,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.ListExploreTaskResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.ListExploreTaskResp": {
             "type": "object",
             "properties": {
                 "entries": {
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.ExploreTaskInfo"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.ExploreTaskInfo"
                     }
                 },
                 "total_count": {
@@ -11305,7 +11535,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.RuleIDResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.RuleIDResp": {
             "type": "object",
             "properties": {
                 "rule_id": {
@@ -11314,7 +11544,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.UpdateRuleReqBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.UpdateRuleReqBody": {
             "type": "object",
             "required": [
                 "rule_name"
@@ -11342,7 +11572,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_explore_task.UpdateRuleStatusReqBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_explore_task.UpdateRuleStatusReqBody": {
             "type": "object",
             "required": [
                 "enable",
@@ -11363,76 +11593,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.BatchExploreReportItem": {
-            "type": "object",
-            "properties": {
-                "error": {
-                    "description": "错误信息（如果失败）",
-                    "type": "string"
-                },
-                "form_view_id": {
-                    "description": "逻辑视图ID",
-                    "type": "string"
-                },
-                "has_quality_report": {
-                    "description": "是否存在质量报告（可用性标识）",
-                    "type": "boolean"
-                },
-                "report": {
-                    "description": "报告内容（如果成功）",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreReportResp"
-                        }
-                    ]
-                },
-                "success": {
-                    "description": "是否成功获取报告",
-                    "type": "boolean"
-                }
-            }
-        },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.BatchGetExploreReportReq": {
-            "type": "object",
-            "required": [
-                "ids"
-            ],
-            "properties": {
-                "has_quality_report": {
-                    "description": "是否有质量报告标识（可选，不传默认false）",
-                    "type": "boolean"
-                },
-                "ids": {
-                    "description": "逻辑视图ID列表（至少1个，支持单个ID）",
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "third_party": {
-                    "description": "第三方报告（可选，不传默认false）",
-                    "type": "boolean"
-                },
-                "version": {
-                    "description": "报告版本（可选，不传默认nil，获取最新版本）",
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.BatchGetExploreReportResp": {
-            "type": "object",
-            "properties": {
-                "reports": {
-                    "description": "报告列表",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.BatchExploreReportItem"
-                    }
-                }
-            }
-        },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.BatchPublishBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.BatchPublishBody": {
             "type": "object",
             "required": [
                 "datasource"
@@ -11442,19 +11603,19 @@ const docTemplate = `{
                     "description": "需要发布视图的数据源列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DatasourceFilter"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DatasourceFilter"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.BatchPublishRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.BatchPublishRes": {
             "type": "object",
             "properties": {
                 "fail_publish_view": {
                     "description": "失败发布的视图",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FailView"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FailView"
                     }
                 },
                 "fail_publish_view_count": {
@@ -11465,7 +11626,7 @@ const docTemplate = `{
                     "description": "成功发布的视图",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.SuccessView"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.SuccessView"
                     }
                 },
                 "success_publish_view_count": {
@@ -11474,7 +11635,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ColumnMeta": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ColumnMeta": {
             "type": "object",
             "properties": {
                 "name": {
@@ -11487,7 +11648,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.CompletionResult": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.CompletionResult": {
             "type": "object",
             "required": [
                 "form_view_id"
@@ -11497,7 +11658,7 @@ const docTemplate = `{
                     "description": "字段补全信息",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Field"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Field"
                     }
                 },
                 "form_view_business_name": {
@@ -11514,7 +11675,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ConvertRulesVerifyReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ConvertRulesVerifyReq": {
             "type": "object",
             "required": [
                 "field_id",
@@ -11545,18 +11706,18 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ConvertRulesVerifyResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ConvertRulesVerifyResp": {
             "type": "object",
             "properties": {
                 "convert_data": {
-                    "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FieldInfoWithData"
+                    "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FieldInfoWithData"
                 },
                 "original_data": {
-                    "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FieldInfoWithData"
+                    "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FieldInfoWithData"
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.CreateCompletionReqParamBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.CreateCompletionReqParamBody": {
             "type": "object",
             "required": [
                 "complete_field_name",
@@ -11586,7 +11747,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.CreateCompletionResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.CreateCompletionResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -11595,7 +11756,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.CreateDesensitizationRuleRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.CreateDesensitizationRuleRes": {
             "type": "object",
             "properties": {
                 "status": {
@@ -11604,7 +11765,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.CreateExcelViewReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.CreateExcelViewReq": {
             "type": "object",
             "required": [
                 "business_name",
@@ -11648,7 +11809,7 @@ const docTemplate = `{
                     "description": "excel字段",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExcelField"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExcelField"
                     }
                 },
                 "has_headers": {
@@ -11690,7 +11851,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DataPreviewConfigReqParamBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DataPreviewConfigReqParamBody": {
             "type": "object",
             "required": [
                 "form_view_id"
@@ -11707,7 +11868,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DataPreviewConfigResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DataPreviewConfigResp": {
             "type": "object",
             "properties": {
                 "form_view_id": {
@@ -11716,7 +11877,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DataPreviewReqParamBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DataPreviewReqParamBody": {
             "type": "object",
             "required": [
                 "fields",
@@ -11747,7 +11908,7 @@ const docTemplate = `{
                     "description": "过滤规则",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Member"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Member"
                     }
                 },
                 "form_view_id": {
@@ -11778,13 +11939,13 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DataPreviewResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DataPreviewResp": {
             "type": "object",
             "properties": {
                 "columns": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_adapter_driven_rest_virtualization_engine.Column"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_virtualization_engine.Column"
                     }
                 },
                 "data": {
@@ -11799,7 +11960,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DataTypeMapping": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DataTypeMapping": {
             "type": "object",
             "properties": {
                 "mapping": {
@@ -11810,7 +11971,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Datasource": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Datasource": {
             "type": "object",
             "properties": {
                 "catalog_name": {
@@ -11871,7 +12032,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DatasourceFilter": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DatasourceFilter": {
             "type": "object",
             "required": [
                 "datasource_name"
@@ -11901,7 +12062,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DatasourceOverviewResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DatasourceOverviewResp": {
             "type": "object",
             "properties": {
                 "associated_code_field_count": {
@@ -11942,7 +12103,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DeleteDesensitizationRuleRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DeleteDesensitizationRuleRes": {
             "type": "object",
             "properties": {
                 "status": {
@@ -11951,7 +12112,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DeleteFilterRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DeleteFilterRuleResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -11960,7 +12121,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DepartmentExploreReportsInfo": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DepartmentExploreReportsInfo": {
             "type": "object",
             "properties": {
                 "accuracy_score": {
@@ -12013,7 +12174,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DesensitizationFieldDataPreviewReqParamBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DesensitizationFieldDataPreviewReqParamBody": {
             "type": "object",
             "required": [
                 "desensitization_rule_id",
@@ -12042,7 +12203,7 @@ const docTemplate = `{
                     "description": "过滤规则",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Member"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Member"
                     }
                 },
                 "form_view_field_id": {
@@ -12073,13 +12234,13 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DesensitizationFieldDataPreviewResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DesensitizationFieldDataPreviewResp": {
             "type": "object",
             "properties": {
                 "columns": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_adapter_driven_rest_virtualization_engine.Column"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_virtualization_engine.Column"
                     }
                 },
                 "data": {
@@ -12094,7 +12255,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DesensitizationRule": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DesensitizationRule": {
             "type": "object",
             "properties": {
                 "algorithm": {
@@ -12144,7 +12305,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DesensitizationRuleInternalAlgorithm": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DesensitizationRuleInternalAlgorithm": {
             "type": "object",
             "properties": {
                 "algorithm": {
@@ -12161,7 +12322,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DesensitizationRuleRelatePolicy": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DesensitizationRuleRelatePolicy": {
             "type": "object",
             "properties": {
                 "description": {
@@ -12177,12 +12338,12 @@ const docTemplate = `{
                     "description": "描述信息",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.RelatePrivicyPolicy"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.RelatePrivicyPolicy"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DownloadLinkResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DownloadLinkResp": {
             "type": "object",
             "properties": {
                 "link": {
@@ -12191,7 +12352,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DownloadTaskCreateParams": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DownloadTaskCreateParams": {
             "type": "object",
             "required": [
                 "detail",
@@ -12209,7 +12370,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DownloadTaskEntry": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DownloadTaskEntry": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -12247,7 +12408,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DownloadTaskIDResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DownloadTaskIDResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -12257,7 +12418,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ErrorView": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ErrorView": {
             "type": "object",
             "properties": {
                 "error": {
@@ -12271,14 +12432,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExcelBatchPublishRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExcelBatchPublishRes": {
             "type": "object",
             "properties": {
                 "fail_publish_view": {
                     "description": "失败发布的视图",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FailView"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FailView"
                     }
                 },
                 "fail_publish_view_count": {
@@ -12289,7 +12450,7 @@ const docTemplate = `{
                     "description": "失败编辑的视图",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FailView"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FailView"
                     }
                 },
                 "fail_update_view_count": {
@@ -12300,7 +12461,7 @@ const docTemplate = `{
                     "description": "成功发布的视图",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.SuccessView"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.SuccessView"
                     }
                 },
                 "success_publish_view_count": {
@@ -12311,7 +12472,7 @@ const docTemplate = `{
                     "description": "成功编辑的视图",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.SuccessView"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.SuccessView"
                     }
                 },
                 "success_update_view_count": {
@@ -12320,7 +12481,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExcelField": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExcelField": {
             "type": "object",
             "required": [
                 "business_name",
@@ -12376,7 +12537,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExecFilterRuleReqParamBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExecFilterRuleReqParamBody": {
             "type": "object",
             "required": [
                 "filter_rule"
@@ -12388,13 +12549,13 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExecFilterRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExecFilterRuleResp": {
             "type": "object",
             "properties": {
                 "columns": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_adapter_driven_rest_virtualization_engine.Column"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_virtualization_engine.Column"
                     }
                 },
                 "count": {
@@ -12409,7 +12570,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExecuteDesensitizationRuleRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExecuteDesensitizationRuleRes": {
             "type": "object",
             "properties": {
                 "desensitization_text": {
@@ -12418,13 +12579,13 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExecuteWhiteListPolicyRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExecuteWhiteListPolicyRes": {
             "type": "object",
             "properties": {
                 "columns": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_adapter_driven_rest_virtualization_engine.Column"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_virtualization_engine.Column"
                     }
                 },
                 "data": {
@@ -12439,7 +12600,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreConfigResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreConfigResp": {
             "type": "object",
             "properties": {
                 "config": {
@@ -12456,7 +12617,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreDetails": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreDetails": {
             "type": "object",
             "properties": {
                 "accuracy_score": {
@@ -12475,7 +12636,7 @@ const docTemplate = `{
                     "description": "探查结果详情",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.RuleResult"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.RuleResult"
                     }
                 },
                 "standardization_score": {
@@ -12488,7 +12649,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreFieldDetail": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreFieldDetail": {
             "type": "object",
             "properties": {
                 "accuracy_score": {
@@ -12511,7 +12672,7 @@ const docTemplate = `{
                     "description": "规则结果明细（仅返回部分需要呈现的字段规则输出结果）",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.RuleResult"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.RuleResult"
                     }
                 },
                 "field_id": {
@@ -12528,7 +12689,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreFieldsInfo": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreFieldsInfo": {
             "type": "object",
             "properties": {
                 "explore_count": {
@@ -12541,7 +12702,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreJobStatusResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreJobStatusResp": {
             "type": "object",
             "properties": {
                 "explore_type": {
@@ -12554,7 +12715,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreReportInfo": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreReportInfo": {
             "type": "object",
             "properties": {
                 "accuracy_score": {
@@ -12595,7 +12756,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreReportResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreReportResp": {
             "type": "object",
             "properties": {
                 "code": {
@@ -12606,14 +12767,14 @@ const docTemplate = `{
                     "description": "字段级探查结果详情",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreFieldDetail"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreFieldDetail"
                     }
                 },
                 "explore_metadata_details": {
                     "description": "元数据级探查结果详情",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreDetails"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreDetails"
                         }
                     ]
                 },
@@ -12621,7 +12782,7 @@ const docTemplate = `{
                     "description": "行级探查结果详情",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreDetails"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreDetails"
                         }
                     ]
                 },
@@ -12633,14 +12794,14 @@ const docTemplate = `{
                     "description": "视图级探查结果详情",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.RuleResult"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.RuleResult"
                     }
                 },
                 "overview": {
                     "description": "总览信息",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ReportOverview"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ReportOverview"
                         }
                     ]
                 },
@@ -12658,18 +12819,18 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExportDesensitizationRuleRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExportDesensitizationRuleRes": {
             "type": "object",
             "properties": {
                 "entities": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExportSubEntity"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExportSubEntity"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExportExploreReportsReqBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExportExploreReportsReqBody": {
             "type": "object",
             "required": [
                 "department_id"
@@ -12687,7 +12848,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExportSubEntity": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExportSubEntity": {
             "type": "object",
             "required": [
                 "name"
@@ -12710,7 +12871,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FailView": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FailView": {
             "type": "object",
             "properties": {
                 "error": {
@@ -12727,7 +12888,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Field": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Field": {
             "type": "object",
             "required": [
                 "field_id"
@@ -12743,21 +12904,21 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FieldExploreReportResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FieldExploreReportResp": {
             "type": "object",
             "properties": {
                 "group": {
                     "description": "枚举值分布",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GroupInfo"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GroupInfo"
                     }
                 },
                 "time_range": {
                     "description": "时间范围信息",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.TimeRange"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.TimeRange"
                         }
                     ]
                 },
@@ -12767,7 +12928,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FieldInfoWithData": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FieldInfoWithData": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -12788,7 +12949,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Fields": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Fields": {
             "type": "object",
             "required": [
                 "business_name",
@@ -12846,6 +13007,10 @@ const docTemplate = `{
                     "description": "分级标签ID",
                     "type": "string"
                 },
+                "open_type": {
+                    "description": "开放属性",
+                    "type": "integer"
+                },
                 "reset_convert_rules": {
                     "description": "重置转换规则 （仅日期类型）",
                     "type": "string",
@@ -12859,13 +13024,25 @@ const docTemplate = `{
                     "description": "重置数据长度（仅DECIMAL类型）",
                     "type": "integer"
                 },
+                "secret_type": {
+                    "description": "涉密属性",
+                    "type": "integer"
+                },
+                "sensitive_type": {
+                    "description": "敏感属性",
+                    "type": "integer"
+                },
+                "shared_type": {
+                    "description": "共享属性",
+                    "type": "integer"
+                },
                 "standard_code": {
                     "description": "数据标准",
                     "type": "string"
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FieldsRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FieldsRes": {
             "type": "object",
             "properties": {
                 "attribute_id": {
@@ -12968,6 +13145,10 @@ const docTemplate = `{
                     "description": "标签路径",
                     "type": "string"
                 },
+                "open_type": {
+                    "description": "开放属性",
+                    "type": "integer"
+                },
                 "original_data_type": {
                     "description": "原始数据类型",
                     "type": "string"
@@ -12994,6 +13175,18 @@ const docTemplate = `{
                 },
                 "reset_data_length": {
                     "description": "重置数据长度（仅DECIMAL类型）",
+                    "type": "integer"
+                },
+                "secret_type": {
+                    "description": "涉密属性",
+                    "type": "integer"
+                },
+                "sensitive_type": {
+                    "description": "敏感属性",
+                    "type": "integer"
+                },
+                "shared_type": {
+                    "description": "共享属性",
                     "type": "integer"
                 },
                 "simple_type": {
@@ -13034,7 +13227,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FormView": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FormView": {
             "type": "object",
             "properties": {
                 "apply_num": {
@@ -13165,7 +13358,7 @@ const docTemplate = `{
                     "description": "数据Owner",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Owner"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Owner"
                     }
                 },
                 "publish_at": {
@@ -13226,7 +13419,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FormViewFilterReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FormViewFilterReq": {
             "type": "object",
             "properties": {
                 "ids": {
@@ -13237,7 +13430,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FormViewFilterResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FormViewFilterResp": {
             "type": "object",
             "properties": {
                 "ids": {
@@ -13248,7 +13441,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FormViewInfo": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FormViewInfo": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -13277,7 +13470,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FormViewRelateWhiteListPolicy": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FormViewRelateWhiteListPolicy": {
             "type": "object",
             "properties": {
                 "form_view_id": {
@@ -13290,19 +13483,19 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetBasicViewListResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetBasicViewListResp": {
             "type": "object",
             "properties": {
                 "entries": {
                     "description": "逻辑视图列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ViewInfo"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ViewInfo"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetBusinessUpdateTimeResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetBusinessUpdateTimeResp": {
             "type": "object",
             "properties": {
                 "business_update_time": {
@@ -13319,7 +13512,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetByAuditStatusResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetByAuditStatusResp": {
             "type": "object",
             "required": [
                 "entries",
@@ -13330,7 +13523,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FormViewInfo"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FormViewInfo"
                     }
                 },
                 "total_count": {
@@ -13341,7 +13534,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetCompletionResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetCompletionResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -13352,13 +13545,13 @@ const docTemplate = `{
                     "description": "补全结果",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.CompletionResult"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.CompletionResult"
                         }
                     ]
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetDataPreviewConfigResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetDataPreviewConfigResp": {
             "type": "object",
             "properties": {
                 "config": {
@@ -13367,18 +13560,18 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetDatasourceListRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetDatasourceListRes": {
             "type": "object",
             "properties": {
                 "entries": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Datasource"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Datasource"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetDepartmentExploreReportsResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetDepartmentExploreReportsResp": {
             "type": "object",
             "required": [
                 "entries",
@@ -13389,7 +13582,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DepartmentExploreReportsInfo"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DepartmentExploreReportsInfo"
                     }
                 },
                 "total_count": {
@@ -13400,7 +13593,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetDesensitizationRuleByIdsRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetDesensitizationRuleByIdsRes": {
             "type": "object",
             "required": [
                 "data"
@@ -13410,12 +13603,12 @@ const docTemplate = `{
                     "description": "脱敏规则数据",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DesensitizationRule"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DesensitizationRule"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetDesensitizationRuleDetailsRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetDesensitizationRuleDetailsRes": {
             "type": "object",
             "properties": {
                 "algorithm": {
@@ -13471,18 +13664,18 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetDesensitizationRuleInternalAlgorithmRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetDesensitizationRuleInternalAlgorithmRes": {
             "type": "object",
             "properties": {
                 "entities": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DesensitizationRuleInternalAlgorithm"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DesensitizationRuleInternalAlgorithm"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetDesensitizationRuleListRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetDesensitizationRuleListRes": {
             "type": "object",
             "required": [
                 "total_count"
@@ -13491,7 +13684,7 @@ const docTemplate = `{
                 "entries": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DesensitizationRule"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DesensitizationRule"
                     }
                 },
                 "total_count": {
@@ -13501,18 +13694,18 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetDesensitizationRuleRelatePolicyRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetDesensitizationRuleRelatePolicyRes": {
             "type": "object",
             "properties": {
                 "entries": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DesensitizationRuleRelatePolicy"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DesensitizationRuleRelatePolicy"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetExploreReportsResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetExploreReportsResp": {
             "type": "object",
             "required": [
                 "entries",
@@ -13523,7 +13716,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreReportInfo"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreReportInfo"
                     }
                 },
                 "total_count": {
@@ -13534,7 +13727,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetFieldsRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetFieldsRes": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -13581,7 +13774,7 @@ const docTemplate = `{
                 "fields": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FieldsRes"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FieldsRes"
                     }
                 },
                 "is_favored": {
@@ -13592,9 +13785,17 @@ const docTemplate = `{
                     "description": "最新发布时间（已发布）",
                     "type": "integer"
                 },
+                "open_type": {
+                    "description": "开放属性",
+                    "type": "integer"
+                },
                 "original_name": {
                     "description": "原始表名称",
                     "type": "string"
+                },
+                "shared_type": {
+                    "description": "共享属性",
+                    "type": "integer"
                 },
                 "status": {
                     "description": "表状态",
@@ -13612,13 +13813,17 @@ const docTemplate = `{
                     "description": "逻辑视图编码",
                     "type": "string"
                 },
+                "update_cycle": {
+                    "description": "更新周期",
+                    "type": "integer"
+                },
                 "view_source_catalog_name": {
                     "description": "视图源",
                     "type": "string"
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetFieldsResWithId": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetFieldsResWithId": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -13665,7 +13870,7 @@ const docTemplate = `{
                 "fields": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FieldsRes"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FieldsRes"
                     }
                 },
                 "id": {
@@ -13679,9 +13884,17 @@ const docTemplate = `{
                     "description": "最新发布时间（已发布）",
                     "type": "integer"
                 },
+                "open_type": {
+                    "description": "开放属性",
+                    "type": "integer"
+                },
                 "original_name": {
                     "description": "原始表名称",
                     "type": "string"
+                },
+                "shared_type": {
+                    "description": "共享属性",
+                    "type": "integer"
                 },
                 "status": {
                     "description": "表状态",
@@ -13699,13 +13912,17 @@ const docTemplate = `{
                     "description": "逻辑视图编码",
                     "type": "string"
                 },
+                "update_cycle": {
+                    "description": "更新周期",
+                    "type": "integer"
+                },
                 "view_source_catalog_name": {
                     "description": "视图源",
                     "type": "string"
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetFilterRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetFilterRuleResp": {
             "type": "object",
             "properties": {
                 "filter_rule": {
@@ -13718,183 +13935,18 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetFormViewDetailsRes": {
-            "type": "object",
-            "properties": {
-                "business_name": {
-                    "description": "表业务名称",
-                    "type": "string"
-                },
-                "catalog_provider": {
-                    "description": "目录提供方路径",
-                    "type": "string"
-                },
-                "comment": {
-                    "description": "注释",
-                    "type": "string"
-                },
-                "created_at": {
-                    "description": "创建时间",
-                    "type": "integer"
-                },
-                "created_by": {
-                    "description": "创建人",
-                    "type": "string"
-                },
-                "datasource_department_id": {
-                    "description": "数据源所属部门ID",
-                    "type": "string"
-                },
-                "datasource_id": {
-                    "description": "数据源id （不可编辑）",
-                    "type": "string"
-                },
-                "datasource_name": {
-                    "description": "数据源名称 （不可编辑）",
-                    "type": "string"
-                },
-                "department": {
-                    "description": "所属部门",
-                    "type": "string"
-                },
-                "department_id": {
-                    "description": "所属部门id",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "描述",
-                    "type": "string"
-                },
-                "end_cell": {
-                    "description": "结束单元格",
-                    "type": "string"
-                },
-                "excel_file_name": {
-                    "description": "excel文件名",
-                    "type": "string"
-                },
-                "favor_id": {
-                    "description": "收藏项ID，仅已收藏时返回该字段",
-                    "type": "string",
-                    "example": "0"
-                },
-                "has_headers": {
-                    "description": "是否首行作为列名",
-                    "type": "boolean"
-                },
-                "info_system": {
-                    "description": "关联信息系统（默认显示所属数据源信息系统，非必填，以用户修改为准）",
-                    "type": "string"
-                },
-                "info_system_id": {
-                    "description": "关联信息系统ID  （不可编辑）",
-                    "type": "string"
-                },
-                "is_favored": {
-                    "description": "是否已收藏",
-                    "type": "boolean"
-                },
-                "online_status": {
-                    "description": "上线状态",
-                    "type": "string"
-                },
-                "online_time": {
-                    "description": "上线时间",
-                    "type": "integer"
-                },
-                "original_name": {
-                    "description": "原始名称",
-                    "type": "string"
-                },
-                "owners": {
-                    "description": "数据Owner",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Owner"
-                    }
-                },
-                "publish_at": {
-                    "description": "发布时间",
-                    "type": "integer"
-                },
-                "publish_status": {
-                    "description": "发布状态",
-                    "type": "string"
-                },
-                "scene_analysis_id": {
-                    "description": "场景分析画布id",
-                    "type": "string"
-                },
-                "schema": {
-                    "description": "库名称  （不可编辑）",
-                    "type": "string"
-                },
-                "sheet": {
-                    "description": "sheet页,逗号分隔",
-                    "type": "string"
-                },
-                "sheet_as_new_column": {
-                    "description": "是否将sheet作为新列",
-                    "type": "boolean"
-                },
-                "source_sign": {
-                    "description": "来源标识",
-                    "type": "integer"
-                },
-                "start_cell": {
-                    "description": "起始单元格",
-                    "type": "string"
-                },
-                "subject": {
-                    "description": "所属主题",
-                    "type": "string"
-                },
-                "subject_id": {
-                    "description": "所属主题id",
-                    "type": "string"
-                },
-                "subject_path_id": {
-                    "description": "所属主题path id",
-                    "type": "string"
-                },
-                "technical_name": {
-                    "description": "表技术名称",
-                    "type": "string"
-                },
-                "type": {
-                    "description": "视图类型",
-                    "type": "string"
-                },
-                "uniform_catalog_code": {
-                    "description": "逻辑视图编码",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "编辑时间",
-                    "type": "integer"
-                },
-                "updated_by": {
-                    "description": "编辑人",
-                    "type": "string"
-                },
-                "view_source_catalog_name": {
-                    "description": "视图源",
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetFormViewRelateWhiteListPolicyRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetFormViewRelateWhiteListPolicyRes": {
             "type": "object",
             "properties": {
                 "entries": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FormViewRelateWhiteListPolicy"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FormViewRelateWhiteListPolicy"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetMultiViewsFieldsBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetMultiViewsFieldsBody": {
             "type": "object",
             "required": [
                 "ids"
@@ -13910,18 +13962,18 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetMultiViewsFieldsRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetMultiViewsFieldsRes": {
             "type": "object",
             "properties": {
                 "logic_views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.LogicViewFields"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.LogicViewFields"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetOverviewResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetOverviewResp": {
             "type": "object",
             "properties": {
                 "above_average_views": {
@@ -13966,7 +14018,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetUsersFormViewsPageRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetUsersFormViewsPageRes": {
             "type": "object",
             "required": [
                 "entries",
@@ -13977,7 +14029,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UsersFormView"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UsersFormView"
                     }
                 },
                 "total_count": {
@@ -13988,7 +14040,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetUsersMultiFormViewsFieldsBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetUsersMultiFormViewsFieldsBody": {
             "type": "object",
             "required": [
                 "ids"
@@ -14003,18 +14055,18 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetUsersMultiFormViewsFieldsRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetUsersMultiFormViewsFieldsRes": {
             "type": "object",
             "properties": {
                 "logic_views": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetFieldsResWithId"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetFieldsResWithId"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetViewFieldsResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetViewFieldsResp": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -14023,7 +14075,7 @@ const docTemplate = `{
                 "fields": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.SimpleViewField"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.SimpleViewField"
                     }
                 },
                 "form_view_id": {
@@ -14034,7 +14086,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetWhiteListPolicyListRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetWhiteListPolicyListRes": {
             "type": "object",
             "required": [
                 "total_count"
@@ -14043,7 +14095,7 @@ const docTemplate = `{
                 "entries": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.WhiteListPolicy"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.WhiteListPolicy"
                     }
                 },
                 "total_count": {
@@ -14053,7 +14105,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GetWhiteListPolicyWhereSqlRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GetWhiteListPolicyWhereSqlRes": {
             "type": "object",
             "properties": {
                 "sql": {
@@ -14061,7 +14113,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.GroupInfo": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.GroupInfo": {
             "type": "object",
             "properties": {
                 "count": {
@@ -14074,7 +14126,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.IsAllowClearGradeResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.IsAllowClearGradeResp": {
             "type": "object",
             "properties": {
                 "is_allow": {
@@ -14083,7 +14135,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.LogicViewFields": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.LogicViewFields": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -14093,7 +14145,7 @@ const docTemplate = `{
                 "fields": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FieldsRes"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FieldsRes"
                     }
                 },
                 "id": {
@@ -14113,7 +14165,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Member": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Member": {
             "type": "object",
             "required": [
                 "operator"
@@ -14146,7 +14198,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.NameRepeatParam": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.NameRepeatParam": {
             "type": "object",
             "required": [
                 "name",
@@ -14184,7 +14236,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Owner": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Owner": {
             "type": "object",
             "properties": {
                 "owner_id": {
@@ -14198,7 +14250,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.PageListFormViewResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.PageListFormViewResp": {
             "type": "object",
             "required": [
                 "entries",
@@ -14209,7 +14261,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FormView"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FormView"
                     }
                 },
                 "explore_time": {
@@ -14224,7 +14276,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.PageResultNew-DownloadTaskEntry": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.PageResultNew-DownloadTaskEntry": {
             "type": "object",
             "required": [
                 "entries",
@@ -14235,7 +14287,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.DownloadTaskEntry"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.DownloadTaskEntry"
                     }
                 },
                 "total_count": {
@@ -14246,7 +14298,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.PolicyStatusFilter": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.PolicyStatusFilter": {
             "type": "string",
             "enum": [
                 "Active",
@@ -14257,7 +14309,7 @@ const docTemplate = `{
                 "PolicyExpired"
             ]
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.QueryLogicalEntity": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.QueryLogicalEntity": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -14286,7 +14338,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.QueryLogicalEntityByViewReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.QueryLogicalEntityByViewReq": {
             "type": "object",
             "properties": {
                 "direction": {
@@ -14330,7 +14382,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.QueryLogicalEntityByViewResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.QueryLogicalEntityByViewResp": {
             "type": "object",
             "required": [
                 "entries",
@@ -14341,7 +14393,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.QueryLogicalEntity"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.QueryLogicalEntity"
                     }
                 },
                 "total_count": {
@@ -14352,14 +14404,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.QueryStreamNextResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.QueryStreamNextResp": {
             "type": "object",
             "properties": {
                 "columns": {
                     "description": "字段元数据数组",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ColumnMeta"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ColumnMeta"
                     }
                 },
                 "data": {
@@ -14380,14 +14432,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.QueryStreamStartResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.QueryStreamStartResp": {
             "type": "object",
             "properties": {
                 "columns": {
                     "description": "字段元数据数组",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ColumnMeta"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ColumnMeta"
                     }
                 },
                 "data": {
@@ -14412,7 +14464,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.RelatePrivicyPolicy": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.RelatePrivicyPolicy": {
             "type": "object",
             "properties": {
                 "policy_form_view_id": {
@@ -14426,7 +14478,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ReportOverview": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ReportOverview": {
             "type": "object",
             "properties": {
                 "accuracy_score": {
@@ -14445,7 +14497,7 @@ const docTemplate = `{
                     "description": "表字段信息",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExploreFieldsInfo"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExploreFieldsInfo"
                         }
                     ]
                 },
@@ -14453,7 +14505,7 @@ const docTemplate = `{
                     "description": "六性评分历史趋势数据",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ScoreTrend"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ScoreTrend"
                     }
                 },
                 "standardization_score": {
@@ -14466,7 +14518,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.RuleResult": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.RuleResult": {
             "type": "object",
             "properties": {
                 "accuracy_score": {
@@ -14526,7 +14578,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ScanReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ScanReq": {
             "type": "object",
             "required": [
                 "datasource_id"
@@ -14546,19 +14598,19 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ScanRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ScanRes": {
             "type": "object",
             "properties": {
                 "delete_revoke_audit_view_list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.View"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.View"
                     }
                 },
                 "error_view": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ErrorView"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ErrorView"
                     }
                 },
                 "error_view_count": {
@@ -14570,12 +14622,12 @@ const docTemplate = `{
                 "update_revoke_audit_view_list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.View"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.View"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ScoreTrend": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ScoreTrend": {
             "type": "object",
             "properties": {
                 "accuracy_score": {
@@ -14612,7 +14664,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.SimpleViewField": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.SimpleViewField": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -14673,7 +14725,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.SuccessView": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.SuccessView": {
             "type": "object",
             "properties": {
                 "id": {
@@ -14690,7 +14742,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.TimeRange": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.TimeRange": {
             "type": "object",
             "properties": {
                 "max": {
@@ -14703,7 +14755,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UndoAuditReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UndoAuditReq": {
             "type": "object",
             "required": [
                 "operate_type"
@@ -14724,7 +14776,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateCompletionField": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateCompletionField": {
             "type": "object",
             "required": [
                 "field_id"
@@ -14740,20 +14792,20 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateCompletionReqParamBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateCompletionReqParamBody": {
             "type": "object",
             "properties": {
                 "result": {
                     "description": "补全结果",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateCompletionResult"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateCompletionResult"
                         }
                     ]
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateCompletionResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateCompletionResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -14762,14 +14814,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateCompletionResult": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateCompletionResult": {
             "type": "object",
             "properties": {
                 "fields": {
                     "description": "字段补全信息",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateCompletionField"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateCompletionField"
                     }
                 },
                 "form_view_business_name": {
@@ -14782,7 +14834,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateDesensitizationRuleRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateDesensitizationRuleRes": {
             "type": "object",
             "properties": {
                 "status": {
@@ -14791,7 +14843,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateExcelViewReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateExcelViewReq": {
             "type": "object",
             "required": [
                 "business_name",
@@ -14833,7 +14885,7 @@ const docTemplate = `{
                     "description": "excel字段",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ExcelField"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ExcelField"
                     }
                 },
                 "has_headers": {
@@ -14878,7 +14930,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateFilterRuleReqParamBody": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateFilterRuleReqParamBody": {
             "type": "object",
             "required": [
                 "filter_rule"
@@ -14890,7 +14942,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateFilterRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateFilterRuleResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -14899,7 +14951,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateFormViewDetailsReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateFormViewDetailsReq": {
             "type": "object",
             "required": [
                 "business_name",
@@ -14921,8 +14973,11 @@ const docTemplate = `{
                 "description": {
                     "description": "描述",
                     "type": "string",
-                    "maxLength": 300,
                     "example": "description"
+                },
+                "open_type": {
+                    "description": "开放属性",
+                    "type": "integer"
                 },
                 "owner_id": {
                     "description": "数据Owner id",
@@ -14938,8 +14993,12 @@ const docTemplate = `{
                     "description": "数据Owner",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Owner"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Owner"
                     }
+                },
+                "shared_type": {
+                    "description": "共享属性",
+                    "type": "integer"
                 },
                 "source_sign": {
                     "description": "来源标识",
@@ -14960,13 +15019,17 @@ const docTemplate = `{
                     "maxLength": 255,
                     "minLength": 1,
                     "example": "xxxx"
+                },
+                "update_cycle": {
+                    "description": "更新周期",
+                    "type": "integer"
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateFormViewDetailsRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateFormViewDetailsRes": {
             "type": "object"
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateReq": {
             "type": "object",
             "required": [
                 "business_name",
@@ -14987,7 +15050,7 @@ const docTemplate = `{
                 "fields": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Fields"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Fields"
                     }
                 },
                 "info_system_id": {
@@ -14996,10 +15059,10 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UpdateRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UpdateRes": {
             "type": "object"
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.UsersFormView": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.UsersFormView": {
             "type": "object",
             "properties": {
                 "allow_download": {
@@ -15134,14 +15197,14 @@ const docTemplate = `{
                     "description": "数据Owner",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Owner"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Owner"
                     }
                 },
                 "policies": {
                     "description": "逻辑视图及其子视图（行列规则）的权限规则",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_adapter_driven_rest_auth_service.Entries"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_adapter_driven_rest_auth_service.Entries"
                     }
                 },
                 "publish_at": {
@@ -15202,7 +15265,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.View": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.View": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -15213,7 +15276,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.ViewInfo": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.ViewInfo": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -15266,7 +15329,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.WhiteListPolicy": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.WhiteListPolicy": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -15307,7 +15370,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.BatchDeleteReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.BatchDeleteReq": {
             "type": "object",
             "required": [
                 "ids"
@@ -15322,7 +15385,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.BatchDeleteResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.BatchDeleteResp": {
             "type": "object",
             "properties": {
                 "ids": {
@@ -15333,7 +15396,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.BindGradeRuleGroupReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.BindGradeRuleGroupReq": {
             "type": "object",
             "required": [
                 "rule_ids"
@@ -15351,7 +15414,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.BindGradeRuleGroupResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.BindGradeRuleGroupResp": {
             "type": "object",
             "properties": {
                 "group_id": {
@@ -15365,7 +15428,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.ClassificationDetails": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.ClassificationDetails": {
             "type": "object",
             "required": [
                 "operate"
@@ -15375,7 +15438,7 @@ const docTemplate = `{
                     "description": "分级规则数组",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.GradeRuleDetail"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.GradeRuleDetail"
                     }
                 },
                 "operate": {
@@ -15384,7 +15447,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.ClassificationRuleSubject": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.ClassificationRuleSubject": {
             "type": "object",
             "properties": {
                 "id": {
@@ -15399,13 +15462,13 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.Classifications": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.Classifications": {
             "type": "object",
             "properties": {
                 "grade_rules": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.ClassifyItem"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.ClassifyItem"
                     }
                 },
                 "operate": {
@@ -15413,7 +15476,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.ClassifyItem": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.ClassifyItem": {
             "type": "object",
             "properties": {
                 "classification_rule_subject_ids": {
@@ -15427,7 +15490,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.CreateGradeRuleReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.CreateGradeRuleReq": {
             "type": "object",
             "required": [
                 "classifications",
@@ -15440,7 +15503,7 @@ const docTemplate = `{
                     "description": "分类属性逻辑组合",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.Classifications"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.Classifications"
                         }
                     ]
                 },
@@ -15484,7 +15547,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.CreateGradeRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.CreateGradeRuleResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -15493,7 +15556,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.DeleteGradeRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.DeleteGradeRuleResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -15502,7 +15565,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.ExportGradeRule": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.ExportGradeRule": {
             "type": "object",
             "properties": {
                 "classification_grade": {
@@ -15523,7 +15586,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.ExportGradeRuleReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.ExportGradeRuleReq": {
             "type": "object",
             "required": [
                 "business_object_id"
@@ -15549,7 +15612,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.ExportGradeRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.ExportGradeRuleResp": {
             "type": "object",
             "required": [
                 "data"
@@ -15559,12 +15622,12 @@ const docTemplate = `{
                     "description": "分级规则数据",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.ExportGradeRule"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.ExportGradeRule"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.GradeRule": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.GradeRule": {
             "type": "object",
             "properties": {
                 "classification_subject_names": {
@@ -15636,7 +15699,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.GradeRuleDetail": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.GradeRuleDetail": {
             "type": "object",
             "required": [
                 "operate"
@@ -15646,7 +15709,7 @@ const docTemplate = `{
                     "description": "分类属性ID数组",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.ClassificationRuleSubject"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.ClassificationRuleSubject"
                     }
                 },
                 "operate": {
@@ -15655,14 +15718,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.GradeRuleDetailResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.GradeRuleDetailResp": {
             "type": "object",
             "properties": {
                 "classifications": {
                     "description": "分类属性逻辑组合",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.ClassificationDetails"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.ClassificationDetails"
                         }
                     ]
                 },
@@ -15748,7 +15811,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.PageListGradeRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.PageListGradeRuleResp": {
             "type": "object",
             "required": [
                 "entries",
@@ -15759,7 +15822,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.GradeRule"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.GradeRule"
                     }
                 },
                 "total_count": {
@@ -15770,7 +15833,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.StartGradeRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.StartGradeRuleResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -15779,18 +15842,18 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.StatisticsGradeRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.StatisticsGradeRuleResp": {
             "type": "object",
             "properties": {
                 "statistics": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.SubjectRuleStatistics"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.SubjectRuleStatistics"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.StopGradeRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.StopGradeRuleResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -15799,7 +15862,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.SubjectRuleStatistics": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.SubjectRuleStatistics": {
             "type": "object",
             "properties": {
                 "count": {
@@ -15817,14 +15880,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.UpdateGradeRuleReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.UpdateGradeRuleReq": {
             "type": "object",
             "properties": {
                 "classifications": {
                     "description": "分类属性逻辑组合",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.Classifications"
+                            "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.Classifications"
                         }
                     ]
                 },
@@ -15850,7 +15913,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule.UpdateGradeRuleResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule.UpdateGradeRuleResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -15859,7 +15922,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroup": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroup": {
             "type": "object",
             "properties": {
                 "business_object_id": {
@@ -15888,7 +15951,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupCreateReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupCreateReq": {
             "type": "object",
             "required": [
                 "business_object_id",
@@ -15909,7 +15972,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupCreateResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupCreateResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -15917,7 +15980,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupDeleteResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupDeleteResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -15925,7 +15988,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupLimitedResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupLimitedResp": {
             "type": "object",
             "properties": {
                 "limited": {
@@ -15933,7 +15996,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupListResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupListResp": {
             "type": "object",
             "required": [
                 "entries",
@@ -15944,7 +16007,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroup"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroup"
                     }
                 },
                 "total_count": {
@@ -15955,7 +16018,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupRepeatReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupRepeatReq": {
             "type": "object",
             "required": [
                 "business_object_id",
@@ -15973,7 +16036,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupRepeatResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupRepeatResp": {
             "type": "object",
             "properties": {
                 "repeat": {
@@ -15981,7 +16044,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupUpdateReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupUpdateReq": {
             "type": "object",
             "required": [
                 "name"
@@ -15995,7 +16058,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_grade_rule_group.GradeRuleGroupUpdateResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_grade_rule_group.GradeRuleGroupUpdateResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -16003,7 +16066,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.CanvasContent": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.CanvasContent": {
             "type": "object",
             "required": [
                 "content"
@@ -16019,7 +16082,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.CreateModelLabelRecRelReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.CreateModelLabelRecRelReq": {
             "type": "object",
             "required": [
                 "name",
@@ -16050,7 +16113,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.CreateModelReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.CreateModelReq": {
             "type": "object",
             "required": [
                 "business_name",
@@ -16075,7 +16138,7 @@ const docTemplate = `{
                     "description": "元模型字段",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_infrastructure_db_model.TModelField"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_infrastructure_db_model.TModelField"
                     }
                 },
                 "model_type": {
@@ -16097,7 +16160,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.ModeListItem": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.ModeListItem": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -16173,7 +16236,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.ModelDetail": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.ModelDetail": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -16212,7 +16275,7 @@ const docTemplate = `{
                     "description": "元模型字段",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_infrastructure_db_model.TModelField"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_infrastructure_db_model.TModelField"
                     }
                 },
                 "grade_label_Name": {
@@ -16239,14 +16302,14 @@ const docTemplate = `{
                     "description": "元模型",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.ModelDetail"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.ModelDetail"
                     }
                 },
                 "relations": {
                     "description": "复合模型的关系",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.Relation"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.Relation"
                     }
                 },
                 "subject_id": {
@@ -16271,7 +16334,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.ModelLabelRecRelResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.ModelLabelRecRelResp": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -16298,7 +16361,7 @@ const docTemplate = `{
                     "description": "模型标签关联",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.RelatedModelsResp"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.RelatedModelsResp"
                     }
                 },
                 "updated_at": {
@@ -16311,7 +16374,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.RelatedModelsResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.RelatedModelsResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -16324,7 +16387,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.Relation": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.Relation": {
             "type": "object",
             "required": [
                 "business_name",
@@ -16353,7 +16416,7 @@ const docTemplate = `{
                     "description": "关联关系匹配的字段",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.RelationLink"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.RelationLink"
                     }
                 },
                 "start_display_field_id": {
@@ -16366,7 +16429,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.RelationLink": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.RelationLink": {
             "type": "object",
             "required": [
                 "end_field_id",
@@ -16429,7 +16492,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.UpdateModelLabelRecRelReqParam": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.UpdateModelLabelRecRelReqParam": {
             "type": "object",
             "required": [
                 "id",
@@ -16465,14 +16528,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.UpdateModelReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.UpdateModelReq": {
             "type": "object",
             "properties": {
                 "all_nodes": {
                     "description": "所有的节点",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_infrastructure_db_model.TModelSingleNode"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_infrastructure_db_model.TModelSingleNode"
                     }
                 },
                 "business_name": {
@@ -16488,7 +16551,7 @@ const docTemplate = `{
                     "description": "元模型字段",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_infrastructure_db_model.TModelField"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_infrastructure_db_model.TModelField"
                     }
                 },
                 "id": {
@@ -16499,7 +16562,7 @@ const docTemplate = `{
                     "description": "模型关系",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.Relation"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.Relation"
                     }
                 },
                 "technical_name": {
@@ -16508,7 +16571,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_graph_model.UpdateTopicModelMjReqParam": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_graph_model.UpdateTopicModelMjReqParam": {
             "type": "object",
             "required": [
                 "grade_label_id",
@@ -16525,7 +16588,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.AuthorizableViewListResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.AuthorizableViewListResp": {
             "type": "object",
             "required": [
                 "entries",
@@ -16536,7 +16599,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.FormView"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.FormView"
                     }
                 },
                 "total_count": {
@@ -16547,7 +16610,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.CreateAuditProcessInstanceReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.CreateAuditProcessInstanceReq": {
             "type": "object",
             "required": [
                 "audit_type",
@@ -16570,7 +16633,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.CreateLogicViewReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.CreateLogicViewReq": {
             "type": "object",
             "required": [
                 "business_name",
@@ -16603,14 +16666,14 @@ const docTemplate = `{
                     "type": "array",
                     "minItems": 1,
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.LogicViewField"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.LogicViewField"
                     }
                 },
                 "owners": {
                     "description": "OwnerID         []string           ` + "`" + `json:\"owner_id\" form:\"owner_id\" binding:\"omitempty,dive,uuid\" example:\"88f78432-ee4e-43df-804c-4ccc4ff17f15\"` + "`" + `",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_form_view.Owner"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_form_view.Owner"
                     }
                 },
                 "scene_analysis_id": {
@@ -16643,7 +16706,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.LogicViewField": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.LogicViewField": {
             "type": "object",
             "required": [
                 "business_name",
@@ -16742,7 +16805,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.SubjectDomain": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.SubjectDomain": {
             "type": "object",
             "properties": {
                 "child_count": {
@@ -16802,7 +16865,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.SubjectDomainListRes": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.SubjectDomainListRes": {
             "type": "object",
             "required": [
                 "entries",
@@ -16813,7 +16876,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.SubjectDomain"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.SubjectDomain"
                     }
                 },
                 "total_count": {
@@ -16824,7 +16887,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.UpdateLogicViewReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.UpdateLogicViewReq": {
             "type": "object",
             "required": [
                 "id",
@@ -16847,7 +16910,7 @@ const docTemplate = `{
                     "type": "array",
                     "minItems": 1,
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_logic_view.LogicViewField"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_logic_view.LogicViewField"
                     }
                 },
                 "sql": {
@@ -16864,7 +16927,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.AlgorithmSubject": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.AlgorithmSubject": {
             "type": "object",
             "properties": {
                 "algorithm_id": {
@@ -16879,12 +16942,12 @@ const docTemplate = `{
                     "description": "分类属性",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.Subject"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.Subject"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.CreateRecognitionAlgorithmReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.CreateRecognitionAlgorithmReq": {
             "type": "object",
             "required": [
                 "algorithm",
@@ -16931,7 +16994,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.CreateRecognitionAlgorithmResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.CreateRecognitionAlgorithmResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -16940,7 +17003,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.DeleteBatchRecognitionAlgorithmReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.DeleteBatchRecognitionAlgorithmReq": {
             "type": "object",
             "required": [
                 "ids",
@@ -16964,7 +17027,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.DeleteBatchRecognitionAlgorithmResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.DeleteBatchRecognitionAlgorithmResp": {
             "type": "object",
             "required": [
                 "deleted_ids"
@@ -16979,7 +17042,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.DeleteRecognitionAlgorithmResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.DeleteRecognitionAlgorithmResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -16988,7 +17051,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.DuplicateCheckReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.DuplicateCheckReq": {
             "type": "object",
             "required": [
                 "name"
@@ -17004,7 +17067,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.DuplicateCheckResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.DuplicateCheckResp": {
             "type": "object",
             "properties": {
                 "is_duplicate": {
@@ -17013,7 +17076,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.ExportRecognitionAlgorithmReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.ExportRecognitionAlgorithmReq": {
             "type": "object",
             "required": [
                 "ids"
@@ -17028,7 +17091,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.ExportRecognitionAlgorithmResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.ExportRecognitionAlgorithmResp": {
             "type": "object",
             "required": [
                 "data"
@@ -17038,24 +17101,24 @@ const docTemplate = `{
                     "description": "识别算法数据",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.RecognitionAlgorithm"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.RecognitionAlgorithm"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.GetInnerTypeResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.GetInnerTypeResp": {
             "type": "object",
             "properties": {
                 "inner_map": {
                     "description": "识别算法数据",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.InnerMap"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.InnerMap"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.GetSubjectsByIdsReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.GetSubjectsByIdsReq": {
             "type": "object",
             "required": [
                 "ids"
@@ -17070,19 +17133,19 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.GetSubjectsByIdsResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.GetSubjectsByIdsResp": {
             "type": "object",
             "properties": {
                 "algorithm_subjects": {
                     "description": "识别算法及其引用分类属性",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.AlgorithmSubject"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.AlgorithmSubject"
                     }
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.GetWorkingAlgorithmIdsReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.GetWorkingAlgorithmIdsReq": {
             "type": "object",
             "required": [
                 "ids"
@@ -17097,7 +17160,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.GetWorkingAlgorithmIdsResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.GetWorkingAlgorithmIdsResp": {
             "type": "object",
             "required": [
                 "working_ids"
@@ -17112,7 +17175,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.InnerMap": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.InnerMap": {
             "type": "object",
             "properties": {
                 "inner_algorithm": {
@@ -17125,7 +17188,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.PageListRecognitionAlgorithmResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.PageListRecognitionAlgorithmResp": {
             "type": "object",
             "required": [
                 "entries",
@@ -17136,7 +17199,7 @@ const docTemplate = `{
                     "description": "对象列表",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.RecognitionAlgorithm"
+                        "$ref": "#/definitions/devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.RecognitionAlgorithm"
                     }
                 },
                 "total_count": {
@@ -17147,7 +17210,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.RecognitionAlgorithm": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.RecognitionAlgorithm": {
             "type": "object",
             "properties": {
                 "algorithm": {
@@ -17184,7 +17247,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.RecognitionAlgorithmDetailResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.RecognitionAlgorithmDetailResp": {
             "type": "object",
             "properties": {
                 "algorithm": {
@@ -17248,7 +17311,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.StartRecognitionAlgorithmResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.StartRecognitionAlgorithmResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -17257,7 +17320,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.StopRecognitionAlgorithmResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.StopRecognitionAlgorithmResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -17266,7 +17329,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.Subject": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.Subject": {
             "type": "object",
             "properties": {
                 "description": {
@@ -17291,7 +17354,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.UpdateRecognitionAlgorithmReq": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.UpdateRecognitionAlgorithmReq": {
             "type": "object",
             "required": [
                 "type"
@@ -17333,7 +17396,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_recognition_algorithm.UpdateRecognitionAlgorithmResp": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_recognition_algorithm.UpdateRecognitionAlgorithmResp": {
             "type": "object",
             "properties": {
                 "id": {
@@ -17342,7 +17405,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_domain_sub_view.SubView": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_domain_sub_view.SubView": {
             "type": "object",
             "properties": {
                 "auth_scope_id": {
@@ -17371,7 +17434,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_infrastructure_db_model.DataSet": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_infrastructure_db_model.DataSet": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -17403,7 +17466,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_infrastructure_db_model.TModelField": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_infrastructure_db_model.TModelField": {
             "type": "object",
             "properties": {
                 "business_name": {
@@ -17452,7 +17515,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_kweaver-ai_dsg_services_apps_data-view_infrastructure_db_model.TModelSingleNode": {
+        "devops_aishu_cn_AISHUDevOps_AnyFabric__git_data-view_infrastructure_db_model.TModelSingleNode": {
             "type": "object",
             "properties": {
                 "display_field_id": {
@@ -17469,6 +17532,25 @@ const docTemplate = `{
                 },
                 "model_id": {
                     "description": "主题模型/专题模型ID",
+                    "type": "string"
+                }
+            }
+        },
+        "ginx.HttpError": {
+            "type": "object",
+            "properties": {
+                "cause": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "data": {},
+                "description": {
+                    "type": "string"
+                },
+                "detail": {},
+                "solution": {
                     "type": "string"
                 }
             }
@@ -17512,7 +17594,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "1.0.0.0",
 	Host:             "",
 	BasePath:         "/api/data-view/v1",
-	Schemes:          []string{},
+	Schemes:          []string{"http", "https"},
 	Title:            "data-view",
 	Description:      "AnyFabric data view",
 	InfoInstanceName: "swagger",

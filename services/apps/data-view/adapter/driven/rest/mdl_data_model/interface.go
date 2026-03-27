@@ -7,7 +7,7 @@ import (
 )
 
 type DrivenMdlDataModel interface {
-	GetDataViews(ctx context.Context) (*GetDataViewsResp, error)
+	GetDataViews(ctx context.Context, updateTimeStart int64, dataSourceId string, offset, limit int) (*GetDataViewsResp, error)
 	GetDataView(ctx context.Context, viewIds []string) ([]*GetDataViewResp, error)
 	UpdateDataView(ctx context.Context, viewId string, view *UpdateDataView) ([]*GetDataViewResp, error)
 	DeleteDataView(ctx context.Context, viewId string) error

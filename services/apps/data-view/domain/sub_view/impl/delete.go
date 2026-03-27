@@ -2,7 +2,6 @@ package impl
 
 import (
 	"context"
-
 	authServiceV1 "github.com/kweaver-ai/idrm-go-common/api/auth-service/v1"
 
 	"github.com/google/uuid"

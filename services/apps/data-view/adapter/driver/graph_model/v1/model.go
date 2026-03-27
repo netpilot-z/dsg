@@ -82,10 +82,12 @@ func (s *Service) CheckExist(c *gin.Context) {
 //	@Summary		更新模型
 //	@Accept			application/json
 //	@Produce		application/json
+//	@Param			Authorization	header		string					true	"token"
+//	@Param			id			    path		string					true	"模型ID" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Param			_			    body		domain.UpdateModelReq	true	"请求参数"
 //	@Success		200				{object}	response.IDResp	        "成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
-//	@Router			/graph-model/:id  [PUT]
+//	@Router			/graph-model/{id}  [PUT]
 func (s *Service) Update(c *gin.Context) {
 	req := form_validator.Valid[domain.UpdateModelReqParam](c)
 	if req == nil {
@@ -107,10 +109,11 @@ func (s *Service) Update(c *gin.Context) {
 //	@Summary		模型详情
 //	@Accept			plain/text
 //	@Produce		application/json
-//	@Param			_			    path		request.IDReq	true	"请求参数"
+//	@Param			Authorization	header		string					true	"token"
+//	@Param			id			    path		string					true	"模型ID" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Success		200				{object}	domain.ModelDetail	    "成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
-//	@Router			/graph-model/:id  [GET]
+//	@Router			/graph-model/{id}  [GET]
 func (s *Service) Get(c *gin.Context) {
 	req := form_validator.Valid[request.IDPathReq](c)
 	if req == nil {
@@ -156,10 +159,11 @@ func (s *Service) List(c *gin.Context) {
 //	@Summary		删除模型
 //	@Accept			plain/text
 //	@Produce		application/json
-//	@Param			_			    path		request.IDPathReq	true	"请求参数"
+//	@Param			Authorization	header		string					true	"token"
+//	@Param			id			    path		string					true	"模型ID" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Success		200				{object}	response.IDResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			        "失败响应参数"
-//	@Router			/graph-model/:id    [DELETE]
+//	@Router			/graph-model/{id}    [DELETE]
 func (s *Service) Delete(c *gin.Context) {
 	req := form_validator.Valid[request.IDPathReq](c)
 	if req == nil {
@@ -180,10 +184,12 @@ func (s *Service) Delete(c *gin.Context) {
 //	@Summary		设置主题模型密级
 //	@Accept			application/json
 //	@Produce		application/json
+//	@Param			Authorization	header		string					true	"token"
+//	@Param			id			    path		string					true	"模型ID"	Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Param			_			    body		domain.UpdateTopicModelMjReqParam	true	"请求参数"
 //	@Success		200				{object}	response.IDResp	        "成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
-//	@Router			/graph-model/topic-confidential/:id  [PUT]
+//	@Router			/graph-model/topic-confidential/{id}  [PUT]
 func (s *Service) UpdateMj(c *gin.Context) {
 	req := form_validator.Valid[domain.UpdateTopicModelMjReqParam](c)
 	if req == nil {
@@ -254,10 +260,12 @@ func (s *Service) CreateTopicModelLabelRec(c *gin.Context) {
 //	@Summary		修改主题模型标签推荐配置
 //	@Accept			application/json
 //	@Produce		application/json
+//	@Param			Authorization	header		string					true	"token"
+//	@Param			id			    path		string					true	"配置ID"	Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Param			_			    body		domain.UpdateModelLabelRecRelReqParam	true	"请求参数"
 //	@Success		200				{object}	response.IDResp	        "成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
-//	@Router			/graph-model/topic-label-rec/:id  [PUT]
+//	@Router			/graph-model/topic-label-rec/{id}  [PUT]
 func (s *Service) UpdateTopicModelLabelRec(c *gin.Context) {
 	req := form_validator.Valid[domain.UpdateModelLabelRecRelReqParam](c)
 	if req == nil {
@@ -279,10 +287,11 @@ func (s *Service) UpdateTopicModelLabelRec(c *gin.Context) {
 //	@Summary		主题模型标签推荐配置详情
 //	@Accept			plain/text
 //	@Produce		application/json
-//	@Param			_			    path		request.IDReq	true	"请求参数"
+//	@Param			Authorization	header		string					true	"token"
+//	@Param			id			    path		string					true	"配置ID" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Success		200				{object}	domain.ModelLabelRecRelResp	    "成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
-//	@Router			/graph-model/topic-label-rec/:id  [GET]
+//	@Router			/graph-model/topic-label-rec/{id}  [GET]
 func (s *Service) GetTopicModelLabelRec(c *gin.Context) {
 	req := form_validator.Valid[request.IDPathReq](c)
 	if req == nil {
@@ -303,10 +312,11 @@ func (s *Service) GetTopicModelLabelRec(c *gin.Context) {
 //	@Summary		删除主题模型标签推荐配置
 //	@Accept			plain/text
 //	@Produce		application/json
-//	@Param			_			    path		request.IDReq	true	"请求参数"
+//	@Param			Authorization	header		string					true	"token"
+//	@Param			id			    path		string					true	"配置ID" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Success		200				{object}	response.IDResp	        "成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
-//	@Router			/graph-model/topic-label-rec/:id  [DELETE]
+//	@Router			/graph-model/topic-label-rec/{id}  [DELETE]
 func (s *Service) DeleteTopicModelLabelRec(c *gin.Context) {
 	req := form_validator.Valid[request.IDPathReq](c)
 	if req == nil {

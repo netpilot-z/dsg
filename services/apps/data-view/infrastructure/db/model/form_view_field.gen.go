@@ -47,6 +47,10 @@ type FormViewField struct {
 	Index               int                   `gorm:"column:index" json:"index"`                                                  // 字段顺序
 	GradeID             sql.NullInt64         `gorm:"column:grade_id" json:"grade_id"`                                            // 分级标签id
 	GradeType           sql.NullInt32         `gorm:"column:grade_type" json:"grade_type"`                                        // 数据分级标签获得方式 1：auto（自动匹配分级） 2：manual（人工选择分级）
+	SharedType          int32                 `gorm:"column:shared_type;comment:共享属性" json:"shared_type"`                         // 共享属性
+	OpenType            int32                 `gorm:"column:open_type;comment:开放属性" json:"open_type"`                             // 开放属性
+	SensitiveType       int32                 `gorm:"column:sensitive_type;comment:敏感属性" json:"sensitive_type"`                   // 敏感属性
+	SecretType          int32                 `gorm:"column:secret_type;comment:涉密属性" json:"secret_type"`                         // 涉密属性
 }
 
 // TableName FormViewField's table name

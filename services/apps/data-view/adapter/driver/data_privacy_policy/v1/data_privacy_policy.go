@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/constant"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/form_validator"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/data_privacy_policy"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 
 	// my_errorcode "github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
-	"github.com/gin-gonic/gin"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/rest/ginx"
+	"github.com/gin-gonic/gin"
 )
 
 type DataPrivacyPolicyService struct {
@@ -120,6 +120,7 @@ func (f *DataPrivacyPolicyService) Create(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                    true	"token"
+//	@Param			id				path		string					                true	"数据隐私策略ID"
 //	@Param			body			body		data_privacy_policy.UpdateDataPrivacyPolicyReq	true	"请求参数"
 //	@Success		200				{object}	data_privacy_policy.UpdateDataPrivacyPolicyResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                    "失败响应参数"
@@ -173,7 +174,7 @@ func (f *DataPrivacyPolicyService) Update(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                true	"token"
-//	@Param			id				query		string					                true	"数据隐私策略ID"
+//	@Param			id				path		string					                true	"数据隐私策略ID"
 //	@Success		200				{object}	data_privacy_policy.DataPrivacyPolicyDetailResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                "失败响应参数"
 //	@Router			/data-privacy-policy/{id} [get]
@@ -200,7 +201,7 @@ func (f *DataPrivacyPolicyService) GetDetailById(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                true	"token"
-//	@Param			id				query		string					                true	"表单视图ID"
+//	@Param			id				path		string					                true	"表单视图ID"
 //	@Success		200				{object}	data_privacy_policy.DataPrivacyPolicyDetailResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                "失败响应参数"
 //	@Router			/data-privacy-policy/{id}/by-form-view [get]
@@ -226,7 +227,7 @@ func (f *DataPrivacyPolicyService) GetDetailByFormViewId(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                true	"token"
-//	@Param			id				query		string					                true	"数据隐私策略ID"
+//	@Param			id				path		string					                true	"数据隐私策略ID"
 //	@Success		200				{object}	data_privacy_policy.DeleteDataPrivacyPolicyResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                "失败响应参数"
 //	@Router			/data-privacy-policy/{id} [delete]
@@ -253,7 +254,7 @@ func (f *DataPrivacyPolicyService) Delete(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                    true	"token"
-//	@Param			form_view_id	query		string					                    true	"表单视图ID"
+//	@Param			id				path		string					                true	"数据隐私策略ID"
 //	@Success		200				{object}	data_privacy_policy.IsExistByFormViewIdResp	    "成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                    "失败响应参数"
 //	@Router			/data-privacy-policy/{id}/is-exist [post]
@@ -280,6 +281,7 @@ func (f *DataPrivacyPolicyService) IsExistByFormViewId(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                            true	"token"
+//	@Param			id				path		string					                true	"数据隐私策略ID"
 //	@Param			body			body		data_privacy_policy.GetFormViewIdsByFormViewIdsReq	true	"请求参数"
 //	@Success		200				{object}	data_privacy_policy.GetFormViewIdsByFormViewIdsResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                            "失败响应参数"
@@ -307,7 +309,7 @@ func (f *DataPrivacyPolicyService) GetFormViewIdsByFormViewIds(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                        true	"token"
-//	@Param			query			query		data_privacy_policy.GetDesensitizationDataByIdReq	true	"查询参数"
+//	@Param			id				path		string					                true	"数据隐私策略ID"
 //	@Success		200				{object}	data_privacy_policy.GetDesensitizationDataByIdResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                        "失败响应参数"
 //	@Router			/data-privacy-policy/{id}/desensitization-data [get]

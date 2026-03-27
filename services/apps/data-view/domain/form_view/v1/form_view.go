@@ -685,7 +685,7 @@ func (f *formViewUseCase) GetByUserMapByIds(ctx context.Context, ids []string) (
 	if len(ids) == 0 {
 		return usersMap, nil
 	}
-	users, err := f.userRepo.GetByUserIds(ctx, ids)
+	users, err := f.configurationCenterDriven.GetBaseUserByIds(ctx, ids)
 	if err != nil {
 		return usersMap, errorcode.Detail(my_errorcode.DatabaseError, err.Error())
 	}
@@ -1672,6 +1672,35 @@ func (f *formViewUseCase) GetFields(ctx context.Context, req *form_view.GetField
 		return nil, err
 	}
 
+	// 批量获取字段级探查规则
+	fieldIds := make([]string, 0, len(fields))
+	for _, field := range fields {
+		fieldIds = append(fieldIds, field.ID)
+	}
+	rules, err := f.exploreRuleConfigRepo.GetByFieldIds(ctx, fieldIds)
+	if err != nil {
+		return nil, err
+	}
+	type ruleStat struct {
+		total   int
+		enabled int
+	}
+	fieldRuleStatMap := make(map[string]*ruleStat, len(fieldIds))
+	for _, rule := range rules {
+		if rule.FieldID == "" {
+			continue
+		}
+		stat, ok := fieldRuleStatMap[rule.FieldID]
+		if !ok {
+			stat = &ruleStat{}
+			fieldRuleStatMap[rule.FieldID] = stat
+		}
+		stat.total++
+		if rule.Enable == 1 {
+			stat.enabled++
+		}
+	}
+
 	// 批量获取属性信息
 	attributeInfoMap, err := f.GetAttributInfos(ctx, fields)
 	if err != nil {
@@ -1702,19 +1731,11 @@ func (f *formViewUseCase) GetFields(ctx context.Context, req *form_view.GetField
 	standardCodeSlice := make([]string, 0)
 	for i, field := range fields {
 		res[i] = f.AssignField(ctx, field, &codeTableSlice, &standardCodeSlice)
-		// 获取字段已启用的探查规则条数和字段级规则总数
-		rules, err := f.exploreRuleConfigRepo.GetByFieldId(ctx, field.ID)
-		if err != nil {
-			return nil, err
+		// 获取字段已启用的探查规则条数和字段级规则总数（使用批量查询结果）
+		if stat, ok := fieldRuleStatMap[field.ID]; ok {
+			res[i].EnableRules = stat.enabled
+			res[i].TotalRules = stat.total
 		}
-		enableRules := 0
-		for _, rule := range rules {
-			if rule.Enable == 1 {
-				enableRules++
-			}
-		}
-		res[i].EnableRules = enableRules
-		res[i].TotalRules = len(rules)
 
 		if field.SubjectID != nil && *field.SubjectID != "" {
 			attributeId := *field.SubjectID
@@ -1825,6 +1846,9 @@ func (f *formViewUseCase) AssembleTotalRes(ctx context.Context, formView *model.
 		Status:             enum.ToString[constant.FormViewScanStatus](formView.Status),
 		EditStatus:         enum.ToString[constant.FormViewEditStatus](formView.EditStatus),
 		Type:               enum.ToString[constant.FormViewType](formView.Type),
+		UpdateCycle:        formView.UpdateCycle,
+		SharedType:         formView.SharedType,
+		OpenType:           formView.OpenType,
 	}
 	switch formView.Type {
 	case constant.FormViewTypeDatasource.Integer.Int32():
@@ -1866,6 +1890,10 @@ func (f *formViewUseCase) AssignField(ctx context.Context, field *model.FormView
 		ResetDataLength:     field.ResetDataLength.Int32,
 		ResetDataAccuracy:   field.ResetDataAccuracy.Int32,
 		SimpleType:          constant.SimpleTypeMapping[field.DataType],
+		SharedType:          field.SharedType,
+		OpenType:            field.OpenType,
+		SensitiveType:       field.SensitiveType,
+		SecretType:          field.SecretType,
 	}
 	if field.GradeID.Valid && field.GradeID.Int64 > 0 {
 		res.LabelID = strconv.Itoa(int(field.GradeID.Int64))
@@ -2297,7 +2325,7 @@ func (f *formViewUseCase) GetUsersAllFormViews(ctx context.Context, req *form_vi
 	ownerReq.Offset = 0
 	total1, formViews1, err := f.repo.GetByOwnerOrIdsPages(ctx, &ownerReq)
 	//日志打印total1的值
-	log.Infof("------------------>total1----------------------->:", total1)
+	log.Infof("------------------>total1----------------------->: %d", total1)
 
 	if err != nil {
 		return nil, errorcode.Detail(my_errorcode.DatabaseError, err.Error())
@@ -2386,7 +2414,7 @@ func (f *formViewUseCase) GetUsersAllFormViews(ctx context.Context, req *form_vi
 	}
 	sort.Strings(permReq.ViewIds)
 	total2, formViews2, err := f.repo.GetByOwnerOrIdsPages(ctx, &permReq)
-	log.Infof("------------------>total2----------------------->:", total2)
+	log.Infof("------------------>total2----------------------->: %d", total2)
 	if err != nil {
 		return nil, errorcode.Detail(my_errorcode.DatabaseError, err.Error())
 	}
@@ -2771,6 +2799,9 @@ func (f *formViewUseCase) GetFormViewDetails(ctx context.Context, req *form_view
 		ExcelFileName:      formView.ExcelFileName,
 		SourceSign:         formView.SourceSign.Int32,
 		InfoSystemID:       formView.InfoSystemID,
+		UpdateCycle:        formView.UpdateCycle,
+		SharedType:         formView.SharedType,
+		OpenType:           formView.OpenType,
 	}
 
 	// 添加发布状态字段，根据 PublishAt 判断是否已发布
@@ -3016,6 +3047,15 @@ func (f *formViewUseCase) UpdateFormViewDetails(ctx context.Context, req *form_v
 	formViewUpdate.BusinessName = req.BusinessName
 	formViewUpdate.OwnerId = sql.NullString{String: strings.Join(ownerIDs, constant.OwnerIdSep), Valid: true}
 	formViewUpdate.UpdatedByUID = userInfo.ID
+	if req.UpdateCycle != nil {
+		formViewUpdate.UpdateCycle = *req.UpdateCycle
+	}
+	if req.SharedType != nil {
+		formViewUpdate.SharedType = *req.SharedType
+	}
+	if req.OpenType != nil {
+		formViewUpdate.OpenType = *req.OpenType
+	}
 	// 更新统一视图服务视图信息
 	updateViewReq := &mdl_data_model.UpdateDataView{
 		Name:    req.BusinessName,
@@ -3046,7 +3086,21 @@ func (f *formViewUseCase) UpdateFormViewDetails(ctx context.Context, req *form_v
 		return err
 	}
 
-	if err = f.repo.Update(ctx, formViewUpdate); err != nil {
+	updateFields := []string{"business_name", "description", "subject_id", "department_id", "owner_id", "updated_by_uid"}
+	if formViewUpdate.SourceSign.Valid {
+		updateFields = append(updateFields, "source_sign")
+	}
+
+	if req.UpdateCycle != nil {
+		updateFields = append(updateFields, "update_cycle")
+	}
+	if req.SharedType != nil {
+		updateFields = append(updateFields, "shared_type")
+	}
+	if req.OpenType != nil {
+		updateFields = append(updateFields, "open_type")
+	}
+	if err = f.repo.Db().WithContext(ctx).Where("id=?", formViewUpdate.ID).Select(updateFields).Updates(formViewUpdate).Error; err != nil {
 		return errorcode.Detail(my_errorcode.DatabaseError, err.Error())
 	}
 

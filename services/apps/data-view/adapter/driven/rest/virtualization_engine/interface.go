@@ -6,6 +6,8 @@ import (
 
 //mockgen  -source "adapter/driven/virtualization_engine/interface.go"  -destination="interface/mock/virtualization_engine_mock.go" -package=mock
 
+//http://api.aishu.cn/project/3003/interface/api/cat_17977
+
 type DrivenVirtualizationEngine interface {
 	GetView(ctx context.Context, req *GetViewReq) (*GetViewRes, error) //查询视图
 	CreateView(ctx context.Context, req *CreateViewReq) error          //新增视图
@@ -116,7 +118,8 @@ type GetConnectorsRes struct {
 }
 
 // GetConnectorsResConnector 代表虚拟化引擎的查询所有支持数据源接口的返回值中的一个数据源
-
+//
+// Definition: http://api.aishu.cn/project/3003/interface/api/93478
 type GetConnectorsResConnector struct {
 	OLKConnectorName string `json:"olkConnectorName,omitempty"`
 

@@ -14,11 +14,13 @@ import (
 //
 //	@Description    删除指定子视图
 //	@Tags           子视图
+//	@Summary        删除指定子视图
 //	@Accept         application/json
 //	@Produce        application/json
-//	@Param          id  path        string  true    "子视图 ID"     Format(uuid)
+//	@Param          id  path        string  true    "子视图 ID"     Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
+//	@Success        200 "成功"
 //	@Failure        400 {object}    rest.HttpError  "失败响应参数"
-//	@Router         /api/v1/data-view/v1/sub-views/:id [delete]
+//	@Router         /sub-views/{id} [delete]
 func (s *SubViewService) Delete(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {

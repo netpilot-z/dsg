@@ -48,6 +48,9 @@ CREATE TABLE IF NOT EXISTS  "form_view" (
     "sheet_as_new_column" int DEFAULT NULL,
     "source_sign" INT DEFAULT NULL,
     "mdl_id" VARCHAR(36 char) NULL DEFAULT NULL,
+    "update_cycle" INT DEFAULT 0,
+    "shared_type" INT DEFAULT 0,
+    "open_type" INT DEFAULT 0,
     "understand_status" int NOT NULL DEFAULT 0,
     CLUSTER PRIMARY KEY ("form_view_id")
 );
@@ -66,7 +69,7 @@ CREATE TABLE IF NOT EXISTS  "form_view_field" (
     "business_name" VARCHAR(255 char)  DEFAULT NULL,
     "original_name" VARCHAR(255 char)  DEFAULT NULL,
     "field_role" TINYINT DEFAULT NULL,
-    "field_description" varchar(300 char) DEFAULT NULL,
+    "field_description" varchar(300) DEFAULT NULL,
     "comment" text  NULL,
     "status" int NOT NULL,
     "primary_key" TINYINT,
@@ -90,6 +93,10 @@ CREATE TABLE IF NOT EXISTS  "form_view_field" (
     "match_score" VARCHAR(10 char) NULL DEFAULT NULL,
     "grade_id" BIGINT NULL DEFAULT NULL,
     "grade_type" int NULL DEFAULT NULL,
+    "shared_type" INT DEFAULT 0,
+    "open_type" INT DEFAULT 0,
+    "sensitive_type" INT DEFAULT 0,
+    "secret_type" INT DEFAULT 0,
     CLUSTER PRIMARY KEY ("form_view_field_id")
     );
 

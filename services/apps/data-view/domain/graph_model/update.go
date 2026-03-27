@@ -2,14 +2,13 @@ package graph_model
 
 import (
 	"context"
-	"strings"
-
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/models/request"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
 	"github.com/kweaver-ai/idrm-go-common/util"
 	"github.com/samber/lo"
+	"strings"
 )
 
 type UpdateModelReqParam struct {

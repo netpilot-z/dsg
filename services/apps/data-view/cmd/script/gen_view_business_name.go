@@ -31,8 +31,8 @@ func init() {
 	rootCmd.PersistentFlags().IntVarP(&offset, "offset", "o", -1, "")
 	rootCmd.PersistentFlags().StringVarP(&name, "name", "n", "", "virtualization_engine service host .  ex 10.4.89.65:9088 ")
 	rootCmd.PersistentFlags().StringVarP(&vreHost, "vr_host", "v", "http://10.101.234.208:8099", "virtualization_engine service host .  ex 10.4.89.65:8099 ")
-	rootCmd.PersistentFlags().StringVarP(&dbAuth, "db_auth", "a", "username:password", "database  auth ")
-	rootCmd.PersistentFlags().StringVar(&dbHost, "db_host", "ip:3306", "database host  .  ex 10.4.89.65:3306 ")
+	rootCmd.PersistentFlags().StringVarP(&dbAuth, "db_auth", "a", "anyshare:eisoo.com123", "database  auth .  ex jade:123456 ")
+	rootCmd.PersistentFlags().StringVar(&dbHost, "db_host", "10.100.156.251:3330", "database host  .  ex 10.4.89.65:3306 ")
 }
 
 func genBusiness(data []any) string {
@@ -63,8 +63,8 @@ func genBusiness(data []any) string {
 
 var rootCmd = &cobra.Command{
 	Use:   "root",
-	Short: "gen-name  xxx Special Handling Script",
-	Long:  `gen-name  xxx Special Handling Script (organdame,sys_name_zh,table_des) to BusinessName`,
+	Short: "gen-name  Minhang Special Handling Script",
+	Long:  `gen-name  Minhang Special Handling Script (organdame,sys_name_zh,table_des) to BusinessName`,
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
 		querySql := "select aim_inceptortable,organdame,sys_name_zh,table_des from vdm_inceptor_jdbc_ozw081wh.default.rocket_table_status where  aim_inceptortable is not null "

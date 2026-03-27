@@ -2,7 +2,6 @@ package sub_view
 
 import (
 	"encoding/json"
-
 	"github.com/google/uuid"
 	authServiceV1 "github.com/kweaver-ai/idrm-go-common/api/auth-service/v1"
 	"github.com/samber/lo"

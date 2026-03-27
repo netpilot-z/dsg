@@ -2,7 +2,10 @@ package common
 
 import (
 	"context"
-
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
+	"github.com/kweaver-ai/idrm-go-common/rest/configuration_center"
+	"github.com/kweaver-ai/idrm-go-common/rest/standardization"
+	"github.com/kweaver-ai/idrm-go-common/rest/user_management"
 	fieldRepo "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/form_view_field"
 	data_subject_local "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/data-subject"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/constant"
@@ -10,10 +13,6 @@ import (
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/form_view"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
-	"github.com/kweaver-ai/idrm-go-common/rest/configuration_center"
-	"github.com/kweaver-ai/idrm-go-common/rest/standardization"
-	"github.com/kweaver-ai/idrm-go-common/rest/user_management"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 )
 

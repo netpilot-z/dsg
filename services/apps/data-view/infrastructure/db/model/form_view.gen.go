@@ -66,6 +66,9 @@ type FormView struct {
 	SheetAsNewColumn        bool                  `gorm:"column:sheet_as_new_column;comment:结束单元格" json:"sheet_as_new_column"` // 是否将sheet作为新列
 	SourceSign              sql.NullInt32         `gorm:"column:source_sign;comment:来源标识" json:"source_sign"`                  // 来源标识
 	MdlID                   string                `gorm:"column:mdl_id;comment:统一视图id" json:"mdl_id"`                          // 统一视图id
+	UpdateCycle             int32                 `gorm:"column:update_cycle;comment:更新周期" json:"update_cycle"`                // 更新周期
+	SharedType              int32                 `gorm:"column:shared_type;comment:共享属性" json:"shared_type"`                  // 共享属性
+	OpenType                int32                 `gorm:"column:open_type;comment:开放属性" json:"open_type"`                      // 开放属性
 }
 
 // TableName FormView's table name

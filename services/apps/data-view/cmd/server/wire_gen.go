@@ -39,7 +39,7 @@ import (
 	impl29 "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/white_list_policy/impl"
 	impl7 "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/mq/es/impl"
 	impl4 "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/mq/kafka/impl"
-	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/redis"
+	redisson "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/redis"
 	impl17 "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/auth_service/impl"
 	impl15 "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/configuration_center/impl"
 	impl6 "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/data-subject/impl"
@@ -67,7 +67,7 @@ import (
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/middleware"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/mq"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/mq/datasource"
-	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/mq/explore"
+	data_explore "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/mq/explore"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/mq/explore_task"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/mq/form_view"
 	kafka2 "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driver/mq/kafka"
@@ -99,7 +99,6 @@ import (
 	"github.com/kweaver-ai/idrm-go-common/rest"
 	impl59 "github.com/kweaver-ai/idrm-go-common/rest/af_sailor/impl"
 	impl60 "github.com/kweaver-ai/idrm-go-common/rest/af_sailor_service/impl"
-	"github.com/kweaver-ai/idrm-go-common/rest/auth-service/v1"
 	impl3 "github.com/kweaver-ai/idrm-go-common/rest/authorization/impl"
 	impl31 "github.com/kweaver-ai/idrm-go-common/rest/business_grooming/impl"
 	impl2 "github.com/kweaver-ai/idrm-go-common/rest/configuration_center/impl"
@@ -279,7 +278,7 @@ func InitApp(conf *config.Bootstrap) (*app.AppRunner, func(), error) {
 	server := driver.NewHttpEngine(conf, iRouter)
 	v1Server := v1_3.NewServer(tmpCompletionRepo, conf)
 	v := app.ToTransportServer(server, v1Server)
-	idrm_go_frameApp := app.NewApp(conf, server, v)
+	af_go_frameApp := app.NewApp(conf, server, v)
 	consumerGroupFactory := kafka.NewConsumerGroupProduct(conf)
 	mqClient, err := kafka2.NewConsumerClient(consumerGroupFactory)
 	if err != nil {
@@ -297,7 +296,7 @@ func InitApp(conf *config.Bootstrap) (*app.AppRunner, func(), error) {
 	dataLineageTransport := callbacks.NewDataLineageTransport(metadata_manageDriven, formViewInfoFetcher)
 	transports := callbacks.NewTransport(gormDB, entityChangeTransport, dataLineageTransport)
 	wfStarter := workflow.NewWFStarter(workflowInterface)
-	appRunner := app.NewAppRunner(idrm_go_frameApp, mqHandler, transports, wfStarter)
+	appRunner := app.NewAppRunner(af_go_frameApp, mqHandler, transports, wfStarter)
 	return appRunner, func() {
 		cleanup2()
 		cleanup()

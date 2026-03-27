@@ -2,9 +2,6 @@ package form_validator
 
 import (
 	"errors"
-	"reflect"
-	"strings"
-
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh"
@@ -14,6 +11,8 @@ import (
 	zhTranslations "github.com/go-playground/validator/v10/translations/zh"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
 	log "github.com/kweaver-ai/idrm-go-frame/core/logx/zapx"
+	"reflect"
+	"strings"
 )
 
 var (

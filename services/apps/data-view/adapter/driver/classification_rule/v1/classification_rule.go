@@ -83,6 +83,7 @@ func (f *ClassificationRuleService) Create(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                    true	"token"
+//	@Param			id				path		string					                true	"分类规则ID"
 //	@Param			body			body		classification_rule.UpdateClassificationRuleReq	true	"请求参数"
 //	@Success		200				{object}	classification_rule.UpdateClassificationRuleResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                    "失败响应参数"
@@ -110,7 +111,7 @@ func (f *ClassificationRuleService) Update(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                true	"token"
-//	@Param			id				query		string					                true	"分类规则ID"
+//	@Param			id				path		string					                true	"分类规则ID"
 //	@Success		200				{object}	classification_rule.ClassificationRuleDetailResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                "失败响应参数"
 //	@Router			/classification-rule/{id} [get]
@@ -137,7 +138,7 @@ func (f *ClassificationRuleService) GetDetailById(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                true	"token"
-//	@Param			id				query		string					                true	"分类规则ID"
+//	@Param			id				path		string					                true	"分类规则ID"	Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Success		200				{object}	classification_rule.DeleteClassificationRuleResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                "失败响应参数"
 //	@Router			/classification-rule/{id} [delete]
@@ -233,7 +234,7 @@ func (f *ClassificationRuleService) Export(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                true	"token"
-//	@Param			id				query		string					                true	"分类规则ID"
+//	@Param			id				path		string					                true	"分类规则ID"
 //	@Success		200				{object}	classification_rule.StartClassificationRuleResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                "失败响应参数"
 //	@Router			/classification-rule/{id}/start [post]
@@ -260,7 +261,7 @@ func (f *ClassificationRuleService) Start(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                true	"token"
-//	@Param			id				query		string					                true	"分类规则ID"
+//	@Param			id				path		string					                true	"分类规则ID"
 //	@Success		200				{object}	classification_rule.StopClassificationRuleResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                "失败响应参数"
 //	@Router			/classification-rule/{id}/stop [post]

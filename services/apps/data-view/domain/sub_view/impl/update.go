@@ -2,11 +2,10 @@ package impl
 
 import (
 	"context"
-	"encoding/json"
-	"strings"
-
 	authServiceV1 "github.com/kweaver-ai/idrm-go-common/api/auth-service/v1"
+	"encoding/json"
 	"github.com/samber/lo"
+	"strings"
 
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/form_validator"
@@ -20,11 +19,12 @@ func (s *subViewUseCase) Update(ctx context.Context, subView *sub_view.SubView, 
 	ctx, span := trace.StartInternalSpan(ctx)
 	defer span.End()
 
+
 	if err := s.subViewRepo.IsRepeat(ctx, subView.Model()); err != nil {
 		return nil, err
 	}
 
-	if !isInternal {
+	if !isInternal{
 		//检查当前用户是否有权限更新子视图，至少是分配权限
 		if err := s.checkPermission(ctx, subView.ID.String(), authServiceV1.ObjectSubView, AuthAllocate, AuthAction); err != nil {
 			return nil, err

@@ -127,3 +127,18 @@ func (r *templateRuleRepo) NameRepeat(ctx context.Context, ruleId, name string) 
 	}
 	return true, nil
 }
+
+func (r *templateRuleRepo) CheckSysRuleNameRepeat(ctx context.Context, name string) (bool, error) {
+	var exploreRule *model.TemplateRule
+	var err error
+	db := r.db.WithContext(ctx).Model(&model.TemplateRule{}).Where("source = 1 and rule_name = ? and deleted_at = 0", name)
+
+	err = db.Take(&exploreRule).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}

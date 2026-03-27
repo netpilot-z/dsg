@@ -4,8 +4,8 @@ import (
 	"github.com/IBM/sarama"
 	"go.opentelemetry.io/otel/sdk/trace"
 
-	my_config "github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/config"
 	"github.com/kweaver-ai/idrm-go-common/audit"
+	my_config "github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/config"
 	"github.com/kweaver-ai/idrm-go-frame/core/logx/zapx"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"

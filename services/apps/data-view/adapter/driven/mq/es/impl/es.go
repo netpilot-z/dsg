@@ -2,9 +2,8 @@ package impl
 
 import (
 	"context"
-	"encoding/json"
-	"strings"
-
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
+	"github.com/kweaver-ai/idrm-go-common/rest/configuration_center"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/user"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/mq/es"
 	kafka_pub "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/mq/kafka"
@@ -13,10 +12,10 @@ import (
 	my_errorcode "github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
-	"github.com/kweaver-ai/idrm-go-common/rest/configuration_center"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
+	"encoding/json"
 	"go.uber.org/zap"
+	"strings"
 )
 
 type esRepo struct {

@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strings"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	universal_translator "github.com/go-playground/universal-translator"
@@ -13,6 +11,7 @@ import (
 	"github.com/kweaver-ai/TelemetrySDK-Go/exporter/v2/ar_trace"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
 	"go.opentelemetry.io/otel/trace"
+	"strings"
 )
 
 // BindAndValid bind data from form and  validate

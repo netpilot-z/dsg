@@ -3,12 +3,11 @@ package processor
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
-	"sync"
-
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/data_lineage/processor/formulas"
 	"github.com/kweaver-ai/idrm-go-frame/core/enum"
 	"github.com/samber/lo"
+	"strings"
+	"sync"
 )
 
 type FormulaNode struct {

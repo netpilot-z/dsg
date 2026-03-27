@@ -78,6 +78,7 @@ func (f *GradeRuleGroupService) Create(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					true	"token"
+//	@Param			id				path		string					true	"规则组ID"	Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Param			body			body		grade_rule_group.GradeRuleGroupUpdateReq	true	"请求参数"
 //	@Success		200				{object}	grade_rule_group.GradeRuleGroupUpdateResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
@@ -105,7 +106,7 @@ func (f *GradeRuleGroupService) Update(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					true	"token"
-//	@Param			id				query		string					true	"分级规则ID"
+//	@Param			id				path		string					true	"分级规则ID"	Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Success		200				{object}	grade_rule_group.GradeRuleGroupDeleteResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			"失败响应参数"
 //	@Router			/grade-rule-group/{id} [delete]

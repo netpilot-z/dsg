@@ -2,12 +2,11 @@ package graph_model
 
 import (
 	"context"
-
-	"github.com/google/uuid"
+	"github.com/kweaver-ai/idrm-go-common/util"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/constant"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	"github.com/kweaver-ai/idrm-go-common/util"
 	"github.com/kweaver-ai/idrm-go-frame/core/enum"
+	"github.com/google/uuid"
 )
 
 type ModelNameCheckReqParam struct {

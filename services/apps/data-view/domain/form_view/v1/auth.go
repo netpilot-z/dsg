@@ -3,12 +3,11 @@ package v1
 import (
 	"context"
 	"fmt"
-	"strings"
-
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/auth_service"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
 	"github.com/kweaver-ai/idrm-go-common/util"
+	"strings"
 )
 
 func (f *formViewUseCase) youCanAuth(ctx context.Context, viewDetail *model.FormView) (bool, error) {

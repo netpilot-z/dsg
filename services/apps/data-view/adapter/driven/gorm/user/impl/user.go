@@ -2,15 +2,14 @@ package impl
 
 import (
 	"context"
-	"errors"
-
 	"github.com/kweaver-ai/idrm-go-common/rest/user_management"
+	"errors"
 	"go.uber.org/zap"
 
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/user"
 	my_errorcode "github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 	"gorm.io/gorm"
 )

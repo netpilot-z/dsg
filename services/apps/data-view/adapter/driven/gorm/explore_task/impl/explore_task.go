@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/explore_task"
 	my_errorcode "github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
 	domain "github.com/kweaver-ai/dsg/services/apps/data-view/domain/explore_task"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/idrm-go-frame/core/enum"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 	"go.uber.org/zap"
@@ -171,14 +171,28 @@ func (r *exploreTaskRepo) Delete(ctx context.Context, taskId string) error {
 	return r.db.WithContext(ctx).Model(&model.ExploreTask{}).Where("task_id =?", taskId).Delete(&model.ExploreTask{}).Error
 }
 
+func (r *exploreTaskRepo) GetListByWorkOrderIDs(ctx context.Context, workOrderIDs []string) (exploreTasks []*model.ExploreTask, err error) {
+	err = r.db.WithContext(ctx).
+		Model(&model.ExploreTask{}).
+		Where("work_order_id in ? and id in (select max(id) from explore_task where work_order_id in ? group by datasource_id, form_view_id)", workOrderIDs, workOrderIDs).
+		Order("datasource_id asc, form_view_id asc").
+		Find(&exploreTasks).Error
+	return exploreTasks, err
+}
+
 func (r *exploreTaskRepo) GetList(ctx context.Context, req *domain.ListExploreTaskReq, userId string) (total int64, tasks []*domain.TaskInfo, err error) {
-	db := r.db.WithContext(ctx).Table("explore_task e")
+	db := r.db.WithContext(ctx)
+	if len(req.WorkOrderId) == 0 {
+		db = db.Table("(select * from explore_task where created_by_uid = ? and (work_order_id is null or work_order_id = '')) e", userId)
+	} else {
+		db = db.Table("(select * from explore_task where work_order_id = ? and id in (select max(id) from explore_task where work_order_id = ? group by datasource_id, form_view_id)) e", req.WorkOrderId, req.WorkOrderId)
+	}
 	db = db.Select("e.*,e.created_by_uid as created_by,f.business_name as form_view_name,f.type as form_view_type,d.name as datasource_name,d.type_name as datasource_type").
 		Joins("LEFT JOIN form_view f ON e.form_view_id = f.id").
 		Joins("LEFT JOIN datasource d ON e.datasource_id = d.id").Where("e.deleted_at = 0")
-	if req.WorkOrderId == "" {
-		db = db.Where("e.created_by_uid = ?", userId)
-	}
+	// if req.WorkOrderId == "" {
+	// 	db = db.Where("e.created_by_uid = ?", userId)
+	// }
 	keyword := req.Keyword
 	if keyword != "" {
 		if strings.Contains(keyword, "_") {
@@ -213,11 +227,11 @@ func (r *exploreTaskRepo) GetList(ctx context.Context, req *domain.ListExploreTa
 			db = db.Where("e.status in  ?", status)
 		}
 	}
-	if req.WorkOrderId == "" {
-		db = db.Where("e.work_order_id is null or e.work_order_id = ''")
-	} else {
-		db = db.Where("e.work_order_id = ?", req.WorkOrderId)
-	}
+	// if req.WorkOrderId == "" {
+	// 	db = db.Where("e.work_order_id is null or e.work_order_id = ''")
+	// } else {
+	// 	db = db.Where("e.work_order_id = ?", req.WorkOrderId)
+	// }
 	err = db.Debug().Count(&total).Error
 	if err != nil {
 		return total, tasks, err

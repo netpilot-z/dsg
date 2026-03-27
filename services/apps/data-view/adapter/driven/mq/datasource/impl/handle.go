@@ -2,7 +2,6 @@ package impl
 
 import (
 	"context"
-
 	"github.com/Shopify/sarama"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/mq/datasource"

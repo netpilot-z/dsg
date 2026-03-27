@@ -3,10 +3,13 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/form_validator"
+	"github.com/kweaver-ai/dsg/services/apps/data-view/common/models/response"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/explore_task"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/rest/ginx"
 )
+
+var _ = new(response.BoolResp)
 
 type ExploreTaskService struct {
 	uc explore_task.ExploreTaskUseCase
@@ -171,17 +174,6 @@ func (f *ExploreTaskService) CreateRule(c *gin.Context) {
 	c.JSON(201, res)
 }
 
-// GetRuleList 获取规则列表
-// @Description	获取规则列表
-// @Tags		探查规则
-// @Summary		获取规则列表
-// @Accept		application/json
-// @Produce		application/json
-// @Param		Authorization	header		string	true	"token"
-// @Param       _     query       explore_task.GetRuleListReq true 	"请求参数"
-// @Success		200				{array}	explore_task.GetRuleResp	"成功响应参数"
-// @Failure		400				{object}	rest.HttpError			    "失败响应参数"
-// @Router		/explore-config/rule [get]
 func (f *ExploreTaskService) GetRuleList(c *gin.Context) {
 	req := form_validator.Valid[explore_task.GetRuleListReq](c)
 	if req == nil {
@@ -231,7 +223,7 @@ func (f *ExploreTaskService) GetRule(c *gin.Context) {
 // @Produce		application/json
 // @Param		Authorization	header		string	true	"token"
 // @Param       _     query       explore_task.NameRepeatReq true 	"请求参数"
-// @Success		200				bool	      true    "成功响应参数"
+// @Success		200				{object}	response.BoolResp "成功响应参数"
 // @Failure		400				{object}	rest.HttpError			    "失败响应参数"
 // @Router		/explore-config/rule/repeat [get]
 func (f *ExploreTaskService) NameRepeat(c *gin.Context) {
@@ -284,7 +276,7 @@ func (f *ExploreTaskService) UpdateRule(c *gin.Context) {
 // @Produce		json
 // @Param		Authorization 	header 		string	true	"token"
 // @Param		_     			body      	explore_task.UpdateRuleStatusReqBody true 	"请求参数"
-// @Success		200				bool	      true    "成功响应参数"
+// @Success		200				{object}	response.BoolResp "成功响应参数"
 // @Failure		400				{object}	rest.HttpError					"失败响应参数"
 // @Router		/explore-config/rule/status [put]
 func (f *ExploreTaskService) UpdateRuleStatus(c *gin.Context) {
@@ -369,6 +361,21 @@ func (f *ExploreTaskService) GetList(c *gin.Context) {
 	}
 
 	res, err := util.TraceA1R2(c, req, f.uc.List)
+	if err != nil {
+		ginx.ResBadRequestJson(c, err)
+		return
+	}
+
+	ginx.ResOKJson(c, res)
+}
+
+func (f *ExploreTaskService) GetWorkOrderExploreProgress(c *gin.Context) {
+	req := form_validator.Valid[explore_task.WorkOrderExploreProgressReq](c)
+	if req == nil {
+		return
+	}
+
+	res, err := util.TraceA1R2(c, req, f.uc.GetWorkOrderExploreProgress)
 	if err != nil {
 		ginx.ResBadRequestJson(c, err)
 		return

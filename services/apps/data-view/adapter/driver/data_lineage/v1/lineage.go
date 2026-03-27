@@ -21,7 +21,7 @@ func NewFormViewService(uc data_lineage.UseCase) *Service {
 //
 //	@Description	前台下的获取base节点及相关信息
 //	@Tags			open数据服务超市
-//	@Summary		前台下的-获取base节点及相关信息
+//	@Summary		前台下的获取base节点及相关信息
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string					true	"token"
@@ -47,7 +47,7 @@ func (s *Service) GetBase(c *gin.Context) {
 //
 //	@Description	前台下的分页获取指定节点上一度血缘关系
 //	@Tags			open数据服务超市
-//	@Summary		前台下的-分页获取指定节点上一度血缘关系
+//	@Summary		前台下的分页获取指定节点上一度血缘关系
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string					        true	"token"
@@ -72,17 +72,6 @@ func (s *Service) ListLineage(c *gin.Context) {
 	ginx.ResOKJson(c, resp)
 }
 
-// ParserLineage 解析得到视图血缘数据
-//
-//	@Description	解析得到视图血缘数据
-//	@Tags			open数据服务超市
-//	@Summary		解析得到视图血缘数据
-//	@Accept			json
-//	@Produce		json
-//	@Param			req      		query		data_lineage.ParseLineageParamReq	true	"节点实体ID"
-//	@Success		200				{object}	data_lineage.ListLineageResp	        "成功响应参数"
-//	@Failure		400				{object}	rest.HttpError			        "失败响应参数"
-//	@Router			/data-lineage/parser [get]
 func (s *Service) ParserLineage(c *gin.Context) {
 	req := form_validator.Valid[data_lineage.ParseLineageParamReq](c)
 	if req == nil {

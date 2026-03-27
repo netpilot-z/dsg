@@ -2,15 +2,13 @@ package middleware
 
 import (
 	"context"
+	v1 "github.com/kweaver-ai/idrm-go-common/api/auth-service/v1"
 	"net/http"
 	"strings"
-
-	v1 "github.com/kweaver-ai/idrm-go-common/api/auth-service/v1"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
-	my_config "github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/config"
 	"github.com/kweaver-ai/idrm-go-common/access_control"
 	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/idrm-go-common/interception"
@@ -19,10 +17,12 @@ import (
 	configuration_center_impl "github.com/kweaver-ai/idrm-go-common/rest/configuration_center/impl"
 	"github.com/kweaver-ai/idrm-go-common/rest/hydra"
 	"github.com/kweaver-ai/idrm-go-common/rest/user_management"
+	my_config "github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/config"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/trace"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/rest/ginx"
 )
+
 
 func NewConfigurationCenterLabelService(conf *my_config.Bootstrap, client *http.Client) configuration_center.LabelService {
 	return configuration_center_impl.NewConfigurationCenterDrivenByService(client)
@@ -39,6 +39,7 @@ type WrappedMiddleware struct {
 }
 
 var _ middleware.Middleware = &WrappedMiddleware{}
+
 
 func (m *WrappedMiddleware) AccessControl(resource access_control.Resource) gin.HandlerFunc {
 	underlying := m.Middleware.AccessControl(resource)
@@ -134,6 +135,7 @@ func AddToken() gin.HandlerFunc {
 	}
 }
 
+
 func LocalToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenID := c.GetHeader("Authorization")
@@ -153,3 +155,4 @@ func LocalToken() gin.HandlerFunc {
 		c.Next()
 	}
 }
+

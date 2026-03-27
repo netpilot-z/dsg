@@ -4,24 +4,26 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 	"strings"
+	"time"
 
-	"github.com/google/uuid"
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/mq/es"
-	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/configuration_center"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/mdl_data_model"
 	my_errorcode "github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/idrm-go-frame/core/errorx/agerrors"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
+	"github.com/google/uuid"
 	"github.com/samber/lo"
 	"go.uber.org/zap"
 
+	"github.com/kweaver-ai/idrm-go-common/rest/data_view"
+	form_view_repo "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/form_view"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/constant"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/form_view"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	"github.com/kweaver-ai/idrm-go-common/rest/data_view"
 	"github.com/kweaver-ai/idrm-go-frame/core/enum"
 )
 
@@ -160,102 +162,266 @@ func (f *formViewUseCase) QueryAuthedSubView(ctx context.Context, req *form_view
 
 func (f *formViewUseCase) Sync(ctx context.Context) {
 	ctx = context.Background()
-	views, err := f.DrivenMdlDataModel.GetDataViews(ctx)
+
+	// 1) 从 Redis 获取上次同步时间（如果存在）
+	lastSyncTimeMs := int64(0)
+	syncTimeKey := constant.MdlDataModelSyncTimeKey
+	lastSyncTimeStr, err := f.redis.GetClient().Get(ctx, syncTimeKey).Result()
+	if err == nil && lastSyncTimeStr != "" {
+		lastSyncTimeMs, err = strconv.ParseInt(lastSyncTimeStr, 10, 64)
+		if err != nil {
+			log.WithContext(ctx).Warn("parse last sync time from redis fail, will do full sync", zap.Error(err))
+			lastSyncTimeMs = 0
+		} else {
+			log.WithContext(ctx).Infof("incremental sync: using last sync time from redis: %d", lastSyncTimeMs)
+		}
+	} else {
+		// Redis 中没有记录，执行全量同步（首次同步或 Redis 数据丢失的情况）
+		log.WithContext(ctx).Infof("incremental sync: redis has no record, will do full sync")
+		lastSyncTimeMs = 0
+	}
+
+	// 记录本次同步开始时间（用于下次同步）
+	syncStartTimeMs := time.Now().UnixMilli()
+
+	// 2) 计算增量同步的起始时间（使用时间缓冲窗口，避免漏数据）
+	fullSync := lastSyncTimeMs == 0
+	updateStart := int64(0)
+	if !fullSync {
+		// 使用时间缓冲窗口（减去5分钟），避免因时间边界、时间戳精度不一致或同步过程中的数据更新导致漏数据
+		const bufferMinutes = 5
+		updateStart = lastSyncTimeMs - int64(bufferMinutes*60*1000)
+		if updateStart < 0 {
+			updateStart = 0
+		}
+		log.WithContext(ctx).Infof("incremental sync: lastSyncTimeMs=%d, adjusted=%d (minus %d minutes)",
+			lastSyncTimeMs, updateStart, bufferMinutes)
+	}
+
+	// 按数据源分片同步，避免一次性处理所有视图
+	datasources, err := f.datasourceRepo.GetAll(ctx)
 	if err != nil {
+		log.WithContext(ctx).Error("get all datasource fail", zap.Error(err))
 		return
 	}
-	viewMap := make(map[string]*mdl_data_model.DataViewInfo)
-	viewIds := make([]string, 0)
-	for _, view := range views.Entries {
-		viewMap[view.Id] = view
-		viewIds = append(viewIds, view.Id)
+
+	const listPageSize = 500
+	const detailBatchSize = 200
+
+	for _, ds := range datasources {
+		if ds == nil || ds.ID == "" {
+			continue
+		}
+
+		// 分页加载当前数据源的 formViews 映射
+		formViewsMap, formViewInfosMap, err := f.buildFormViewSyncMapsPaged(ctx, ds.ID)
+		if err != nil {
+			log.WithContext(ctx).Error("build form_view sync maps for datasource fail", zap.Error(err), zap.String("datasource_id", ds.ID))
+			return
+		}
+
+		// 拉一页同步一页，不累积全量 viewMap/needSyncIDs；编码按需从池子中批量获取
+		var pool codePool
+		for offset := 0; ; {
+			page, err := f.DrivenMdlDataModel.GetDataViews(ctx, updateStart, ds.ID, offset, listPageSize)
+			if err != nil {
+				log.WithContext(ctx).Error("get data views page (sync pass) fail", zap.Error(err), zap.Int("offset", offset), zap.String("datasource_id", ds.ID))
+				return
+			}
+			if len(page.Entries) == 0 {
+				break
+			}
+			viewMapPage := make(map[string]viewSyncEntry, len(page.Entries))
+			needSyncIDsPage := make([]string, 0, len(page.Entries))
+			for _, v := range page.Entries {
+				viewMapPage[v.Id] = viewSyncEntry{DataSourceId: v.DataSourceId, TechnicalName: v.TechnicalName}
+				needSyncIDsPage = append(needSyncIDsPage, v.Id)
+			}
+			for start := 0; start < len(needSyncIDsPage); start += detailBatchSize {
+				end := start + detailBatchSize
+				if end > len(needSyncIDsPage) {
+					end = len(needSyncIDsPage)
+				}
+				batchIDs := needSyncIDsPage[start:end]
+				batchInfos, err := f.DrivenMdlDataModel.GetDataView(ctx, batchIDs)
+				if err != nil {
+					log.WithContext(ctx).Error("get data view detail from mdl-data-model fail", zap.Error(err), zap.Int("batchSize", len(batchIDs)), zap.String("datasource_id", ds.ID))
+					return
+				}
+				if err = f.compareFormViewBatch(ctx, batchInfos, viewMapPage, formViewsMap, formViewInfosMap, &pool); err != nil {
+					log.WithContext(ctx).Error("compare/sync form_view batch fail", zap.Error(err), zap.Int("offset", offset), zap.Int("batchStart", start), zap.String("datasource_id", ds.ID))
+					return
+				}
+				batchInfos = nil
+			}
+			viewMapPage = nil
+			needSyncIDsPage = nil
+			if len(page.Entries) < listPageSize {
+				break
+			}
+			offset += len(page.Entries)
+		}
+
+		if fullSync {
+			if err = f.deleteFormViewFromSyncFlags(ctx, formViewsMap); err != nil {
+				log.WithContext(ctx).Error("delete form_view (full sync) fail", zap.Error(err), zap.String("datasource_id", ds.ID))
+				return
+			}
+		}
 	}
-	viewInfos, err := f.DrivenMdlDataModel.GetDataView(ctx, viewIds)
-	if err != nil {
-		return
-	}
-	err = f.CompareFormView(ctx, viewMap, viewInfos)
-	if err != nil {
-		return
+
+	// 同步完成后，将本次同步开始时间保存到 Redis，作为下次增量同步的起点
+	if err = f.redis.GetClient().Set(ctx, syncTimeKey, syncStartTimeMs, 0).Err(); err != nil {
+		log.WithContext(ctx).Error("save sync time to redis fail", zap.Error(err), zap.Int64("syncStartTimeMs", syncStartTimeMs))
+		// 不返回错误，因为同步已经完成，只是记录失败
+	} else {
+		log.WithContext(ctx).Infof("sync completed, saved sync time to redis: %d (next sync will start from this time)", syncStartTimeMs)
 	}
 }
 
-func (f *formViewUseCase) CompareFormView(ctx context.Context, viewMap map[string]*mdl_data_model.DataViewInfo, tables []*mdl_data_model.GetDataViewResp) error {
-	formViews, err := f.repo.GetAllFormView(ctx)
-	if err != nil {
-		return errorcode.Detail(my_errorcode.DatabaseError, err.Error())
+type SyncFormViewFlag struct {
+	FormViewID         string
+	UniformCatalogCode string
+	flag               int
+}
+
+type viewSyncEntry struct{ DataSourceId, TechnicalName string }
+
+// codePool 用于按需批量获取统一视图编码，避免一次性生成大 codeList 占用内存
+type codePool struct {
+	entries []string
+	index   int
+}
+
+const dataViewCodeBatchSize = 200
+
+func (f *formViewUseCase) nextDataViewCode(ctx context.Context, pool *codePool) (string, error) {
+	if pool == nil {
+		return "", nil
 	}
-	formViewsMap := make(map[string]*FormViewFlag)
-	formViewInfosMap := make(map[string]*FormViewFlag)
-	for _, formView := range formViews {
-		if formView.MdlID != "" {
-			formViewsMap[formView.MdlID] = &FormViewFlag{FormView: formView, flag: 1}
+	// 当前批次已用完，向配置中心再要一批编码
+	if pool.index >= len(pool.entries) {
+		batch := dataViewCodeBatchSize
+		codeList, err := f.configurationCenterDrivenNG.Generate(ctx, CodeGenerationRuleUUIDDataView, batch)
+		if err != nil {
+			if agerrors.Code(err).GetErrorCode() == "ConfigurationCenter.CodeGenerationRule.NotFound" {
+				// 兼容老版本配置中心：打 warn，返回空编码，后续逻辑自行处理
+				log.WithContext(ctx).Warn("generate code for data view fail", zap.Error(err),
+					zap.Stringer("rule", CodeGenerationRuleUUIDDataView), zap.Int("count", batch))
+				pool.entries = make([]string, batch)
+				pool.index = 0
+			} else {
+				log.WithContext(ctx).Error("generate code for data view fail", zap.Error(err),
+					zap.Stringer("rule", CodeGenerationRuleUUIDDataView), zap.Int("count", batch))
+				return "", err
+			}
 		} else {
-			tmp := fmt.Sprintf("%s %s", formView.DatasourceID, formView.TechnicalName)
-			formViewInfosMap[tmp] = &FormViewFlag{FormView: formView, flag: 1}
+			pool.entries = codeList.Entries
+			pool.index = 0
 		}
 	}
+	if pool.index >= len(pool.entries) {
+		return "", nil
+	}
+	code := pool.entries[pool.index]
+	pool.index++
+	return code, nil
+}
 
-	// 需要的逻辑视图编码的数量
-	var uniformCatalogCodeCount int
-	for _, table := range tables {
-		if flag := formViewsMap[table.Id]; flag != nil && flag.UniformCatalogCode != "" {
-			continue
+func (f *formViewUseCase) buildFormViewSyncMaps(syncList []*form_view_repo.FormViewSyncItem) (
+	formViewsMap map[string]*SyncFormViewFlag,
+	formViewInfosMap map[string]*SyncFormViewFlag,
+) {
+	formViewsMap = make(map[string]*SyncFormViewFlag)
+	formViewInfosMap = make(map[string]*SyncFormViewFlag)
+	for _, item := range syncList {
+		flag := &SyncFormViewFlag{FormViewID: item.ID, UniformCatalogCode: item.UniformCatalogCode, flag: 1}
+		if item.MdlID != "" {
+			formViewsMap[item.MdlID] = flag
 		}
-		uniformCatalogCodeCount++
+		tmp := fmt.Sprintf("%s %s", item.DatasourceID, item.TechnicalName)
+		formViewInfosMap[tmp] = flag
 	}
+	return formViewsMap, formViewInfosMap
+}
 
-	// 生成逻辑视图的编码
-	codeList, err := f.configurationCenterDrivenNG.Generate(ctx, CodeGenerationRuleUUIDDataView, uniformCatalogCodeCount)
-	if agerrors.Code(err).GetErrorCode() == "ConfigurationCenter.CodeGenerationRule.NotFound" {
-		// 找不到对应编码生成规则，说明 configuration-center 可能没有升级，兼容
-		// 处理，逻辑视图的编码设置为空。当 configuration-center 完成升级后可再
-		// 次设置编码
-		//
-		// 兼容处理仅限于 2.0.0.1 一个版本，2.0.0.2 时移除这此兼容处理
-		log.WithContext(ctx).Warn("generate code for data view fail", zap.Error(err), zap.Stringer("rule", CodeGenerationRuleUUIDDataView), zap.Int("count", len(tables)))
-		codeList = &configuration_center.CodeList{Entries: make([]string, len(tables))}
-	} else if err != nil {
-		log.WithContext(ctx).Error("generate code for data view fail", zap.Error(err), zap.Stringer("rule", CodeGenerationRuleUUIDDataView), zap.Int("count", len(tables)))
-		return err
+// buildFormViewSyncMapsPaged 分页拉取指定数据源的 sync 所需字段并构建映射，不一次性加载全量 syncList
+func (f *formViewUseCase) buildFormViewSyncMapsPaged(ctx context.Context, datasourceId string) (
+	formViewsMap map[string]*SyncFormViewFlag,
+	formViewInfosMap map[string]*SyncFormViewFlag,
+	err error,
+) {
+	formViewsMap = make(map[string]*SyncFormViewFlag)
+	formViewInfosMap = make(map[string]*SyncFormViewFlag)
+	const syncListPageSize = 1000
+	for offset := 0; ; {
+		page, err := f.repo.GetFormViewSyncList(ctx, offset, syncListPageSize, datasourceId)
+		if err != nil {
+			return nil, nil, err
+		}
+		if len(page) == 0 {
+			break
+		}
+		for _, item := range page {
+			flag := &SyncFormViewFlag{FormViewID: item.ID, UniformCatalogCode: item.UniformCatalogCode, flag: 1}
+			if item.MdlID != "" {
+				formViewsMap[item.MdlID] = flag
+			}
+			tmp := fmt.Sprintf("%s %s", item.DatasourceID, item.TechnicalName)
+			formViewInfosMap[tmp] = flag
+		}
+		if len(page) < syncListPageSize {
+			break
+		}
+		offset += len(page)
 	}
+	return formViewsMap, formViewInfosMap, nil
+}
 
-	var codeListIndex int
+// compareFormViewBatch 对单批视图详情做新增/更新；更新时按 FormViewID 加载完整 FormView
+func (f *formViewUseCase) compareFormViewBatch(ctx context.Context, tables []*mdl_data_model.GetDataViewResp, viewMap map[string]viewSyncEntry,
+	formViewsMap map[string]*SyncFormViewFlag, formViewInfosMap map[string]*SyncFormViewFlag, pool *codePool) error {
 	for _, table := range tables {
 		tmp := fmt.Sprintf("%s %s", table.DataSourceId, table.TechnicalName)
-		if formViewsMap[table.Id] == nil && formViewInfosMap[tmp] == nil {
-			if err = f.newFormView(ctx, codeList.Entries[codeListIndex], viewMap, table); err != nil {
-				return err
-			}
-			codeListIndex++
-		} else {
-			//exist , form update or not form update (by field)
-			var newUniformCatalogCode bool
-			if newUniformCatalogCode = formViewsMap[table.Id].FormView.UniformCatalogCode == ""; newUniformCatalogCode {
-				formViewsMap[table.Id].FormView.UniformCatalogCode = codeList.Entries[codeListIndex]
-				codeListIndex++
-			}
-			var formView *model.FormView
-			if formViewsMap[table.Id] != nil {
-				formView = formViewsMap[table.Id].FormView
-			} else {
-				formView = formViewInfosMap[tmp].FormView
-			}
-			if err = f.updateFormView(ctx, formView, table, newUniformCatalogCode); err != nil {
-				return err
-			}
-			formViewsMap[table.Id].flag = 2
+		var fvFlag *SyncFormViewFlag
+		if formViewsMap[table.Id] != nil {
+			fvFlag = formViewsMap[table.Id]
+		} else if formViewInfosMap[tmp] != nil {
+			fvFlag = formViewInfosMap[tmp]
 		}
-	}
 
-	err = f.deleteFormView(ctx, formViewsMap)
-	if err != nil {
-		return err
+		if fvFlag == nil {
+			code, err := f.nextDataViewCode(ctx, pool)
+			if err != nil {
+				return err
+			}
+			if err := f.newFormView(ctx, code, viewMap, table); err != nil {
+				return err
+			}
+		} else {
+			newUniformCatalogCode := fvFlag.UniformCatalogCode == ""
+			if newUniformCatalogCode {
+				code, err := f.nextDataViewCode(ctx, pool)
+				if err != nil {
+					return err
+				}
+				fvFlag.UniformCatalogCode = code
+			}
+
+			formView, err := f.repo.GetById(ctx, fvFlag.FormViewID)
+			if err != nil {
+				return err
+			}
+			if err := f.updateFormView(ctx, formView, table, newUniformCatalogCode); err != nil {
+				return err
+			}
+			fvFlag.flag = 2
+		}
 	}
 	return nil
 }
 
-func (f *formViewUseCase) newFormView(ctx context.Context, uniformCatalogCode string, viewMap map[string]*mdl_data_model.DataViewInfo, table *mdl_data_model.GetDataViewResp) (err error) {
+func (f *formViewUseCase) newFormView(ctx context.Context, uniformCatalogCode string, viewMap map[string]viewSyncEntry, table *mdl_data_model.GetDataViewResp) (err error) {
 	formViewId := uuid.New().String()
 	fields := make([]*model.FormViewField, len(table.Fields))
 	fieldObjs := make([]*es.FieldObj, len(table.Fields)) // 发送ES消息字段列表
@@ -396,7 +562,9 @@ func (f *formViewUseCase) updateFormView(ctx context.Context, formView *model.Fo
 	if formView.MdlID == "" {
 		formView.MdlID = table.Id
 	}
-	formViewUpdate := formView.Comment.String != table.Comment || formView.OriginalName != table.TechnicalName
+	tableStatusInt := enum.ToInteger[constant.FormViewScanStatus](table.Status).Int32()
+	formViewUpdate := formView.Comment.String != table.Comment || formView.OriginalName != table.TechnicalName ||
+		formView.BusinessName != table.Name || formView.Status != tableStatusInt
 	if formViewUpdate {
 		formView.Comment = sql.NullString{String: util.CutStringByCharCount(table.Comment, constant.CommentCharCountLimit), Valid: true}
 		formView.OriginalName = table.TechnicalName
@@ -410,19 +578,18 @@ func (f *formViewUseCase) updateFormView(ctx context.Context, formView *model.Fo
 		if formView.Status == constant.FormViewUniformity.Integer.Int32() || formView.Status == constant.FormViewNew.Integer.Int32() {
 			formViewUpdate = true
 		}
-	} else { //表的字段无变化
-		if formView.Status == constant.FormViewNew.Integer.Int32() || formView.Status == constant.FormViewModify.Integer.Int32() {
-			formViewUpdate = true
-		}
-		//草稿状态视图保持扫描状态
 	}
 	if formView.Status == constant.FormViewDelete.Integer.Int32() { //删除状态又找到
 		log.WithContext(ctx).Infof("FormViewDelete status Reversal", zap.String("formView ID", formView.ID))
 		formView.EditStatus = constant.FormViewDraft.Integer.Int32()
 		formViewUpdate = true
 	}
-	formView.Status = enum.ToInteger[constant.FormViewScanStatus](table.Status).Int32()
+	formView.Status = tableStatusInt
 	formView.BusinessName = table.Name
+	// 字段没有变化且视图信息也没有变化时，不更新 DB/ES
+	if len(newFields) == 0 && len(updateFields) == 0 && len(deleteFields) == 0 && !formViewUpdate && !newUniformCatalogCode {
+		return nil
+	}
 	if len(newFields) != 0 || len(updateFields) != 0 || len(deleteFields) != 0 { //字段及表都修改
 		formView.UpdatedByUID = table.Updater.ID
 		if err = f.repo.UpdateViewTransaction(ctx, formView, newFields, updateFields, deleteFields, query); err != nil {
@@ -451,16 +618,16 @@ func (f *formViewUseCase) updateFormView(ctx context.Context, formView *model.Fo
 	return nil
 }
 
-func (f *formViewUseCase) deleteFormView(ctx context.Context, formViewsMap map[string]*FormViewFlag) (err error) {
+// deleteFormViewFromSyncFlags 全量同步时删除本地已不存在的视图
+func (f *formViewUseCase) deleteFormViewFromSyncFlags(ctx context.Context, formViewsMap map[string]*SyncFormViewFlag) (err error) {
 	deleteIds := make([]string, 0)
-	for _, formView := range formViewsMap {
-		if formView.flag == 1 {
-			//delete
-			deleteIds = append(deleteIds, formView.ID)
+	for _, fv := range formViewsMap {
+		if fv.flag == 1 {
+			deleteIds = append(deleteIds, fv.FormViewID)
 		}
 	}
 	if len(deleteIds) == 0 {
-		return
+		return nil
 	}
 	auditingLogicView, err := f.logicViewRepo.GetAuditingInIds(ctx, deleteIds)
 	if err != nil {
@@ -470,8 +637,5 @@ func (f *formViewUseCase) deleteFormView(ctx context.Context, formViewsMap map[s
 		f.RevokeAudit(ctx, view, "原因：之前处于审核中时，有扫描到视图删除，因此撤销了当时的审核，需要重新提交")
 	}
 	auditAdvice := "之前有扫描到“源表删除”的结果，导致资源不可用并做了自动下线的处理。"
-	if err = f.repo.UpdateViewStatusAndAdvice(ctx, auditAdvice, deleteIds); err != nil {
-		return errorcode.Detail(my_errorcode.DatabaseError, err.Error())
-	}
-	return nil
+	return f.repo.UpdateViewStatusAndAdvice(ctx, auditAdvice, deleteIds)
 }

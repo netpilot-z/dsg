@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/kweaver-ai/idrm-go-common/rest/configuration_center"
 	repo "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/grade_rule"
 	group_repo "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/grade_rule_group"
 	user "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/user"
@@ -17,7 +18,6 @@ import (
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
 	domain "github.com/kweaver-ai/dsg/services/apps/data-view/domain/grade_rule"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	"github.com/kweaver-ai/idrm-go-common/rest/configuration_center"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 	"github.com/samber/lo"
 	"go.uber.org/zap"

@@ -11,13 +11,13 @@ import (
 
 	"github.com/samber/lo"
 
+	audit_v1 "github.com/kweaver-ai/idrm-go-common/api/audit/v1"
+	"github.com/kweaver-ai/idrm-go-common/rest/data_view"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/auth_service"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/virtualization_engine"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/constant"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/models/request"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	audit_v1 "github.com/kweaver-ai/idrm-go-common/api/audit/v1"
-	"github.com/kweaver-ai/idrm-go-common/rest/data_view"
 	"github.com/kweaver-ai/idrm-go-frame/core/enum"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/rest/ginx"
 )
@@ -185,7 +185,66 @@ type PageListFormViewReqQueryParam struct {
 	QueryAuthed               bool     `json:"query_authed"  form:"query_authed" binding:"omitempty"`                                                     //是否查询授权的
 	AuthedViewID              []string `json:"-"`                                                                                                         //授权的视图ID
 	MyDepartmentResource      bool     `json:"my_department_resource" form:"my_department_resource"`                                                      //本部门资源
+	IncludeDWHDataAuthRequest bool     `json:"include_dwh_data_auth_request" form:"include_dwh_data_auth_request"`
+	UpdateCycle               *int32   `json:"update_cycle" form:"update_cycle" binding:"omitempty"` //更新周期筛选
+	SharedType                *int32   `json:"shared_type" form:"shared_type" binding:"omitempty"`   //共享属性筛选
+	OpenType                  *int32   `json:"open_type" form:"open_type" binding:"omitempty"`       //开放属性筛选
+	MdlID                     string   `json:"mdl_id" form:"mdl_id" binding:"omitempty"`             //统一视图id
+}
+
+type PageListFormViewReqQueryParamBase struct {
+	request.PageInfo3
+	request.KeywordInfo
+	Direction        string  `json:"direction" form:"direction,default=desc" binding:"oneof=asc desc" default:"desc"`                                                                 // 排序方向，枚举：asc：正序；desc：倒序。默认倒序
+	Sort             string  `json:"sort" form:"sort,default=created_at" binding:"oneof=created_at updated_at name type publish_at online_time technical_name"  default:"created_at"` // 排序类型，枚举：created_at：按创建时间排序；updated_at：按更新时间排序；name：按名称排序。默认按创建时间排序
+	Status           string  `json:"status" form:"status" binding:"omitempty,oneof=uniformity new modify delete"`                                                                     //状态
+	StatusListString string  `json:"status_list" form:"status_list" binding:"omitempty"`                                                                                              //状态  多选逗号分割
+	StatusList       []int32 `json:"-"`
+
+	EditStatus         string   `json:"edit_status" form:"edit_status" binding:"omitempty,oneof=draft latest"` //编辑状态
+	CreatedAtStart     int64    `json:"created_at_start" form:"created_at_start" binding:"omitempty,gt=0"`     //创建开始时间
+	CreatedAtEnd       int64    `json:"created_at_end" form:"created_at_end" binding:"omitempty,gt=0"`         // 创建结束时间
+	UpdatedAtStart     int64    `json:"updated_at_start" form:"updated_at_start" binding:"omitempty,gt=0"`     //编辑开始时间
+	UpdatedAtEnd       int64    `json:"updated_at_end" form:"updated_at_end" binding:"omitempty,gt=0"`         //编辑结束时间
+	DatasourceType     string   `json:"datasource_type" form:"datasource_type" binding:"omitempty"`            // 数据源类型
+	DatasourceIdString string   `json:"datasource_ids" form:"datasource_ids" binding:"omitempty"`              //数据源id 逗号分隔
+	DatasourceIds      []string `json:"-" `
+	DatasourceId       string   `json:"datasource_id" form:"datasource_id" binding:"omitempty,uuid"` //数据源id
+	//TaskId             string   `json:"task_id" form:"task_id" binding:"omitempty,uuid" example:"4a5a3cc0-0169-4d62-9442-62214d8fcd8d"`        // 任务id，uuid（36）
+	//ProjectID          string   `json:"project_id"  form:"project_id" binding:"omitempty,uuid" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"` //项目id
+	FormViewIdsString string   `json:"form_view_ids" form:"form_view_ids" binding:"omitempty"` //逗号分隔
+	FormViewIds       []string `json:"-" `
+
+	SubjectID         string   `json:"subject_id" form:"subject_id" binding:"omitempty,uuid" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"` // 主题id
+	IncludeSubSubject bool     `json:"include_sub_subject"  form:"include_sub_subject" binding:"omitempty"`                                  //包含子主题
+	SubSubSubjectIDs  []string `json:"-"`                                                                                                    // 子主题域名id
+
+	DepartmentID         string   `json:"department_id" form:"department_id" binding:"omitempty,uuid" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"` // 部门id
+	IncludeSubDepartment bool     `json:"include_sub_department"  form:"include_sub_department" binding:"omitempty"`                                  //包含子部门
+	SubDepartmentIDs     []string `json:"-"`                                                                                                          // 部门的子部门id 	// 未分配部门
+
+	BusinessModelID string `json:"business_model_id" form:"business_model_id" binding:"omitempty,uuid"  example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"` //业务模型ID，查询当前也的视图ID有没有在这个数据模型生成数据原始表用
+
+	NotHaveOwner              bool     `json:"-"`                                             // 未分配数据Owner
+	OwnerIDString             string   `json:"owner_id"  form:"owner_id" binding:"omitempty"` // 数据Owner id 逗号分隔
+	OwnerIDs                  []string `json:"-"`                                             // 数据Owner id
+	OwnerID                   string   `json:"-"`
+	Type                      string   `json:"type"  form:"type" binding:"omitempty,oneof=datasource custom logic_entity"`
+	OnlineStatus              string   `json:"online_status"  form:"online_status" binding:"omitempty,oneof=notline online offline up-auditing down-auditing up-reject down-reject"` //上线状态
+	OnlineStatusListString    string   `json:"online_status_list"  form:"online_status_list" binding:"omitempty"`                                                                    //上线状态 多选逗号分割
+	OnlineStatusList          []string `json:"-"`
+	AuditStatus               string   `json:"audit_status"  form:"audit_status" binding:"omitempty,oneof=unpublished auditing pass reject"`
+	ExcelFileName             string   `json:"excel_file_name"  form:"excel_file_name"`
+	TechnicalName             string   `json:"technical_name" form:"technical_name"`                                                                      // 表技术名称
+	InfoSystemID              *string  `json:"info_system_id" form:"info_system_id" binding:"omitempty"`                                                  // 信息系统id
+	DataSourceSourceType      string   `json:"datasource_source_type" form:"datasource_source_type" binding:"omitempty,oneof=records analytical sandbox"` // 数据源来源类型 records 信息系统 analytical 数据仓库   sandbox 数据沙箱
+	QueryAuthed               bool     `json:"query_authed"  form:"query_authed" binding:"omitempty"`                                                     //是否查询授权的
+	AuthedViewID              []string `json:"-"`                                                                                                         //授权的视图ID
+	MyDepartmentResource      bool     `json:"my_department_resource" form:"my_department_resource"`                                                      //本部门资源
 	IncludeDWHDataAuthRequest bool     `json:"include_dwh_data_auth_request" form:"include_dwh_data_auth_request"`                                        //是否包含数据仓库数据权限请求的过滤
+	UpdateCycle               *int32   `json:"update_cycle" form:"update_cycle" binding:"omitempty"`                                                      //更新周期筛选
+	SharedType                *int32   `json:"shared_type" form:"shared_type" binding:"omitempty"`                                                        //共享属性筛选
+	OpenType                  *int32   `json:"open_type" form:"open_type" binding:"omitempty"`                                                            //开放属性筛选
 }
 
 type PageListFormViewResp struct {
@@ -420,6 +479,10 @@ type Fields struct {
 	LabelID           string `json:"label_id" binding:"omitempty"`                    // 分级标签ID
 	GradeType         int    `json:"grade_type" binding:"omitempty,oneof=1 2"`        // 分级标签类型
 	ClearLableID      string `json:"clear_lable_id" binding:"omitempty"`              // 清除分级标签ID
+	SharedType        *int32 `json:"shared_type" binding:"omitempty"`                 // 共享属性
+	OpenType          *int32 `json:"open_type" binding:"omitempty"`                   // 开放属性
+	SensitiveType     *int32 `json:"sensitive_type" binding:"omitempty"`              // 敏感属性
+	SecretType        *int32 `json:"secret_type" binding:"omitempty"`                 // 涉密属性
 }
 
 type UpdateRes struct {
@@ -560,6 +623,9 @@ type GetFieldsRes struct {
 	IsFavored             bool         `json:"is_favored"`                // 是否已收藏
 	CanAuth               bool         `json:"can_auth"`                  // 能否授权
 	CatalogProviderPath   string       `json:"catalog_provider"`          // 目录提供方路径
+	UpdateCycle           int32        `json:"update_cycle"`              // 更新周期
+	SharedType            int32        `json:"shared_type"`               // 共享属性
+	OpenType              int32        `json:"open_type"`                 // 开放属性
 }
 type FieldsRes struct {
 	ID                  string  `json:"id"`                     // 列uuid
@@ -603,6 +669,10 @@ type FieldsRes struct {
 	ResetDataAccuracy   int32   `json:"reset_data_accuracy"`    // 重置数据精度（仅DECIMAL类型）
 	SimpleType          string  `json:"simple_type"`            // 数据大类型
 	Index               int     `json:"index"`                  // 字段顺序
+	SharedType          int32   `json:"shared_type"`            // 共享属性
+	OpenType            int32   `json:"open_type"`              // 开放属性
+	SensitiveType       int32   `json:"sensitive_type"`         // 敏感属性
+	SecretType          int32   `json:"secret_type"`            // 涉密属性
 
 }
 
@@ -868,6 +938,9 @@ type GetFormViewDetailsRes struct {
 	// 发布状态
 	PublishStatus       string `gorm:"-" json:"publish_status"`
 	CatalogProviderPath string `json:"catalog_provider"` // 目录提供方路径
+	UpdateCycle         int32  `json:"update_cycle"`     // 更新周期
+	SharedType          int32  `json:"shared_type"`      // 共享属性
+	OpenType            int32  `json:"open_type"`        // 开放属性
 }
 
 //endregion
@@ -881,12 +954,15 @@ type UpdateFormViewDetailsReq struct {
 type UpdateFormViewDetailsParamPath struct {
 	BusinessName  string   `json:"business_name" binding:"required,min=1,max=255" example:"xxxx"`                                              // 视图业务名称
 	TechnicalName *string  `json:"technical_name" binding:"omitempty,min=1,max=255" example:"xxxx"`                                            // 视图技术名称（仅自定义视图、逻辑实体视图支持）
-	Description   string   `json:"description"  binding:"TrimSpace,omitempty,lte=300" example:"description"`                                   // 描述
+	Description   string   `json:"description"  binding:"TrimSpace,omitempty" example:"description"`                                           // 描述
 	SubjectID     string   `json:"subject_id" form:"subject_id" binding:"omitempty,uuid" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"`       // 主题域id (逻辑实体视图不支持)
 	DepartmentID  string   `json:"department_id" form:"department_id" binding:"omitempty,uuid" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"` // 部门id
 	OwnerID       []string `json:"owner_id" form:"owner_id" binding:"omitempty,dive,uuid" example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"`      // 数据Owner id
 	Owners        []*Owner `json:"owners"`                                                                                                     // 数据Owner
 	SourceSign    *int32   `json:"source_sign" form:"source_sign" binding:"required,oneof=0 1"`                                                // 来源标识
+	UpdateCycle   *int32   `json:"update_cycle" binding:"omitempty"`                                                                           // 更新周期
+	SharedType    *int32   `json:"shared_type" binding:"omitempty"`                                                                            // 共享属性
+	OpenType      *int32   `json:"open_type" binding:"omitempty"`                                                                              // 开放属性
 }
 
 type UpdateFormViewDetailsRes struct {

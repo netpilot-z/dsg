@@ -19,6 +19,10 @@ type IDNameResp struct {
 	Name string `json:"name" binding:"required"`
 }
 
+type BoolResp struct {
+	Value bool `json:"value" example:"true"` // 布尔值
+}
+
 func ID(id string) *IDResp {
 	return &IDResp{
 		ID: id,

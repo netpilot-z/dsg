@@ -2,13 +2,12 @@ package form_validator
 
 import (
 	"fmt"
+	explore_task2 "github.com/kweaver-ai/dsg/services/apps/data-view/domain/explore_task"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
 	"unicode/utf8"
-
-	explore_task2 "github.com/kweaver-ai/dsg/services/apps/data-view/domain/explore_task"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/constant"

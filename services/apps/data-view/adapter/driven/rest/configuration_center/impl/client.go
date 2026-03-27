@@ -11,8 +11,8 @@ import (
 	"path"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/kweaver-ai/idrm-go-common/errorcode"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/configuration_center"

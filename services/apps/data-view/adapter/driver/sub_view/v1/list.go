@@ -1,15 +1,14 @@
 package v1
 
 import (
-	"strings"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"strings"
 
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/form_validator"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/sub_view"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/sub_view/validation"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/rest/ginx"
 )
 
@@ -17,6 +16,7 @@ import (
 //
 //	@Description    获取子视图列表
 //	@Tags           子视图
+//	@Summary        获取子视图列表
 //	@Accept         application/json
 //	@Produce        application/json
 //	@Param          logic_view_id   query   string  false   "逻辑视图 ID"   Format(uuid)
@@ -24,7 +24,7 @@ import (
 //	@Param          limit           query   int     false   "每页数量"      default(10)
 //	@Success        200 {object}    sub_view.SubView    "子视图列表"
 //	@Failure        400 {object}    rest.HttpError          "失败响应参数"
-//	@Router         /api/v1/data-view/v1/sub-views [get]
+//	@Router         /sub-views [get]
 func (s *SubViewService) List(c *gin.Context) {
 	var err error
 	var opts sub_view.ListOptions
@@ -54,12 +54,6 @@ func (s *SubViewService) List(c *gin.Context) {
 	ginx.ResOKJson(c, resp)
 }
 
-// ListID 获取子视图的 ID 列表
-//
-//	@Description    获取子视图的 ID 列表
-//	@Tags           子视图
-//	@Produce        application/json
-//	@Router         /api/internal/data-view/v1/sub-view-ids [get]
 func (s *SubViewService) ListID(c *gin.Context) {
 	req := form_validator.Valid[sub_view.ListIDReq](c)
 	if req == nil {

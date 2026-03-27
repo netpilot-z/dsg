@@ -41,11 +41,11 @@ func Test_logicViewRepo_consumerWorkflowAuditResult(t *testing.T) {
 
 func get() *gorm.DB {
 	DB, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@(%s:%d)/%s?charset=utf8mb4&parseTime=true",
-		"username",
-		"password",
-		"ip",
-		8888,
-		"dbname")))
+		"root",
+		"eisoo.com123",
+		"10.4.109.181",
+		3320,
+		"af_main")))
 	if err != nil {
 		log.Println("open mysql failed,err:", err)
 		return nil

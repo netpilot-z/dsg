@@ -11,20 +11,20 @@ import (
 
 	"github.com/samber/lo"
 
-	"github.com/google/uuid"
 	data_classify_attribute_blacklist "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/data_classify_attribute_blacklist/impl"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/mq/es"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/virtualization_engine"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/form_view"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/constant"
 	my_errorcode "github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
 	domain "github.com/kweaver-ai/dsg/services/apps/data-view/domain/form_view"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
 	"github.com/kweaver-ai/idrm-go-frame/core/enum"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 )
@@ -137,6 +137,9 @@ func (r *formViewRepo) PageList(ctx context.Context, req *domain.PageListFormVie
 	if len(req.FormViewIds) != 0 {
 		db = db.Where("f.id in ?", req.FormViewIds)
 	}
+	if req.MdlID != "" {
+		db = db.Where("f.mdl_id = ?", req.MdlID)
+	}
 
 	if req.SubjectID == constant.UnallocatedId {
 		db = db.Where("f.subject_id is null  or f.subject_id =''")
@@ -195,6 +198,15 @@ func (r *formViewRepo) PageList(ctx context.Context, req *domain.PageListFormVie
 	}
 	if req.TechnicalName != "" {
 		db = db.Where("f.technical_name = ?", req.TechnicalName)
+	}
+	if req.UpdateCycle != nil {
+		db = db.Where("f.update_cycle = ?", *req.UpdateCycle)
+	}
+	if req.SharedType != nil {
+		db = db.Where("f.shared_type = ?", *req.SharedType)
+	}
+	if req.OpenType != nil {
+		db = db.Where("f.open_type = ?", *req.OpenType)
 	}
 	keyword := req.Keyword
 	if keyword != "" {
@@ -509,6 +521,20 @@ func (r *formViewRepo) UpdateDatasourceViewTransaction(ctx context.Context, view
 				updateField.GradeType = sql.NullInt32{Int32: int32(req.GradeType), Valid: true}
 			} else {
 				updateField.GradeType = sql.NullInt32{Valid: false}
+			}
+
+			// 处理字段属性
+			if req.SharedType != nil {
+				updateField.SharedType = *req.SharedType
+			}
+			if req.OpenType != nil {
+				updateField.OpenType = *req.OpenType
+			}
+			if req.SensitiveType != nil {
+				updateField.SensitiveType = *req.SensitiveType
+			}
+			if req.SecretType != nil {
+				updateField.SecretType = *req.SecretType
 			}
 
 			// 处理清除分级标签ID
@@ -1242,9 +1268,22 @@ func (r *formViewRepo) GetDatabaseTableCount(ctx context.Context, departmentId s
 	return total, err
 }
 
-func (r *formViewRepo) GetAllFormView(ctx context.Context) (formView []*model.FormView, err error) {
-	err = r.db.WithContext(ctx).Table(model.TableNameFormView).Where("deleted_at=0 ").Find(&formView).Error
-	return
+func (r *formViewRepo) GetFormViewSyncList(ctx context.Context, offset, limit int, datasourceId string) ([]*form_view.FormViewSyncItem, error) {
+	var list []*form_view.FormViewSyncItem
+	q := r.db.WithContext(ctx).Table(model.TableNameFormView).
+		Select("id", "mdl_id", "datasource_id", "technical_name", "uniform_catalog_code").
+		Where("deleted_at = 0")
+	if datasourceId != "" {
+		q = q.Where("datasource_id = ?", datasourceId)
+	}
+	if offset > 0 {
+		q = q.Offset(offset)
+	}
+	if limit > 0 {
+		q = q.Limit(limit)
+	}
+	err := q.Find(&list).Error
+	return list, err
 }
 
 func (r *formViewRepo) GetList(ctx context.Context, departmentId, ownerIds, keyword string) (formViews []*model.FormView, err error) {

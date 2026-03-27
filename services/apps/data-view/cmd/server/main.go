@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/form_validator"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/initialization"
 	my_config "github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/config"
@@ -25,6 +24,7 @@ func init() {
 // @version     1.0.0.0
 // @description AnyFabric data view
 // @BasePath    /api/data-view/v1
+// @schemes     http https
 func main() {
 	flag.Parse()
 	config.InitSources(confPath)

@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	_ "github.com/kweaver-ai/dsg/services/apps/data-view/domain/sub_view"
 	"github.com/kweaver-ai/idrm-go-common/errorcode"
+	_ "github.com/kweaver-ai/dsg/services/apps/data-view/domain/sub_view"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/trace"
 	"github.com/kweaver-ai/idrm-go-frame/core/transport/rest/ginx"
 )
@@ -14,12 +14,13 @@ import (
 //
 //	@Description    获取指定子视图
 //	@Tags           子视图
+//	@Summary        获取指定子视图
 //	@Accept         application/json
 //	@Produce        application/json
-//	@Param          id  path        string              true    "子视图 ID"     Format(uuid)
+//	@Param          id  path        string              true    "子视图 ID"     Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Success        200 {object}    sub_view.SubView            "成功响应参数"
 //	@Failure        400 {object}    rest.HttpError              "失败响应参数"
-//	@Router         /api/v1/data-view/v1/sub-views:id [put]
+//	@Router         /sub-views/{id} [get]
 func (s *SubViewService) Get(c *gin.Context) {
 	ctx, span := trace.StartServerSpan(c)
 	defer span.End()
@@ -39,15 +40,6 @@ func (s *SubViewService) Get(c *gin.Context) {
 	ginx.ResOKJson(c, resp)
 }
 
-// GetLogicViewID
-// GetLogicViewID 获取子视图（行列规则）的 ID 列表
-//
-//	@Description    获取子视图（行列规则）的 ID 列表
-//	@Tags           子视图
-//	@Accept         application/json
-//	@Produce        application/json
-//	@Param          id  path        string              true    "子视图 ID"     Format(uuid)
-//	@Router         /api/internal/data-view/v1/sub-views/:id/logic_view_id [put]
 func (s *SubViewService) GetLogicViewID(c *gin.Context) {
 	ctx, span := trace.StartServerSpan(c)
 	defer span.End()

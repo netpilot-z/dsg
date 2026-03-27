@@ -35,7 +35,7 @@ type DatasourcePayload struct {
 }
 
 func ToModel(p *DatasourcePayload) *model.Datasource {
-	return &model.Datasource{
+	datasource := &model.Datasource{
 		ID:             p.ID,
 		InfoSystemID:   p.InfoSystemID,
 		Name:           p.Name,
@@ -52,4 +52,8 @@ func ToModel(p *DatasourcePayload) *model.Datasource {
 		TypeName:       p.Type,
 		DepartmentId:   p.DepartmentId,
 	}
+	if p.Schema != "" {
+		datasource.DataViewSource = p.CatalogName + "." + p.Schema
+	}
+	return datasource
 }

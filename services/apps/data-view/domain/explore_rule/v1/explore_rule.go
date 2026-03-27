@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/kweaver-ai/idrm-go-common/interception"
+	"github.com/kweaver-ai/idrm-go-common/middleware"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/explore_rule_config"
 	repo "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/form_view"
 	fieldRepo "github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/gorm/form_view_field"
@@ -13,8 +15,6 @@ import (
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/errorcode"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/explore_rule"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	"github.com/kweaver-ai/idrm-go-common/interception"
-	"github.com/kweaver-ai/idrm-go-common/middleware"
 	"github.com/kweaver-ai/idrm-go-frame/core/enum"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
 )
@@ -346,7 +346,14 @@ func (e *exploreRuleUseCase) NameRepeat(ctx context.Context, req *explore_rule.N
 			return false, err
 		}
 	}
-	repeat, err := e.exploreRuleRepo.NameRepeat(ctx, req.FormViewId, req.FieldId, req.RuleId, req.RuleName)
+	repeat, err := e.exploreRuleRepo.CheckSysRuleNameRepeat(ctx, req.RuleName)
+	if err != nil {
+		return false, err
+	}
+	if repeat {
+		return true, nil
+	}
+	repeat, err = e.exploreRuleRepo.NameRepeat(ctx, req.FormViewId, req.FieldId, req.RuleId, req.RuleName)
 	return repeat, err
 }
 

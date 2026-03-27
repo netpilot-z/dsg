@@ -15,9 +15,11 @@ import (
 
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/mq/es"
 
-	"github.com/avast/retry-go"
-	"github.com/google/uuid"
-	"github.com/jinzhu/copier"
+	api_audit_v1 "github.com/kweaver-ai/idrm-go-common/api/audit/v1"
+	"github.com/kweaver-ai/idrm-go-common/audit"
+	"github.com/kweaver-ai/idrm-go-common/errorcode"
+	"github.com/kweaver-ai/idrm-go-common/interception"
+	"github.com/kweaver-ai/idrm-go-common/middleware"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/configuration_center"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/metadata"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/adapter/driven/rest/virtualization_engine"
@@ -26,13 +28,11 @@ import (
 	"github.com/kweaver-ai/dsg/services/apps/data-view/common/util"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/domain/form_view"
 	"github.com/kweaver-ai/dsg/services/apps/data-view/infrastructure/db/model"
-	api_audit_v1 "github.com/kweaver-ai/idrm-go-common/api/audit/v1"
-	"github.com/kweaver-ai/idrm-go-common/audit"
-	"github.com/kweaver-ai/idrm-go-common/errorcode"
-	"github.com/kweaver-ai/idrm-go-common/interception"
-	"github.com/kweaver-ai/idrm-go-common/middleware"
 	"github.com/kweaver-ai/idrm-go-frame/core/errorx/agerrors"
 	"github.com/kweaver-ai/idrm-go-frame/core/telemetry/log"
+	"github.com/avast/retry-go"
+	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
 	"go.uber.org/zap"
 )
 
@@ -989,7 +989,7 @@ func (f *formViewUseCase) updateView(ctx context.Context, createViewErrorCh chan
 			} else {
 				selectFields = util.CE(selectFields == "", selectField, fmt.Sprintf("%s,%s", selectFields, selectField)).(string)
 			}
-			//xx数据据局时 表字段描述变更同步到视图字段业务名称
+			//长沙数据据局时 表字段描述变更同步到视图字段业务名称
 			if cssjj && field.FieldComment != "" && oldField.FormViewField.TechnicalName != field.FieldComment {
 				updateFields[len(updateFields)-1].BusinessName = field.FieldComment
 			}
@@ -1065,7 +1065,7 @@ func (f *formViewUseCase) updateView(ctx context.Context, createViewErrorCh chan
 		formViewUpdate = true
 	}
 
-	//xx数据据局时 表描述变更同步到视图业务名称
+	//长沙数据据局时 表描述变更同步到视图业务名称
 	if cssjj && formView.BusinessName != table.Description {
 		formView.BusinessName = table.Description
 		formViewUpdate = true

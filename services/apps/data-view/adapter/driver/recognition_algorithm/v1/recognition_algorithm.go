@@ -83,6 +83,7 @@ func (f *RecognitionAlgorithmService) Create(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                    true	"token"
+//	@Param			id				path		string					                    true	"识别算法ID"	Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Param			body			body		recognition_algorithm.UpdateRecognitionAlgorithmReq	true	"请求参数"
 //	@Success		200				{object}	recognition_algorithm.UpdateRecognitionAlgorithmResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                    "失败响应参数"
@@ -110,7 +111,7 @@ func (f *RecognitionAlgorithmService) Update(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                true	"token"
-//	@Param			id				query		string					                true	"识别算法ID"
+//	@Param			id				path		string					                true	"识别算法ID"	Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Success		200				{object}	recognition_algorithm.RecognitionAlgorithmDetailResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                "失败响应参数"
 //	@Router			/recognition-algorithm/{id} [get]
@@ -137,7 +138,7 @@ func (f *RecognitionAlgorithmService) GetDetailById(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                true	"token"
-//	@Param			id				query		string					                true	"识别算法ID"
+//	@Param			id				path		string					                true	"识别算法ID"	Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Success		200				{object}	recognition_algorithm.DeleteRecognitionAlgorithmResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                "失败响应参数"
 //	@Router			/recognition-algorithm/{id} [delete]
@@ -218,7 +219,7 @@ func (f *RecognitionAlgorithmService) DeleteBatch(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                true	"token"
-//	@Param			id				query		string					                true	"识别算法ID"
+//	@Param			id				path		string					                true	"识别算法ID"	Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Success		200				{object}	recognition_algorithm.StartRecognitionAlgorithmResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                "失败响应参数"
 //	@Router			/recognition-algorithm/{id}/start [post]
@@ -245,7 +246,7 @@ func (f *RecognitionAlgorithmService) Start(c *gin.Context) {
 //	@Accept			application/json
 //	@Produce		application/json
 //	@Param			Authorization	header		string					                true	"token"
-//	@Param			id				query		string					                true	"识别算法ID"
+//	@Param			id				path		string					                true	"识别算法ID"	Format(uuid) example:"88f78432-ee4e-43df-804c-4ccc4ff17f15"
 //	@Success		200				{object}	recognition_algorithm.StopRecognitionAlgorithmResp	"成功响应参数"
 //	@Failure		400				{object}	rest.HttpError			                "失败响应参数"
 //	@Router			/recognition-algorithm/{id}/stop [post]

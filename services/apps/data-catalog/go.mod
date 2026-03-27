@@ -18,8 +18,8 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/json-iterator/go v1.1.12
 	github.com/kweaver-ai/TelemetrySDK-Go/exporter/v2 v2.10.2
-	github.com/kweaver-ai/idrm-go-common v0.1.4-0.20260119010937-2456e402a095
-	github.com/kweaver-ai/idrm-go-frame v0.1.3
+	github.com/kweaver-ai/idrm-go-common v0.1.4-0.20260327084443-e5490d7d9995
+	github.com/kweaver-ai/idrm-go-frame v0.1.4-0.20260227065704-e2e78cd5f96e
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nsqio/go-nsq v1.1.0
 	github.com/panjf2000/ants/v2 v2.8.1

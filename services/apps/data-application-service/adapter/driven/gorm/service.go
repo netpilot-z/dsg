@@ -1091,8 +1091,10 @@ func (r *serviceRepo) ServiceList(ctx context.Context, req *dto.ServiceListReq) 
 	if req.Sort != "" {
 		if req.Sort == "name" {
 			req.Sort = "service_name"
+			tx = tx.Order(fmt.Sprintf(" CONVERT(`service_name` USING gbk) %s", req.Direction))
+		} else {
+			tx = tx.Order(req.Sort + " " + req.Direction)
 		}
-		tx = tx.Order(req.Sort + " " + req.Direction)
 	}
 
 	tx.Count(&count)
@@ -1909,17 +1911,17 @@ func (r *serviceRepo) ServiceUpdate(ctx context.Context, req *dto.ServiceUpdateR
 	//检查信息系统id
 	var infoSystemIdPtr *string
 	prePath := settings.Instance.Callback.PrePath
-	if prePath != "" {
-		if req.ServiceInfo.InfoSystemId != "" {
-			_, err := r.configurationCenterRepo.GetInfoSystem(ctx, req.ServiceInfo.InfoSystemId)
-			if err != nil {
-				return errorcode.Desc(errorcode.InfoSystemIdNotExist)
-			}
-			infoSystemIdPtr = &req.ServiceInfo.InfoSystemId
-		} else {
-			return errorcode.Desc(errorcode.InfoSystemIdNotExist)
-		}
-	}
+	// if prePath != "" {
+	// 	if req.ServiceInfo.InfoSystemId != "" {
+	// 		_, err := r.configurationCenterRepo.GetInfoSystem(ctx, req.ServiceInfo.InfoSystemId)
+	// 		if err != nil {
+	// 			return errorcode.Desc(errorcode.InfoSystemIdNotExist)
+	// 		}
+	// 		infoSystemIdPtr = &req.ServiceInfo.InfoSystemId
+	// 	} else {
+	// 		return errorcode.Desc(errorcode.InfoSystemIdNotExist)
+	// 	}
+	// }
 
 	//检查应用id
 	var appsIdPtr *string

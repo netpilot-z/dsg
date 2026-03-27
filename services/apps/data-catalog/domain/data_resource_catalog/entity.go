@@ -435,11 +435,13 @@ type GetDataCatalogList struct {
 	InfoSystemID         string   `json:"info_system_id" form:"info_system_id" binding:"omitempty,uuid"`     // 信息系统id
 	CategoryNodeId       string   `json:"category_node_id" form:"category_node_id" binding:"omitempty,uuid"` // 资源属性分类节点id
 	CategoryNodeIDs      []string `json:"-"`
-	SharedType           int8     `json:"shared_type"  binding:"omitempty,oneof=1 2 3" example:"1"` // 共享属性 1 无条件共享 2 有条件共享 3 不予共享
-	ColumnUnshared       bool     `json:"column_unshared"  form:"column_unshared" `                 // 信息项不予共享
-	ResourceNegativeList bool     `json:"resource_negative_list" form:"resource_negative_list"`     // 资源负面清单查询标识
-	UserDepartment       bool     `json:"user_department"  form:"user_department" `                 // 本部门的目录
-	SourceDepartmentID   string   `json:"source_department_id"`                                     // 数据资源来源部门id
+	SharedType           int8     `json:"shared_type"  binding:"omitempty,oneof=1 2 3" example:"1"`                     // 共享属性 1 无条件共享 2 有条件共享 3 不予共享
+	UpdateCycle          *int32   `json:"update_cycle" form:"update_cycle" binding:"omitempty,min=0,max=9" example:"1"` // 更新周期 0未分类 1不定时 2实时 3每日 4每周 5每月 6每季度 7每半年 8每年 9其他
+	OpenType             *int8    `json:"open_type" form:"open_type" binding:"omitempty,oneof=0 1 2" example:"1"`       // 开放属性 0未分类 1 向公众开放 2 不向公众开放
+	ColumnUnshared       bool     `json:"column_unshared"  form:"column_unshared" `                                     // 信息项不予共享
+	ResourceNegativeList bool     `json:"resource_negative_list" form:"resource_negative_list"`                         // 资源负面清单查询标识
+	UserDepartment       bool     `json:"user_department"  form:"user_department" `                                     // 本部门的目录
+	SourceDepartmentID   string   `json:"source_department_id"`                                                         // 数据资源来源部门id
 	ResShow
 	MyDepartmentResource bool `json:"my_department_resource" form:"my_department_resource"` //本部门资源
 }

@@ -1276,7 +1276,7 @@ CREATE TABLE IF NOT EXISTS `t_data_catalog_apply` (
     `id` bigint(20) NOT NULL COMMENT '主键',
     `catalog_id` bigint(20) NOT NULL COMMENT '目录id',
     `apply_num` INT(11) DEFAULT 0 COMMENT '申请量',
-    `create_time` DATETIME(3) DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `create_time` DATETIME(0) DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     primary key (id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据资源申请明细';
 
@@ -1533,3 +1533,11 @@ FROM DUAL WHERE NOT EXISTS(SELECT `id` FROM `category_node_ext` WHERE `id` = 13 
 INSERT INTO `category_node_ext` (`id`, `category_node_id`,`category_id`, `parent_id`, `name`,`required`,`selected`, `sort_weight`)
 SELECT 14,'500932fb-8d55-5f12-95a8-e776c1a96726','00000000-0000-0000-0000-000000000001','4f1f634c-3fc7-5752-94a5-3e7ca1d93ef0','数据服务超市左侧树',1,1,20
 FROM DUAL WHERE NOT EXISTS(SELECT `id` FROM `category_node_ext` WHERE `id` = 14 );
+
+INSERT INTO `category_node_ext` (`id`, `category_node_id`,`category_id`, `parent_id`, `name`,`required`,`selected`, `sort_weight`)
+SELECT 15,'4f1f634c-3fc7-5752-94a5-3e7ca1d93ef1','00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000001','信息资源目录',1,1,30
+FROM DUAL WHERE NOT EXISTS(SELECT `id` FROM `category_node_ext` WHERE `id` = 15 );
+
+INSERT INTO `category_node_ext` (`id`, `category_node_id`,`category_id`, `parent_id`, `name`,`required`,`selected`, `sort_weight`)
+SELECT 16,'731313f1-bbf9-532b-bad2-00c4d2d5374b','00000000-0000-0000-0000-000000000001','4f1f634c-3fc7-5752-94a5-3e7ca1d93ef1','信息资源目录左侧树',1,1,10
+FROM DUAL WHERE NOT EXISTS(SELECT `id` FROM `category_node_ext` WHERE `id` = 16 );

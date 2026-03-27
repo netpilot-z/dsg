@@ -248,7 +248,12 @@ func (r *serviceRepo) ScriptModelScript(ctx context.Context, params map[string]*
 			if orderByIndex > 0 {
 				script = fmt.Sprintf("%s where %s %s", script[:orderByIndex], subServiceRule, script[orderByIndex:])
 			} else {
-				script = fmt.Sprintf("%s where %s ", script, subServiceRule)
+				offsetIndex := strings.Index(strings.ToLower(script), " offset ")
+				if offsetIndex > 0 {
+					script = fmt.Sprintf("%s where %s %s", script[:offsetIndex], subServiceRule, script[offsetIndex:])
+				} else {
+					script = fmt.Sprintf("%s where %s ", script, subServiceRule)
+				}
 			}
 		}
 	}

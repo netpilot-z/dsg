@@ -528,7 +528,9 @@ func (uc *useCase) dataCatalogListProc(ctx context.Context,
 		if len(resTypes) > 0 {
 			list[idx].ResType = util.ValueToPtr(strings.Join(resTypes, ","))
 		}
-		list[idx].OnlineStatus = datas.Entries[i].OnlineStatus == "online"
+		// list[idx].OnlineStatus = datas.Entries[i].OnlineStatus == "online"
+		list[idx].OnlineStatus = datas.Entries[i].IsOnline
+		list[idx].PublishStatus = datas.Entries[i].IsPublish
 		if datas.Entries[i].IsOnline {
 			list[idx].OnlineAt = &datas.Entries[i].OnlineAt
 		}

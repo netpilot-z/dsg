@@ -13,7 +13,7 @@ const TableNameCategory = "category"
 // Category mapped from table <category>
 type Category struct {
 	ID          uint64                `gorm:"column:id;primaryKey" json:"id"`                                   // 唯一id，雪花算法
-	CategoryID  string                `gorm:"column:category_id;default:uuid()" json:"category_id"`             // 类目ID
+	CategoryID  string                `gorm:"column:category_id" json:"category_id"`                            // 类目ID
 	Name        string                `gorm:"column:name;not null" json:"name"`                                 // 类目名称
 	Using       int                   `gorm:"column:using" json:"using"`                                        // 是否启用类目，bool：0：不是；1：是
 	Type        string                `gorm:"column:type" json:"type"`                                          // 类目的类型：系统、自定义

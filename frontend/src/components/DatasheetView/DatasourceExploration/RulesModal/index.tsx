@@ -113,11 +113,16 @@ const RulesModal: React.FC<IRulesModal> = ({
     }, [isTemplateConfig, cssjj])
 
     const defaultAndInternalRule = useMemo(() => {
+        const selectedTemplateId =
+            currentTemplateId ||
+            currentInternalRule?.template_id ||
+            ruleDetails?.template_id
         return (
-            operateType === 'default' &&
-            (!!currentInternalRule?.template_id || !!ruleDetails?.template_id)
+            !isTemplateConfig &&
+            !!selectedTemplateId &&
+            selectedTemplateId !== InternalRuleType.Custom
         )
-    }, [operateType, currentInternalRule, ruleDetails])
+    }, [isTemplateConfig, currentTemplateId, currentInternalRule, ruleDetails])
 
     const noRuleConfig = useMemo(() => {
         return (
@@ -401,6 +406,14 @@ const RulesModal: React.FC<IRulesModal> = ({
 
     const validateNameRepeat = async (value: string): Promise<void> => {
         const trimValue = value.trim()
+        if (
+            (!!currentInternalRule?.template_id &&
+                dimension !== ExplorationPeculiarity.Timeliness &&
+                !isTemplateConfig) ||
+            defaultAndInternalRule
+        ) {
+            return Promise.resolve()
+        }
         try {
             // 内置规则，不校验名称
             if (ruleDetails?.template_id && !isTemplateConfig) {
@@ -415,7 +428,11 @@ const RulesModal: React.FC<IRulesModal> = ({
             const action = getRuleActionMap('repeat', operateType)
             const res = await action(params)
             if (res) {
-                return Promise.reject(new Error(__('该名称已存在，请重新输入')))
+                return Promise.reject(
+                    new Error(
+                        __('该名称已存在或者和系统内置规则重名，请重新输入'),
+                    ),
+                )
             }
             return Promise.resolve()
         } catch (error) {
@@ -703,16 +720,27 @@ const RulesModal: React.FC<IRulesModal> = ({
                                 }}
                                 value={dimension}
                                 onChange={(value) => {
-                                    setCurrentTemplateId('')
+                                    if (
+                                        value !==
+                                        ExplorationPeculiarity.Timeliness
+                                    ) {
+                                        setCurrentTemplateId('')
+                                        form.setFieldValue(
+                                            'rule_description',
+                                            undefined,
+                                        )
+                                        form.setFieldValue(
+                                            'template_id',
+                                            undefined,
+                                        )
+                                        form.setFieldValue(
+                                            'rule_name',
+                                            undefined,
+                                        )
+                                    }
                                     setIsCustom(false)
                                     setValidateError(false)
                                     setDimension(value)
-                                    form.setFieldValue(
-                                        'rule_description',
-                                        undefined,
-                                    )
-                                    form.setFieldValue('template_id', undefined)
-                                    form.setFieldValue('rule_name', undefined)
                                 }}
                             />
                         </Form.Item>

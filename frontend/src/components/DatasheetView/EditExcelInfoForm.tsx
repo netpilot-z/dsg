@@ -60,7 +60,7 @@ const EditExcelInfoForm = () => {
         if (datasheetInfo?.id) {
             getDetailInfoContent()
         }
-    }, [datasheetInfo])
+    }, [datasheetInfo, fieldsTableData])
 
     useEffect(() => {
         // 初始化数据
@@ -212,9 +212,8 @@ const EditExcelInfoForm = () => {
      * 获取详情信息内容
      */
     const getDetailInfoContent = () => {
-        const hasTimestamp = datasheetInfo?.fields?.some(
-            (o) => o.business_timestamp,
-        )
+        // 从 fieldsTableData 中获取字段数据来判断是否有业务时间戳
+        const hasTimestamp = fieldsTableData?.some((o) => o.business_timestamp)
         const list = excelDetailConfig.map((item) => {
             const detailsField =
                 using === 1
@@ -522,7 +521,7 @@ const EditExcelInfoForm = () => {
             ) : (
                 <BasicCantainer
                     basicCantainerContent={detailInfoContent}
-                    labelWidth="140px"
+                    labelWidth="142px"
                 />
             )}
             {/* TODO: 获取字段列表，mock使用 */}

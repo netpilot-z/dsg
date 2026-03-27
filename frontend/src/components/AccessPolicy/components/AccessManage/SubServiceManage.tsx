@@ -1,6 +1,5 @@
 import { Button, Form, Space, Steps, Tooltip, message } from 'antd'
 import {
-    forwardRef,
     useCallback,
     useContext,
     useEffect,
@@ -28,15 +27,13 @@ import {
     UpdateOptType,
 } from '../../const'
 import __ from '../../locale'
-import ColAndRowPanel, { IScopeItem } from './ColAndRowPanel'
+import ColAndRowPanel from './ColAndRowPanel'
 import styles from './styles.module.less'
 import { VisitorProvider } from '../VisitorProvider'
 import VisitorCard from '../VisitorCard'
-import { Empty, ReturnConfirmModal } from '@/ui'
+import { ReturnConfirmModal } from '@/ui'
 import { MicroWidgetPropsContext } from '@/context'
-import ViewAccessData from '../ViewAccessData'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
-import dataEmpty from '@/assets/dataEmpty.svg'
 import { useUpdateStateContext } from '../../UpdateStateProvider'
 import InterfaceTest from '../InterfaceTest'
 

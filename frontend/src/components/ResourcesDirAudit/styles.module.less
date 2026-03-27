@@ -29,6 +29,21 @@
             // }
         }
     }
+
+    .link {
+        color: @link-color;
+        cursor: pointer;
+        text-decoration: none;
+        transition: color 0.3s;
+
+        &:hover {
+            color: @link-hover-color;
+        }
+
+        &:active {
+            color: @link-active-color;
+        }
+    }
 }
 
 .catlgName {

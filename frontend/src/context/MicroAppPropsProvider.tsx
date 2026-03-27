@@ -29,6 +29,8 @@ export interface IMicroAppProps {
     route?: {
         /** 基础路径 */
         basename: string
+        /** 首页路由 */
+        homeRoute?: string
     }
     /** 用户信息 */
     user?: {

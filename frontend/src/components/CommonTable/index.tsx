@@ -3,6 +3,7 @@ import React, {
     useState,
     forwardRef,
     useImperativeHandle,
+    useRef,
 } from 'react'
 import classnames from 'classnames'
 import { Table, message, Button } from 'antd'
@@ -56,6 +57,7 @@ const CommonTable: React.FC<ITableData> = forwardRef(
         const [isInitParams, setIsInitParams] = useState<boolean>(true)
         const [loading, setLoading] = useState<boolean>(true)
         const pageExcludeField = ['offset', 'limit']
+        const requestIdRef = useRef<number>(0)
 
         // 子组件暴露查询方法
         useImperativeHandle(ref, () => ({
@@ -91,11 +93,22 @@ const CommonTable: React.FC<ITableData> = forwardRef(
             setIsInitParams(
                 !Object.values(onlySearchParams).some((item) => item),
             )
+
+            // 生成唯一请求ID，用于防止竞态条件
+            requestIdRef.current += 1
+            const currentRequestId = requestIdRef.current
+
             setLoading(true)
             try {
                 const res = await queryAction({
                     ...searchCondition,
                 })
+
+                // 只有当前请求是最新的请求时才更新数据
+                if (currentRequestId !== requestIdRef.current) {
+                    return
+                }
+
                 const rawData = res[listName?.entries || 'entries'] || []
                 // 数据预处理
                 const finalData = dataProcessor
@@ -108,6 +121,11 @@ const CommonTable: React.FC<ITableData> = forwardRef(
                 setLoading(false)
                 getTableList?.(res)
             } catch (error) {
+                // 只有当前请求是最新的请求时才处理错误
+                if (currentRequestId !== requestIdRef.current) {
+                    return
+                }
+
                 setLoading(false)
                 // 暂无接口时，显示模拟数据
                 if (mockData.length > 0) {
@@ -119,7 +137,10 @@ const CommonTable: React.FC<ITableData> = forwardRef(
                 }
                 getEmptyFlag?.(true)
             } finally {
-                onTableListUpdated()
+                // 只有当前请求是最新的请求时才调用回调
+                if (currentRequestId === requestIdRef.current) {
+                    onTableListUpdated()
+                }
             }
         }
 

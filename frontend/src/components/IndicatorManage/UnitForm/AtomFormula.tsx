@@ -25,7 +25,6 @@ import AnalysisDimension, { FieldType } from './AnalysisDimension'
 import Editor, { getFormatSql } from '../Editor'
 import Empty from '@/ui/Empty'
 import { getSql } from '@/core/apis/indicatorManagement'
-import { getPolicyFields } from '@/components/SceneAnalysis/UnitForm/helper'
 import { disabledGroupSelectLimits } from '@/components/SceneAnalysis/const'
 import { dataTypeMapping } from '@/components/DataConsanguinity/const'
 

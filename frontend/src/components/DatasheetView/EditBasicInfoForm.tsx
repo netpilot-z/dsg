@@ -384,7 +384,7 @@ const EditBasicInfoForm: React.FC<IEditBasicInfoForm> = ({
                         >
                             <TextArea
                                 placeholder={__('请输入库表描述')}
-                                maxLength={300}
+                                maxLength={1000}
                                 showCount
                                 autoSize={
                                     type === 'modal'

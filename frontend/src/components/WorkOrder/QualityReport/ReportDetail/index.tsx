@@ -1,13 +1,9 @@
-import { Button, Drawer, Dropdown, Space, Tooltip } from 'antd'
+import { Drawer } from 'antd'
 import React, { useEffect, useMemo, useState } from 'react'
-import menu, { MenuProps } from 'antd/lib/menu'
-import { DownOutlined, UpOutlined } from '@ant-design/icons'
+import { MenuProps } from 'antd/lib/menu'
 import moment from 'moment'
 import Return from '../../Return'
 import styles from './styles.module.less'
-import { RefreshBtn } from '@/components/ToolbarComponents'
-import CardInfo from './CardInfo'
-import FieldsInfo from './FieldsInfo'
 import {
     formatError,
     getDatasheetViewDetails,
@@ -15,8 +11,6 @@ import {
     getExploreReport,
 } from '@/core'
 import { ExplorationType } from '@/components/DatasheetView/DatasourceExploration/const'
-import { Empty, Loader } from '@/ui'
-import dataEmpty from '@/assets/dataEmpty.svg'
 import __ from './locale'
 import { useDataViewContext } from '@/components/DatasheetView/DataViewProvider'
 import { FontIcon } from '@/icons'

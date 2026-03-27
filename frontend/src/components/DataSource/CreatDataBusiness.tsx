@@ -622,7 +622,6 @@ const CreateDataSource: React.FC<ICreateDataSource> = ({
                 }
                 destroyOnClose
                 maskClosable={false}
-                bodyStyle={{ overflow: 'auto' }}
                 className={styles.createCoreBusinessModal}
                 onCancel={onClose}
                 footer={
@@ -665,7 +664,7 @@ const CreateDataSource: React.FC<ICreateDataSource> = ({
                                 setSelectedDataSourceType(changeValue.type)
                             }
                         }}
-                        style={{ height: '300px' }}
+                        style={{ height: '350px' }}
                     >
                         <Row gutter={24}>
                             <Col span={24}>

@@ -7,7 +7,6 @@ import { getAuditDetails, putDocAudit } from '@/core'
 import { PromptModal } from './helper'
 import __ from './locale'
 import styles from './styles.module.less'
-import DetailModal from '../Template/DetailModal'
 import ReportDetail from '../ReportDetail'
 
 interface IAuditModal {

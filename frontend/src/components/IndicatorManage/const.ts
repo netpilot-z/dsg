@@ -1,6 +1,5 @@
 import moment from 'moment'
 import { dataTypeMapping, SortDirection } from '@/core'
-import { tabsKey } from '../DataSynchronization/const'
 import __ from './locale'
 import {
     limitAndBelongList,

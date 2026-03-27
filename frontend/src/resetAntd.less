@@ -104,10 +104,30 @@
 
     .any-fabric-ant-btn-link {
         padding: 0;
+        color: @link-color;
+
+        &:hover {
+            color: @link-hover-color;
+        }
+
+        &:active,
+        &:focus {
+            color: @link-active-color;
+        }
 
         &[disabled] {
             color: rgb(18 110 227 / 40%) !important;
         }
+    }
+
+    .any-fabric-anticon {
+        display: inline-block;
+        line-height: 0;
+        vertical-align: -0.125em;
+    }
+
+    .any-fabric-anticon > svg {
+        display: block;
     }
 
     .any-fabric-ant-modal-footer {

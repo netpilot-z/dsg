@@ -106,6 +106,10 @@ export const DocAuditClientApp = {
         '#doc-audit-client' || document.getElementById('doc-audit-client'),
     activeRule: getActualUrl('/doc-audit-client').substring(1),
     props: AuditGeneralProps,
+    sandbox: {
+        strictStyleIsolation: false,
+        experimentalStyleIsolation: true,
+    },
 }
 
 export const MicroAppsArr = [

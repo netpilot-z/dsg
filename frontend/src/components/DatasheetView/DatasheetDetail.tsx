@@ -1319,7 +1319,6 @@ const DatasheetDetail = (props: IDatasheetDetail) => {
                                 form_view_id: id,
                             }}
                             isMarket={taskIsCompleted}
-                            showEvaluation
                             showCorrection={false} // 不显示整改按钮
                         />
                     </div>

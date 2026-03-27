@@ -1,4 +1,4 @@
-import { Badge, Button, Table, Tooltip } from 'antd'
+import { Badge, Table, Tooltip } from 'antd'
 import React, { useEffect, useMemo, useState, CSSProperties } from 'react'
 import classnames from 'classnames'
 import {
@@ -18,17 +18,13 @@ import {
 import __ from './locale'
 import styles from './styles.module.less'
 import { EllipsisMiddle, SearchInput } from '@/ui'
-import Icons from './Icons'
 import Empty from '@/ui/Empty'
-import dataEmpty from '@/assets/dataEmpty.svg'
 import {
-    FormatDataTypeTXT,
     HasAccess,
     IGradeLabel,
     LogicViewType,
     getCommonDataType,
 } from '@/core'
-import CodeTableModal from './CodeTableModal'
 import CodeTableDetails from '../CodeTableManage/Details'
 import DataEleDetails from '../DataEleManage/Details'
 import { FontIcon } from '@/icons'

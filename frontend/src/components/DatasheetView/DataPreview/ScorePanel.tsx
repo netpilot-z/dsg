@@ -15,7 +15,6 @@ import {
 import { getIconScore } from './DataPreviewView'
 import __ from './locale'
 import styles from './styles.module.less'
-import { FieldMaxColored } from '@/icons'
 import RuleDetail from './RuleDetail'
 
 const ScoreCard = ({ data, type, onShowDetail }: any) => {

@@ -4,7 +4,6 @@ import { InfoCircleOutlined, SyncOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import moment from 'moment'
-import { useMount, useUnmount } from 'ahooks'
 import ProvinceOrganTree from '@/components/ProvincialOriganizationalStructure/ProvinceOrganTree'
 import __ from '../locale'
 import styles from './styles.module.less'
@@ -12,12 +11,9 @@ import { FontIcon } from '@/icons'
 import { Empty, Expand, SearchInput } from '@/ui'
 import { IconType } from '@/icons/const'
 import dataEmpty from '@/assets/dataEmpty.svg'
-import searchEmpty from '@/assets/searchEmpty.svg'
 import { getFieldTypeEelment } from '@/components/DatasheetView/helper'
 import {
-    IGetSSZDCatalogParams,
     ISSZDCatalog,
-    ISSZDOrganization,
     SSZDSyncTaskEnum,
     createSSZDSyncTask,
     formatError,

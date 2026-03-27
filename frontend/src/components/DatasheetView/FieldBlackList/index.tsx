@@ -3,7 +3,11 @@ import { Drawer, Button, Tabs, Space, message } from 'antd'
 import __ from '../locale'
 import styles from './styles.module.less'
 import TagsSelect from '@/components/GeneralConfig/TagsSelect'
-import { formatError, setTimestampBlacklist } from '@/core'
+import {
+    formatError,
+    getTimestampBlacklist,
+    setTimestampBlacklist,
+} from '@/core'
 import { cnLowercaseEnNumNameReg } from '@/utils'
 
 interface IFieldBlackList {
@@ -13,6 +17,20 @@ interface IFieldBlackList {
 
 const FieldBlackList: React.FC<IFieldBlackList> = ({ open, onClose }) => {
     const [blackList, setBlackList] = useState<string[]>([])
+
+    useEffect(() => {
+        getBlacklist()
+    }, [])
+
+    const getBlacklist = async () => {
+        try {
+            const res = await getTimestampBlacklist()
+            setBlackList(res)
+        } catch (err) {
+            formatError(err)
+        }
+    }
+
     const updateBlacklist = async (val) => {
         try {
             const res = await setTimestampBlacklist({

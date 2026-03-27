@@ -1127,7 +1127,7 @@ const DatasheetTable = forwardRef((props: IDatasheetTable, ref) => {
                     {
                         label: __('上线'),
                         status: OperateType.ONLINE,
-                        show: showOnlineBtn,
+                        show: showOnlineBtn && !isSemanticGovernance,
                         popconfirmTips: __(
                             '确定要将库表资源上线到数据服务超市吗?',
                         ),
@@ -1146,6 +1146,7 @@ const DatasheetTable = forwardRef((props: IDatasheetTable, ref) => {
                                 record.online_status ===
                                     onLineStatus.OfflineReject) &&
                             record.status !== stateType.delete &&
+                            !isSemanticGovernance &&
                             using === 2,
                         popconfirmTips: __(
                             '确定要将库表资源从数据服务超市下线吗?',
@@ -1732,8 +1733,8 @@ const DatasheetTable = forwardRef((props: IDatasheetTable, ref) => {
 
     const getDatasheetViewByType = async (params) => {
         const actions = isSemanticGovernance
-            ? getDatasheetPublishedView
-            : getDatasheetView
+            ? getDatasheetView
+            : getDatasheetPublishedView
         return actions(
             selectedDatasources?.type === 'excel'
                 ? {
@@ -1931,7 +1932,7 @@ const DatasheetTable = forwardRef((props: IDatasheetTable, ref) => {
                                                 type="link"
                                                 onClick={() => {
                                                     window.open(
-                                                        '/studio/mmdl/data-connect',
+                                                        '/studio/semantic-governance/data-semantic-governance/datasheet-view',
                                                     )
                                                 }}
                                             >
@@ -2004,7 +2005,11 @@ const DatasheetTable = forwardRef((props: IDatasheetTable, ref) => {
                                               (item.key !== 'excel_file_name' ||
                                                   selectedDatasources?.type ===
                                                       'excel' ||
-                                                  !selectedDatasources?.id),
+                                                  !selectedDatasources?.id) &&
+                                              (isSemanticGovernance
+                                                  ? item.key !== 'online_status'
+                                                  : item.key !==
+                                                    'publish_status'),
                                       )
                                     : !showTaskScanBtn && type === 'task'
                                     ? columns.filter(

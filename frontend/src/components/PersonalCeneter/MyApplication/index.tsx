@@ -2,7 +2,7 @@ import { Tabs } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import __ from '../locale'
 import ShareApplyTable from '@/components/CitySharing/ShareApplyTable'
-import DataAnalysisApplyTable from '@/components/DataAnalysis/ApplyTable'
+// import DataAnalysisApplyTable from '@/components/DataAnalysis/ApplyTable'
 import styles from '../styles.module.less'
 import { useUserPermCtx } from '@/context/UserPermissionProvider'
 
@@ -22,15 +22,15 @@ const MyApplication = ({ subTabKey }: MyApplicationProps) => {
                 children: <ShareApplyTable tab="apply" isPersonalCenter />,
             })
         }
-        if (checkPermission('initiateDataAnalysisDemand')) {
-            menu.push({
-                key: 'SJFX',
-                label: __('数据分析'),
-                children: (
-                    <DataAnalysisApplyTable tab="apply" isPersonalCenter />
-                ),
-            })
-        }
+        // if (checkPermission('initiateDataAnalysisDemand')) {
+        //     menu.push({
+        //         key: 'SJFX',
+        //         label: __('数据分析'),
+        //         children: (
+        //             <DataAnalysisApplyTable tab="apply" isPersonalCenter />
+        //         ),
+        //     })
+        // }
 
         return menu
     }, [checkPermission])

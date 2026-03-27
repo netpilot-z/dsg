@@ -102,21 +102,21 @@ const LogicViewDetail = ({
                 label: __('字段'),
                 key: detailTabKey.view,
             },
-            {
-                label: __('数据预览'),
-                key: detailTabKey.dataPreview,
-            },
+            // {
+            //     label: __('数据预览'),
+            //     key: detailTabKey.dataPreview,
+            // },
             // {
             //     label: __('样例数据'),
             //     key: detailTabKey.sampleData,
             // },
-            {
-                label:
-                    baseInfoData.type === LogicViewType.DataSource
-                        ? __('数据血缘')
-                        : undefined,
-                key: detailTabKey.dataConsanguinity,
-            },
+            // {
+            //     label:
+            //         baseInfoData.type === LogicViewType.DataSource
+            //             ? __('数据血缘')
+            //             : undefined,
+            //     key: detailTabKey.dataConsanguinity,
+            // },
             // {
             //     label: __('数据质量'),
             //     key: detailTabKey.dataQuality,

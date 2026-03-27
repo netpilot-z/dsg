@@ -1,9 +1,8 @@
-import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { Drawer, Tabs } from 'antd'
 import styles from './styles.module.less'
 import __ from './locale'
 import TabVisitor from './TabVisitor'
-import { DataViewColored } from '@/icons'
 import { AssetTypeEnum, formatError, getIndicatorAuthRequest } from '@/core'
 import { Loader } from '@/ui'
 import {

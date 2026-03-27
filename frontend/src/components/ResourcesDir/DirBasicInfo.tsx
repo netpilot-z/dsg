@@ -745,6 +745,8 @@ const DirBasicInfo = forwardRef((props: IDirBasicInfo, ref) => {
                         // zIndex: 1001,
                     }}
                     isAudit={isAudit}
+                    showFavoriteOperation={false}
+                    showFeedbackOperation={false}
                 />
             )}
             {/* {logicViewDetailOpen && selectedId && (

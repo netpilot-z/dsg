@@ -44,10 +44,13 @@ const ModalTable = ({ readOnly, workOrderTitle, dataSourceInfo }: any) => {
         include_sub_subject: true,
         // publish_status: 'publish',
     })
+    // 存储form_view_ids用于分页请求
+    const [formViewIds, setFormViewIds] = useState<string[]>([])
     // 当 isDataSource 为 false 时的分页状态
-    const [clientPagination, setClientPagination] = useState({
+    const [viewsPagination, setViewsPagination] = useState({
         current: 1,
         pageSize: 5,
+        total: 0,
     })
 
     useEffect(() => {
@@ -56,6 +59,12 @@ const ModalTable = ({ readOnly, workOrderTitle, dataSourceInfo }: any) => {
             setCurrentDS(curItem)
             const hasViews = !!curItem?.form_view_ids?.length
             setIsDataSource(!hasViews)
+            if (hasViews) {
+                setFormViewIds(curItem?.form_view_ids || [])
+                // 清空之前缓存的基本信息
+                setAllViewsBasicInfo([])
+                setFilteredViewIds([])
+            }
         }
     }, [dataSourceInfo])
 
@@ -120,51 +129,13 @@ const ModalTable = ({ readOnly, workOrderTitle, dataSourceInfo }: any) => {
             : hiddenItems
     }, [hiddenItems, popoverSearchKeyword])
 
-    // 当 isDataSource 为 false 时，根据 condition.keyword 筛选并分页处理 datasource 数据
-    const { filteredDatasource, paginatedDatasource, filteredTotal } =
-        useMemo(() => {
-            if (isDataSource || !datasource?.length) {
-                return {
-                    filteredDatasource: datasource,
-                    paginatedDatasource: datasource,
-                    filteredTotal: datasource?.length || 0,
-                }
-            }
-
-            // 根据 condition.keyword 进行筛选
-            let filteredData = datasource
-            if (condition.keyword?.trim()) {
-                const keyword = condition.keyword.toLowerCase().trim()
-                filteredData = datasource.filter((item) => {
-                    const businessName = item.business_name?.toLowerCase() || ''
-                    const technicalName =
-                        item.technical_name?.toLowerCase() || ''
-
-                    return (
-                        businessName.includes(keyword) ||
-                        technicalName.includes(keyword)
-                    )
-                })
-            }
-
-            // 进行分页处理
-            const startIndex =
-                (clientPagination.current - 1) * clientPagination.pageSize
-            const endIndex = startIndex + clientPagination.pageSize
-            const paginatedData = filteredData.slice(startIndex, endIndex)
-
-            return {
-                filteredDatasource: filteredData,
-                paginatedDatasource: paginatedData,
-                filteredTotal: filteredData.length,
-            }
-        }, [
-            isDataSource,
-            datasource,
-            condition.keyword,
-            clientPagination.current,
-            clientPagination.pageSize,
-        ])
+    // 当 isDataSource 为 false 时，使用 datasource 数据（已经是分页后的数据）
+    const displayDatasource = useMemo(() => {
+        if (isDataSource) {
+            return []
+        }
+        return datasource || []
+    }, [isDataSource, datasource])
 
     const getDataList = async (params: any) => {
         try {
@@ -191,23 +162,32 @@ const ModalTable = ({ readOnly, workOrderTitle, dataSourceInfo }: any) => {
         manual: true,
     })
 
-    const getViewsByIds = async (ids: string[]) => {
+    const getViewsByIds = async (ids: string[], params: any) => {
         try {
-            const basicRes = await getFormViewBasicByIds(ids)
-            let entries = basicRes?.entries || []
-            if (ids?.length && entries?.length) {
-                entries = await combineViewData(entries, ids)
-            }
-            setDatasource(entries)
+            // 根据分页参数计算需要请求的ID范围
+            const { offset = 1, limit = 5 } = params
+            const startIndex = (offset - 1) * limit
+            const endIndex = startIndex + limit
+            const pageIds = ids.slice(startIndex, endIndex)
+
+            // 只请求当前页的ID，直接获取基本信息
+            const basicRes = await getFormViewBasicByIds(pageIds)
+            const entries = basicRes?.entries || []
+
+            return { total: ids.length, list: entries }
         } catch (error) {
             formatError(error)
+            return {
+                total: 0,
+                list: [],
+            }
         }
     }
 
     // 组合视图数据 - 将getDatasheetView数据与getFormViewBasicByIds数据按id组合
-    const combineViewData = async (viewList: any[], formViewIds: string[]) => {
+    const combineViewData = async (viewList: any[], ids: string[]) => {
         try {
-            const basicRes = await getFormViewBasicByIds(formViewIds)
+            const basicRes = await getFormViewBasicByIds(ids)
             const basicDataMap = new Map()
 
             // 创建基础数据映射，以id为key
@@ -246,10 +226,87 @@ const ModalTable = ({ readOnly, workOrderTitle, dataSourceInfo }: any) => {
                 setCondition(params)
                 run(params)
             } else {
-                getViewsByIds(currentDS?.form_view_ids)
+                // 使用分页请求视图数据
+                loadViewsByPage(currentDS?.form_view_ids, {
+                    offset: 1,
+                    limit: 5,
+                })
             }
         }
     }, [currentDS])
+
+    // 存储所有视图的基本信息用于搜索
+    const [allViewsBasicInfo, setAllViewsBasicInfo] = useState<any[]>([])
+    const [filteredViewIds, setFilteredViewIds] = useState<string[]>([])
+
+    // 加载所有视图的基本信息（用于搜索过滤）
+    const loadAllViewsBasicInfo = async (ids: string[]) => {
+        try {
+            const basicRes = await getFormViewBasicByIds(ids)
+            const entries = basicRes?.entries || []
+            setAllViewsBasicInfo(entries)
+            return entries
+        } catch (error) {
+            formatError(error)
+            return []
+        }
+    }
+
+    // 分页加载视图数据
+    const loadViewsByPage = async (
+        ids: string[],
+        params: { offset: number; limit: number; keyword?: string },
+    ) => {
+        try {
+            let targetIds = ids
+
+            // 如果有关键字搜索，需要先获取所有基本信息进行过滤
+            if (params.keyword?.trim()) {
+                const keyword = params.keyword.toLowerCase().trim()
+
+                // 如果还没有加载所有基本信息，先加载
+                let allInfo = allViewsBasicInfo
+                if (allInfo.length === 0 || allInfo.length !== ids.length) {
+                    allInfo = await loadAllViewsBasicInfo(ids)
+                }
+
+                // 过滤出匹配的ID
+                const matchedIds = allInfo
+                    .filter((item) => {
+                        const businessName =
+                            item.business_name?.toLowerCase() || ''
+                        const technicalName =
+                            item.technical_name?.toLowerCase() || ''
+                        return (
+                            businessName.includes(keyword) ||
+                            technicalName.includes(keyword)
+                        )
+                    })
+                    .map((item) => item.id)
+
+                targetIds = matchedIds
+                setFilteredViewIds(matchedIds)
+            } else {
+                setFilteredViewIds(ids)
+            }
+
+            const result = await getViewsByIds(targetIds, params)
+            setDatasource(result.list || [])
+            setViewsPagination({
+                current: params.offset,
+                pageSize: params.limit,
+                total: result.total,
+            })
+        } catch (error) {
+            formatError(error)
+            setDatasource([])
+            setViewsPagination({
+                current: params.offset,
+                pageSize: params.limit,
+                total: 0,
+            })
+        }
+    }
 
     // 当前选中的库表
     const [currentView, setCurrentView] = useState<any>()
@@ -380,7 +437,11 @@ const ModalTable = ({ readOnly, workOrderTitle, dataSourceInfo }: any) => {
         if (isDataSource) {
             refresh()
         } else {
-            getViewsByIds(currentDS?.form_view_ids)
+            loadViewsByPage(formViewIds, {
+                offset: viewsPagination.current,
+                limit: viewsPagination.pageSize,
+                keyword: condition.keyword,
+            })
         }
     }
 
@@ -408,12 +469,17 @@ const ModalTable = ({ readOnly, workOrderTitle, dataSourceInfo }: any) => {
                                     const hasViews = !!it?.form_view_ids?.length
                                     const newIsDataSource = !hasViews
                                     setIsDataSource(newIsDataSource)
-                                    // 切换到客户端分页时重置分页状态
+                                    // 切换到视图ID分页时重置分页状态
                                     if (!newIsDataSource) {
-                                        setClientPagination({
+                                        setFormViewIds(it?.form_view_ids || [])
+                                        setViewsPagination({
                                             current: 1,
                                             pageSize: 5,
+                                            total: 0,
                                         })
+                                        // 清空之前缓存的基本信息
+                                        setAllViewsBasicInfo([])
+                                        setFilteredViewIds([])
                                     }
                                 }}
                                 title={it?.datasource_name}
@@ -510,15 +576,27 @@ const ModalTable = ({ readOnly, workOrderTitle, dataSourceInfo }: any) => {
                                                                 setIsDataSource(
                                                                     newIsDataSource,
                                                                 )
-                                                                // 切换到客户端分页时重置分页状态
+                                                                // 切换到视图ID分页时重置分页状态
                                                                 if (
                                                                     !newIsDataSource
                                                                 ) {
-                                                                    setClientPagination(
+                                                                    setFormViewIds(
+                                                                        it?.form_view_ids ||
+                                                                            [],
+                                                                    )
+                                                                    setViewsPagination(
                                                                         {
                                                                             current: 1,
                                                                             pageSize: 5,
+                                                                            total: 0,
                                                                         },
+                                                                    )
+                                                                    // 清空之前缓存的基本信息
+                                                                    setAllViewsBasicInfo(
+                                                                        [],
+                                                                    )
+                                                                    setFilteredViewIds(
+                                                                        [],
                                                                     )
                                                                 }
                                                                 // 关闭 Popover
@@ -611,24 +689,24 @@ const ModalTable = ({ readOnly, workOrderTitle, dataSourceInfo }: any) => {
                             placeholder="搜索库表业务名称、技术名称"
                             width={240}
                             onKeyChange={(keyword) => {
+                                setCondition((prev) => ({
+                                    ...prev,
+                                    keyword,
+                                }))
                                 if (isDataSource) {
                                     const params = {
                                         ...condition,
                                         keyword,
                                         offset: 1,
                                     }
-                                    setCondition(params)
                                     run(params)
                                 } else {
-                                    // 客户端搜索时重置到第一页
-                                    setCondition((prev) => ({
-                                        ...prev,
+                                    // 服务端搜索时重置到第一页
+                                    loadViewsByPage(formViewIds, {
+                                        offset: 1,
+                                        limit: viewsPagination.pageSize,
                                         keyword,
-                                    }))
-                                    setClientPagination((prev) => ({
-                                        ...prev,
-                                        current: 1,
-                                    }))
+                                    })
                                 }
                             }}
                         />
@@ -646,7 +724,7 @@ const ModalTable = ({ readOnly, workOrderTitle, dataSourceInfo }: any) => {
                     rowKey="id"
                     {...(isDataSource
                         ? tableProps
-                        : { dataSource: paginatedDatasource })}
+                        : { dataSource: displayDatasource })}
                     locale={{
                         emptyText: condition?.keyword ? (
                             <Empty />
@@ -663,15 +741,17 @@ const ModalTable = ({ readOnly, workOrderTitle, dataSourceInfo }: any) => {
                                   showSizeChanger: true,
                                   current: condition.offset,
                                   pageSize: condition.limit,
+                                  pageSizeOptions: [5, 10, 20, 50],
                                   showTotal: (count) =>
                                       __('共${count}条', { count }),
                               }
                             : {
-                                  current: clientPagination.current,
-                                  pageSize: clientPagination.pageSize,
-                                  total: filteredTotal,
+                                  current: viewsPagination.current,
+                                  pageSize: viewsPagination.pageSize,
+                                  total: viewsPagination.total,
                                   showSizeChanger: true,
                                   showQuickJumper: true,
+                                  pageSizeOptions: [5, 10, 20, 50],
                                   showTotal: (count) =>
                                       __('共${count}条', { count }),
                               }
@@ -691,10 +771,11 @@ const ModalTable = ({ readOnly, workOrderTitle, dataSourceInfo }: any) => {
                                 limit: newPagination?.pageSize || 10,
                             })
                         } else {
-                            // 客户端分页处理
-                            setClientPagination({
-                                current: newPagination?.current || 1,
-                                pageSize: newPagination?.pageSize || 5,
+                            // 视图ID分页处理
+                            loadViewsByPage(formViewIds, {
+                                offset: newPagination?.current || 1,
+                                limit: newPagination?.pageSize || 5,
+                                keyword: condition.keyword,
                             })
                         }
                     }}

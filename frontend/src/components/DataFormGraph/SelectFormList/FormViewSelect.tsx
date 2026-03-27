@@ -1,26 +1,21 @@
 import { FC, useEffect, useRef, useState, useMemo } from 'react'
 import { useDebounce } from 'ahooks'
-import { Spin } from 'antd'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { Empty, Loader, SearchInput } from '@/ui'
+import { Empty, Loader } from '@/ui'
 import styles from './styles.module.less'
 import __ from '../locale'
 import { useSelectedDataContext } from './SelectedDataContext'
 
 import {
     formatError,
-    formRecommendByLogicView,
     formsQuery,
     getCoreBusinessDetails,
-    getDatasheetView,
     SortDirection,
     transformQuery,
 } from '@/core'
 import SelectNode from './SelectNode'
 import dataEmpty from '@/assets/dataEmpty.svg'
 
-import searchEmpty from '@/assets/searchEmpty.svg'
-import LogicViewSelectTree from './LogicViewSelectTree'
 import { FormTableKind } from '@/components/Forms/const'
 import { useBusinessModelContext } from '../../BusinessModeling/BusinessModelProvider'
 

@@ -328,6 +328,12 @@ const BaseInfo: React.FC<IBaseInfo> = forwardRef((props: any, ref) => {
             newFormInitialValues.subject_id = dataViewResource?.subject_id
                 ? [dataViewResource?.subject_id]
                 : []
+            form.setFieldValue(
+                'subject_id',
+                dataViewResource?.subject_id
+                    ? [dataViewResource?.subject_id]
+                    : undefined,
+            )
         }
         if (dataViewResource?.department_id && opType === 'create') {
             newFormInitialValues.department_id = dataViewResource?.department_id
@@ -383,6 +389,9 @@ const BaseInfo: React.FC<IBaseInfo> = forwardRef((props: any, ref) => {
         delete newFormValues.source_department_id
         if (!labelList?.find((i) => i.id === newFormValues.data_classify)) {
             newFormValues.data_classify = undefined
+        }
+        if (!newFormValues?.subject_id?.length) {
+            delete newFormValues.subject_id
         }
 
         // 初始化

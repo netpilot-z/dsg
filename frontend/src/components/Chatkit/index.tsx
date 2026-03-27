@@ -2,18 +2,29 @@ import React, { useMemo, useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { Tooltip } from 'antd'
 // 确保 Chatkit 的样式被注入（样式已打包�?JS 中，导入组件时会自动注入�?
-import { Assistant, type AssistantProps } from '@kweaver-ai/chatkit'
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
+import {
+    Assistant,
+    type AssistantProps,
+    BlockRegistry,
+} from '@kweaver-ai/chatkit'
+import {
+    useParams,
+    useSearchParams,
+    useNavigate,
+    useLocation,
+} from 'react-router-dom'
 import styles from './styles.module.less'
 import __ from './locale'
 import { useMicroAppProps } from '@/context'
 import { Empty, Loader } from '@/ui'
 import { FontIcon } from '@/icons'
 import { IconType } from '@/icons/const'
+import DataCatlgDrawer from '../SearchDataCopilot/DataCatlgDrawer'
 
 const ChatKit = () => {
     const params = useParams<{ agentKey: string }>()
     const [searchParams] = useSearchParams()
+    const location = useLocation()
     const { microAppProps } = useMicroAppProps()
 
     const navigate = useNavigate()
@@ -22,8 +33,28 @@ const ChatKit = () => {
     // agentName �?businessDomain 从查询参数获取（可选）
     const agentName = searchParams.get('agentName')
     const businessDomain = searchParams.get('businessDomain')
+    const [initialQuestion, setInitialQuestion] = useState('')
+    const [blockData, setBlockData] = useState<any[]>([])
+    const [openResource, setOpenResource] = useState(false)
+
+    // initialQuestion 读取后，将路由 state 清空，保证 question 只使用一次
+    useEffect(() => {
+        const state = location.state as { question?: string } | null
+        if (state?.question) {
+            setInitialQuestion(state.question)
+            navigate(`${location.pathname}${location.search}`, {
+                replace: true,
+                state: null,
+            })
+        }
+    }, [location.pathname, location.search, location.state, navigate])
+
+    useEffect(() => {
+        console.log('initialQuestion', initialQuestion)
+    }, [initialQuestion])
 
     const baseUrl = `${window.location.origin}/api/agent-app/v1`
+    console.log('baseUrl', baseUrl)
 
     // 判断是否需要等�?token
     const [isTokenReady, setIsTokenReady] = useState(false)
@@ -33,9 +64,9 @@ const ChatKit = () => {
     const { assistantToken, assistantRefreshToken } = useMemo(() => {
         // 优先使用微应�?props 中的 token 信息，其次回退�?cookies
         // 注意：accessToken �?getter，需要在这里调用以获取最新�?
-        const accessTokenFromMicroApp = microAppProps.props?.token?.accessToken
-        const refreshTokenFromMicroApp =
-            microAppProps.props?.token?.refreshToken
+        console.log('microAppProps', microAppProps)
+        const accessTokenFromMicroApp = microAppProps.props.token?.accessToken
+        const refreshTokenFromMicroApp = microAppProps.props.token?.refreshToken
 
         const token =
             accessTokenFromMicroApp || Cookies.get('af.oauth2_token') || ''
@@ -67,6 +98,68 @@ const ChatKit = () => {
         // 如果 microAppProps 存在�?token 还没准备好，等待一段时间后再次检�?
         // 这处理了 microAppProps 异步加载的情�?
     }, [assistantToken, microAppProps])
+
+    useEffect(() => {
+        BlockRegistry.registerTools([
+            {
+                name: 'af_sailor',
+                Icon: (
+                    <FontIcon
+                        name="icon-wenjianjia"
+                        type={IconType.COLOREDICON}
+                        style={{ fontSize: 22, color: '#128ee3' }}
+                    />
+                ),
+                onClick: (blockInfo) => {
+                    const data = blockInfo?.data || []
+                    setBlockData(data as any[])
+                    setOpenResource(true)
+                    return () => {
+                        setBlockData([])
+                        setOpenResource(false)
+                    }
+                },
+            },
+            {
+                name: 'datasource_filter',
+                Icon: (
+                    <FontIcon
+                        name="icon-wenjianjia"
+                        type={IconType.COLOREDICON}
+                        style={{ fontSize: 22, color: '#128ee3' }}
+                    />
+                ),
+                onClick: (blockInfo) => {
+                    const data = blockInfo?.data || []
+                    setBlockData(data as any[])
+                    setOpenResource(true)
+                    return () => {
+                        setBlockData([])
+                        setOpenResource(false)
+                    }
+                },
+            },
+            {
+                name: 'datasource_rerank',
+                Icon: (
+                    <FontIcon
+                        name="icon-wenjianjia"
+                        type={IconType.COLOREDICON}
+                        style={{ fontSize: 22, color: '#128ee3' }}
+                    />
+                ),
+                onClick: (blockInfo) => {
+                    const data = blockInfo?.data || []
+                    setBlockData(data as any[])
+                    setOpenResource(true)
+                    return () => {
+                        setBlockData([])
+                        setOpenResource(false)
+                    }
+                },
+            },
+        ])
+    }, [])
 
     // 确保 Chatkit 的样式被注入
     // Chatkit 的样式会在模块加载时自动注入�?document.head
@@ -100,7 +193,7 @@ const ChatKit = () => {
     return (
         <div className={styles.chatKitContainer}>
             <div className={styles.chatKitLeft}>
-                <Tooltip title={__('全部助手')}>
+                <Tooltip title={__('返回')}>
                     <div
                         className={styles.chatKitLeftIcon}
                         onClick={() => {
@@ -109,7 +202,8 @@ const ChatKit = () => {
                     >
                         <FontIcon
                             type={IconType.COLOREDICON}
-                            name="icon-quanbuzhushou"
+                            name="icon-zhuye"
+                            style={{ fontSize: 24 }}
                         />
                     </div>
                 </Tooltip>
@@ -125,9 +219,21 @@ const ChatKit = () => {
                         token: assistantToken,
                         refreshToken: assistantRefreshToken,
                         businessDomain: businessDomain || undefined,
+                        initialQuestion,
                     } as AssistantProps,
                 )}
             </div>
+            {openResource && (
+                <DataCatlgDrawer
+                    open={openResource}
+                    data={blockData}
+                    onClose={() => {
+                        setBlockData([])
+                        setOpenResource(false)
+                    }}
+                    placement="right"
+                />
+            )}
         </div>
     )
 }

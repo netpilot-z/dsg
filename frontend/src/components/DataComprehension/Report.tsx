@@ -14,7 +14,6 @@ import {
     reportClassify,
 } from './const'
 import BasicInfoView from './BasicInfoView'
-import { conbineSvg } from '../UserRoleManage/helper'
 import BlockContainer from '../ApplicationAuth/BlockContainer'
 import { Empty } from '@/ui'
 import dataEmpty from '@/assets/dataEmpty.svg'

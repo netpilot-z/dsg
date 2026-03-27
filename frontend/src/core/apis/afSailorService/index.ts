@@ -413,6 +413,25 @@ export const getSearchAgentInfo = (): Promise<{
     return get(`/api/af-sailor-agent/v1/assistant/search/info`)
 }
 
+/**
+ * 获取 Agent 市场指定 Agent 的 v0 版本信息（含 preset_questions 等配置）
+ * @param key agent key
+ */
+export const getAgentVersionV0 = (
+    key: string,
+    business_domain_id: string,
+): Promise<any> => {
+    return get(
+        `/api/agent-factory/v3/agent-market/agent/${key}/version/v0`,
+        undefined,
+        {
+            headers: {
+                'x-business-domain': business_domain_id,
+            },
+        },
+    )
+}
+
 /** 获取分类列表 */
 export const getWsCategoryList = (): Promise<{ data: IWsCategoryListData }> => {
     return get(`/api/af-sailor-agent/system/config/ws-category-list`)

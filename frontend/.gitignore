@@ -39,3 +39,5 @@ yarn-error.log*
 src/setupProxy.js
 .vscode/
 .husky/
+.codex
+AGENTS.md

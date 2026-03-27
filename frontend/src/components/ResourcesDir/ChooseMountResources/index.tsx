@@ -1,5 +1,5 @@
 import { Button, Modal, ModalProps, Select, Tooltip } from 'antd'
-import React, { memo, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Icon from '@ant-design/icons'
 import __ from './locale'
 import styles from './styles.module.less'
@@ -12,7 +12,6 @@ import DatasourceTree from '@/components/DatasheetView/DatasourceTree'
 import LogicalViewList from './LogicalViewList'
 import { DsType } from '@/components/DatasheetView/const'
 import { BusinessDomainType } from '@/components/BusinessDomain/const'
-import { DatasheetViewColored } from '@/icons'
 
 interface IChooseMountResources extends ModalProps {
     open: boolean

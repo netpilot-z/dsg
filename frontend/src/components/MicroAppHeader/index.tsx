@@ -107,7 +107,7 @@ const MicroAppHeader: React.FC<MicroAppHeaderProps> = ({
             if (item.key === 'search-copilot') {
                 return true
             }
-            const firstPath = findFirstPathByModule(item.key)
+            const firstPath = findFirstPathByModule(item.key, menus)
             return !!firstPath
         })
     }, [menus, isFromSearchCopilot])
@@ -156,7 +156,7 @@ const MicroAppHeader: React.FC<MicroAppHeaderProps> = ({
         }
 
         // 获取菜单所属 module
-        const rootMenu = getRootMenuByPath(pathname)
+        const rootMenu = getRootMenuByPath(pathname, menus)
         let menuKey = rootMenu?.module?.[0]
 
         // 如果没有 module,尝试多种方式获取 menuKey
@@ -182,10 +182,10 @@ const MicroAppHeader: React.FC<MicroAppHeaderProps> = ({
     const handleMenuClick = (key: string) => {
         setActiveMenuKey(key)
         if (['data-market', 'work-center', 'config-center'].includes(key)) {
-            const firstUrl = findFirstPathByModule(key)
+            const firstUrl = findFirstPathByModule(key, menus)
             navigate(firstUrl)
         } else {
-            const firstUrl = findFirstPathByKeys([key])
+            const firstUrl = findFirstPathByKeys([key], menus)
             navigate(firstUrl)
         }
     }
@@ -220,8 +220,8 @@ const MicroAppHeader: React.FC<MicroAppHeaderProps> = ({
     }
 
     const handleToHome = () => {
-        // 跳转到宿主根目录
-        window.location.href = '/dip-hub/my-app'
+        const homeRoute = microAppProps?.route?.homeRoute || '/dip-hub'
+        window.location.href = homeRoute
     }
 
     const [appIcon, appName] = useMemo<[string, string]>(() => {

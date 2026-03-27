@@ -1,8 +1,6 @@
 import { trim } from 'lodash'
 import { AttachmentType, StateType, SortDirection } from '@/core'
-import { WordColored2, PDFColored, FileLinkColored } from '@/icons'
 import __ from './locale'
-import styles from './styles.module.less'
 
 // 文件列表中的排序字段类型
 export enum FileSorterType {

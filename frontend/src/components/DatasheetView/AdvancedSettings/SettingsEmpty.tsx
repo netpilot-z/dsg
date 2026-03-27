@@ -1,7 +1,6 @@
 import { noop } from 'lodash'
 import { FC } from 'react'
 import { Button, Tooltip } from 'antd'
-import { AddOutlined } from '@/icons'
 import { Empty } from '@/ui'
 import dataEmpty from '../../../assets/dataEmpty.svg'
 import __ from '../locale'

@@ -17,12 +17,10 @@ import styles from './styles.module.less'
 import {
     messageError,
     formatError,
-    getMembers,
     TaskType,
     getFlowchartStage,
     TaskStatus,
     TaskPriority,
-    getTaskRescCatlgList,
     createTask,
     editTask,
     getTaskDetail,
@@ -40,22 +38,19 @@ import {
     getUserListByPermission,
 } from '@/core'
 import { keyboardRegEnter, OperateType, useQuery, ErrorInfo } from '@/utils'
-import { validateName, validateTextLegitimacy } from '@/utils/validate'
+import { validateTextLegitimacy } from '@/utils/validate'
 import { statusInfos } from '../const'
 import { ProjectSelect } from '../custom/ProjectComponent'
 import { StageNodeCascader } from '../custom/StageNodeCascader'
 import { StatusSelect } from '../custom/StatusComponent'
 import { PrioritySelect } from './PrioritySelect'
 import { ExecutorSelect } from '../custom/ExecutorComponent'
-import { DeadlineOutlined } from '@/icons'
 import { freeTaskTypeList } from './helper'
 import { TaskTypeSelect } from '../custom/taskTypeComponent'
 import __ from './locale'
-import FreeTaskRelateCoreBusiness from './FreeTaskRelateCoreBusiness'
 import FreeTaskRelateForms from './FreeTaskRelateForms'
 import FreeTaskRelateCats from './FreeTaskRelateCats'
 import BusinessDomainSelect from '@/components/BusiArchitecture/BusinessDomainSelect'
-import BusinessDomainTree from '@/components/BusiArchitecture/BusinessDomainTree'
 import RelateModel from './RelateModel'
 import { useGeneralConfig } from '@/hooks/useGeneralConfig'
 import { StdTypeSelect } from './StdTypeSelect'

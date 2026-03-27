@@ -53,6 +53,7 @@ type Mu struct {
 	Attribute     any      `json:"attribute,omitempty"`
 	Element       string   `json:"element,omitempty"`
 	Index         bool     `json:"index,omitempty"`
+	Belong        []string `json:"belong,omitempty"`
 	Hide          bool     `json:"hide,omitempty"`
 	Children      []*Mu    `json:"children,omitempty"`
 	Actions       []string `json:"actions"`

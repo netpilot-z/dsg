@@ -1,8 +1,8 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-underscore-dangle */
-import React, { Suspense, useEffect, useMemo } from 'react'
+import React, { Suspense, useEffect, useMemo, useState } from 'react'
 import { BrowserRouter } from 'react-router-dom'
-import { ConfigProvider, message, Modal } from 'antd'
+import { ConfigProvider, message, Modal, Spin } from 'antd'
 import enUS from 'antd/lib/locale/en_US'
 import zhCN from 'antd/lib/locale/zh_CN'
 import zhTW from 'antd/lib/locale/zh_TW'
@@ -91,6 +91,7 @@ const AppShellInner: React.FC<{
     containerId?: string
 }> = ({ mode, containerId }) => {
     const { microAppProps } = useMicroAppProps()
+    const [microAppReady, setMicroAppReady] = useState(mode !== 'micro-app')
     const language: string = getLanguage() || 'zh-cn'
     const { pathname } = window.location
 
@@ -145,9 +146,11 @@ const AppShellInner: React.FC<{
             requestClient.default.micro = undefined
             tokenManager.clearMicroAppProps()
             localStorage.removeItem('micro_app_platform')
+            setMicroAppReady(true)
             return
         }
 
+        setMicroAppReady(false)
         requestClient.default.micro = microAppProps
         tokenManager.setMicroAppProps(microAppProps)
 
@@ -173,6 +176,8 @@ const AppShellInner: React.FC<{
                 }
             } catch (error) {
                 //
+            } finally {
+                setMicroAppReady(true)
             }
         }
 
@@ -181,6 +186,7 @@ const AppShellInner: React.FC<{
         localStorage.setItem('micro_app_platform', '1')
 
         return () => {
+            setMicroAppReady(false)
             requestClient.default.micro = undefined
             tokenManager.clearMicroAppProps()
             localStorage.removeItem('micro_app_platform')
@@ -221,7 +227,24 @@ const AppShellInner: React.FC<{
                                             <MenuProvider>
                                                 <UserPermissionsProvider>
                                                     <ScopePermissionProvider>
-                                                        <AnyFabricRoutes />
+                                                        {microAppReady ? (
+                                                            <AnyFabricRoutes />
+                                                        ) : (
+                                                            <div
+                                                                style={{
+                                                                    display:
+                                                                        'flex',
+                                                                    alignItems:
+                                                                        'center',
+                                                                    justifyContent:
+                                                                        'center',
+                                                                    minHeight:
+                                                                        '100vh',
+                                                                }}
+                                                            >
+                                                                <Spin />
+                                                            </div>
+                                                        )}
                                                     </ScopePermissionProvider>
                                                 </UserPermissionsProvider>
                                             </MenuProvider>

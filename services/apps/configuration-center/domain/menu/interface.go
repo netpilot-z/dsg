@@ -8,13 +8,22 @@ import (
 	"github.com/samber/lo"
 )
 
-const DefaultPlatform = 1
+const (
+	DefaultPlatform         = 1 //数据语义治理
+	SmartDataQueryPlatform  = 2 //智能问数
+	SmartDataSearchPlatform = 3 //智能找数
+)
 
 type UseCase interface {
-	GetMenus(ctx context.Context) (*GetMenusRes, error)
-	GetPermissionMenus(ctx context.Context, sessionID string, req *PermissionMenusReq) (*response.PageResults[PermissionMenusRes], error)
-	GetResourceMenuKeys(ctx context.Context) ([][]string, error)
-	SetMenus(ctx context.Context, req *SetMenusReq) error
+	GetMenus(ctx context.Context, req *GetMenusReq) (*GetMenusRes, error)
+	GetPermissionMenus(ctx context.Context, req *PermissionMenusReq) (*response.PageResults[PermissionMenusRes], error)
+	SetMenus(ctx context.Context, req SetMenusReq) error
+	GetResourceMenuKeys(ctx context.Context) (map[string]string, error)
+}
+
+type GetMenusReq struct {
+	ResourceType string `json:"resource_type" form:"resource_type" binding:"omitempty"`
+	Platform     int32  `json:"-"`
 }
 
 type GetMenusRes struct {
@@ -22,7 +31,9 @@ type GetMenusRes struct {
 }
 
 type PermissionMenusReq struct {
-	ID string `json:"id" form:"id" binding:"omitempty"`
+	ID           string `json:"id" form:"id" binding:"omitempty"`
+	ResourceType string `json:"resource_type" form:"resource_type" binding:"omitempty"`
+	Platform     int32  `json:"-"`
 	PermissionMenusFixedReq
 }
 
@@ -38,9 +49,7 @@ type PermissionMenusRes struct {
 	Name string `json:"name"`
 }
 
-type SetMenusReq struct {
-	Router []Mu `json:"router"`
-}
+type SetMenusReq map[string][]Mu
 
 type Mu struct {
 	Type          string   `json:"type,omitempty"`
@@ -53,9 +62,34 @@ type Mu struct {
 	Attribute     any      `json:"attribute,omitempty"`
 	Element       string   `json:"element,omitempty"`
 	Index         bool     `json:"index,omitempty"`
+	Belong        []string `json:"belong,omitempty"`
 	Hide          bool     `json:"hide,omitempty"`
+	ResourceType  string   `json:"resource_type,omitempty"`
 	Children      []*Mu    `json:"children,omitempty"`
 	Actions       []string `json:"actions"`
+}
+
+// ResourceToPlatform 复用原来的platform列，映射到不同的resource
+func ResourceToPlatform(resourceID string) int32 {
+	switch {
+	case resourceID == authorization.RESOURCE_SMART_DATA_QUERY:
+		return SmartDataQueryPlatform
+	case resourceID == authorization.RESOURCE_SMART_DATA_FIND:
+		return SmartDataSearchPlatform
+	default:
+		return DefaultPlatform
+	}
+}
+
+func PlatformToResourceType(platform int32) string {
+	switch {
+	case platform == SmartDataQueryPlatform:
+		return authorization.RESOURCE_SMART_DATA_QUERY
+	case platform == SmartDataSearchPlatform:
+		return authorization.RESOURCE_SMART_DATA_FIND
+	default:
+		return authorization.RESOURCE_TYPE_MENUS
+	}
 }
 
 func (m *Mu) Keys() []string {
@@ -76,12 +110,12 @@ func (m *Mu) IsPermissionMenu() bool {
 	return !(m.Label == "" || m.Hide)
 }
 
-func ToPermissionMenus(ms []*Mu) []*PermissionMenusRes {
+func ToPermissionMenus(ms []*Mu, resourceType string) []*PermissionMenusRes {
 	return lo.Times(len(ms), func(index int) *PermissionMenusRes {
 		return &PermissionMenusRes{
 			ID:   ms[index].Key,
 			Name: ms[index].Label,
-			Type: authorization.RESOURCE_TYPE_MENUS,
+			Type: resourceType,
 		}
 	})
 }

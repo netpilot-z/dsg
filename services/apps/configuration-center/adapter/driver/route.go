@@ -511,12 +511,11 @@ func (r *Router) RegisterApi(engine *gin.Engine) {
 		}
 
 		{
-			configurationCenterRouter.GET("/login/menus", r.MenuApi.GetMenus)                  //登录获取菜单
+			//configurationCenterRouter.GET("/login/menus", r.MenuApi.GetMenus)                  //登录获取菜单
 			configurationCenterRouter.GET("/menus", r.MenuApi.GetMenus)                        //获取菜单
 			configurationCenterNoOauthRouter.GET("/resource/menus", r.MenuApi.PermissionMenus) //获取菜单
-			configurationCenterInternalRouter.GET("/menus/keys", r.MenuApi.GetMenuKeys)        //获取菜单
 			configurationCenterRouter.POST("/menus", r.MenuApi.SetMenus)                       //设置菜单
-
+			configurationCenterInternalRouter.GET("/menus", r.MenuApi.GetAllMenus)             //获取菜单
 		}
 
 		// 通讯录管理

@@ -389,7 +389,10 @@ INSERT  INTO `configuration`(`key`,`value`,`type`)
 SELECT 'sample_data_type', 'synthetic', '0'
 FROM DUAL WHERE NOT EXISTS(SELECT `key` FROM `configuration` WHERE `key` = 'sample_data_type' );
 
-
+-- 是否数字员工菜单1是、0否
+INSERT INTO `configuration` (`key`,`value`,`type`)
+SELECT 'digital_human', '1', '12'
+FROM DUAL WHERE NOT EXISTS(SELECT `key` FROM `configuration` WHERE `key` = 'digital_human' );
 
 CREATE TABLE IF NOT EXISTS `datasource` (
     `data_source_id` bigint(20) NOT NULL COMMENT '数据源雪花id',

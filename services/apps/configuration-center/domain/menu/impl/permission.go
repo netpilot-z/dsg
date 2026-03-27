@@ -10,21 +10,8 @@ import (
 	"github.com/samber/lo"
 )
 
-// GetResourceMenuKeys 获取权限菜单
-func (m *Menu) GetResourceMenuKeys(ctx context.Context) ([][]string, error) {
-	ms, err := m.getAllMenus(ctx)
-	if err != nil {
-		return nil, err
-	}
-	keyDict := make(map[string]string)
-	getMenuLabelDict(keyDict, "", ms)
-	return lo.MapToSlice(keyDict, func(key string, value string) []string {
-		return []string{key, value}
-	}), nil
-}
-
 // GetPermissionMenus 获取权限菜单
-func (m *Menu) GetPermissionMenus(ctx context.Context, sessionID string, req *menu.PermissionMenusReq) (*response.PageResults[menu.PermissionMenusRes], error) {
+func (m *Menu) GetPermissionMenus(ctx context.Context, req *menu.PermissionMenusReq) (*response.PageResults[menu.PermissionMenusRes], error) {
 	// 查询外层菜单
 	if req.Limit == 0 {
 		req.Limit = 50
@@ -41,7 +28,7 @@ func (m *Menu) getAllCategory(ctx context.Context, req *menu.PermissionMenusReq)
 	if err != nil {
 		return nil, err
 	}
-	ps := menu.ToPermissionMenus(ms)
+	ps := menu.ToPermissionMenus(ms, req.ResourceType)
 	//分页返回
 	pageResult := ps
 	if req.Limit < len(ps) {
@@ -60,7 +47,7 @@ func (m *Menu) getMenusByCategory(ctx context.Context, req *menu.PermissionMenus
 		return nil, err
 	}
 	ms := getMatchMenus(validMenus, req.ID)
-	ps := menu.ToPermissionMenus(ms)
+	ps := menu.ToPermissionMenus(ms, req.ResourceType)
 
 	pageResult := ps
 	if req.Limit < len(ps) {
@@ -74,7 +61,7 @@ func (m *Menu) getMenusByCategory(ctx context.Context, req *menu.PermissionMenus
 
 // getPermissionMenus 查询权限菜单
 func (m *Menu) getPermissionMenus(ctx context.Context, req *menu.PermissionMenusReq) ([]*menu.Mu, error) {
-	menus, err := m.repo.GetMenusByPlatformWithKeyword(ctx, menu.DefaultPlatform, req.ID, req.Keyword)
+	menus, err := m.repo.GetMenusByPlatformWithKeyword(ctx, req.Platform, req.ID, req.Keyword)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +83,7 @@ func (m *Menu) getPermissionMenus(ctx context.Context, req *menu.PermissionMenus
 func (m *Menu) getAllMenus(ctx context.Context) ([]*menu.Mu, error) {
 	menus, err := m.repo.GetMenus(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errorcode.Detail(errorcode.PublicDatabaseError, err.Error())
 	}
 	validMenus := make([]*menu.Mu, 0, len(menus))
 	for _, mu := range menus {
@@ -107,6 +94,7 @@ func (m *Menu) getAllMenus(ctx context.Context) ([]*menu.Mu, error) {
 		if !ms.IsPermissionMenu() {
 			continue
 		}
+		ms.ResourceType = menu.PlatformToResourceType(mu.Platform)
 		validMenus = append(validMenus, ms)
 	}
 	return validMenus, err

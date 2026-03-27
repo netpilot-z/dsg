@@ -60,17 +60,12 @@ type MenuFilter func(ctx context.Context, userID string) (map[string]bool, error
 
 type MenuActions func(ctx context.Context, userID string) (map[string][]string, error)
 
-func (m *Menu) GetMenus(ctx context.Context) (*menu.GetMenusRes, error) {
-	userInfo, err := user_util.GetUserInfo(ctx)
-	if err != nil {
-		return nil, err
-	}
-	uid := userInfo.ID
-	menus, err := m.repo.GetMenusByPlatform(ctx, 1)
+func (m *Menu) GetMenus(ctx context.Context, req *menu.GetMenusReq) (*menu.GetMenusRes, error) {
+	menus, err := m.repo.GetMenusByPlatform(ctx, req.Platform)
 	if err != nil {
 		return nil, errorcode.Detail(errorcode.PublicDatabaseError, err.Error())
 	}
-	filter, err := m.getUserMenuActionMap(ctx, uid)
+	filter, err := m.getUserMenuActionMap(ctx, menus, req)
 	if err != nil {
 		return nil, err
 	}
@@ -91,16 +86,15 @@ func (m *Menu) GetMenus(ctx context.Context) (*menu.GetMenusRes, error) {
 	}, nil
 }
 
-func (m *Menu) getUserMenuActionMap(ctx context.Context, userID string) (*MenuActionsFilter, error) {
-	//获取所有的菜单
-	menus, err := m.repo.GetMenusByPlatform(ctx, 1)
+func (m *Menu) getUserMenuActionMap(ctx context.Context, menus []*model.Menu, req *menu.GetMenusReq) (*MenuActionsFilter, error) {
+	userInfo, err := user_util.GetUserInfo(ctx)
 	if err != nil {
-		return nil, errorcode.Detail(errorcode.PublicDatabaseError, err.Error())
+		return nil, err
 	}
 	muKeys := make([]string, 0)
 	for _, mu := range menus {
 		ms := menu.Mu{}
-		if err = jsoniter.Unmarshal([]byte(mu.Value), &ms); err != nil {
+		if err := jsoniter.Unmarshal([]byte(mu.Value), &ms); err != nil {
 			return nil, errorcode.Detail(errorcode.PublicInternalError, err.Error())
 		}
 		muKeys = append(muKeys, ms.Keys()...)
@@ -109,7 +103,7 @@ func (m *Menu) getUserMenuActionMap(ctx context.Context, userID string) (*MenuAc
 	resources := make([]authorization.ResourceObject, 0, len(menus))
 	for _, key := range muKeys {
 		resources = append(resources, authorization.ResourceObject{
-			Type: authorization.RESOURCE_TYPE_MENUS,
+			Type: req.ResourceType,
 			ID:   key,
 		})
 	}
@@ -117,7 +111,7 @@ func (m *Menu) getUserMenuActionMap(ctx context.Context, userID string) (*MenuAc
 	args := &authorization.GetResourceOperationsArgs{
 		Method: "GET",
 		Accessor: authorization.Accessor{
-			ID:   userID,
+			ID:   userInfo.ID,
 			Type: authorization.ACCESSOR_TYPE_USER,
 		},
 		Resources: resources,
@@ -134,26 +128,49 @@ func (m *Menu) getUserMenuActionMap(ctx context.Context, userID string) (*MenuAc
 	return NewMenuFilter(ops), nil
 }
 
-func (m *Menu) SetMenus(ctx context.Context, req *menu.SetMenusReq) error {
+func (m *Menu) SetMenus(ctx context.Context, req menu.SetMenusReq) error {
 	err := m.repo.Truncate(ctx)
 	if err != nil {
 		return errorcode.Detail(errorcode.PublicDatabaseError, err.Error())
 	}
-	//增加额外的智能问数按钮
-	req.Router = append(req.Router, alterMenus...)
-	menus := make([]*model.Menu, 0)
-	for _, router := range req.Router {
-		marshal, _ := jsoniter.Marshal(router)
-		menus = append(menus, &model.Menu{
-			Platform: menu.DefaultPlatform,
-			Value:    string(marshal),
-		})
-	}
-	if len(menus) != 0 {
-		err = m.repo.CreateBatch(ctx, menus)
-		if err != nil {
-			return errorcode.Detail(errorcode.PublicDatabaseError, err.Error())
+	for resourceID, mus := range req {
+		//platform
+		platform := menu.ResourceToPlatform(resourceID)
+		//如果是语义治理，添加问数的按钮
+		menus := make([]*model.Menu, 0)
+		for _, router := range mus {
+			marshal, _ := jsoniter.Marshal(router)
+			menus = append(menus, &model.Menu{
+				Platform: platform,
+				Value:    string(marshal),
+			})
+		}
+		if len(menus) != 0 {
+			err = m.repo.CreateBatch(ctx, menus)
+			if err != nil {
+				return errorcode.Detail(errorcode.PublicDatabaseError, err.Error())
+			}
 		}
 	}
 	return nil
+}
+
+func (m *Menu) GetResourceMenuKeys(ctx context.Context) (map[string]string, error) {
+	menus, err := m.getAllMenus(ctx)
+	if err != nil {
+		return nil, err
+	}
+	dict := make(map[string]string)
+	for _, menu := range menus {
+		getResourceMenuKeys(menu, dict)
+	}
+	return dict, nil
+}
+
+func getResourceMenuKeys(menu *menu.Mu, dict map[string]string) {
+	dict[menu.Key] = menu.ResourceType
+	for i := range menu.Children {
+		menu.Children[i].ResourceType = menu.ResourceType
+		getResourceMenuKeys(menu.Children[i], dict)
+	}
 }

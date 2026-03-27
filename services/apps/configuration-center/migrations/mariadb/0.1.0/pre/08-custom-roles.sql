@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `permissions` (
 --   - 组织架构
 --   - 用户信息
 --   - 业务域
--- https://confluence.kweaver-ai.cn/x/zoCyDw
+-- https://confluence.aishu.cn/x/zoCyDw
 CREATE TABLE IF NOT EXISTS `permission_resources` (
     `id`            CHAR(36)        NOT NULL,
 

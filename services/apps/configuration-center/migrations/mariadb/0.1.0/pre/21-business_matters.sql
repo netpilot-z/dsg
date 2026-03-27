@@ -2,7 +2,7 @@ USE af_configuration;
 
 CREATE TABLE IF NOT EXISTS  `business_matters` (
     `id` bigint(20) unsigned NOT NULL COMMENT '雪花id',
-    `business_matters_id` CHAR(36) NOT NULL DEFAULT UUID()  COMMENT '对象ID, uuid',
+    `business_matters_id` CHAR(36) NOT NULL    COMMENT '对象ID, uuid',
     `name` varchar(128) NOT NULL COMMENT '业务事项名称',
     `type_key` varchar(64) NOT NULL COMMENT '业务事项类型key',
     `department_id` char(36)  NOT NULL COMMENT '所属部门',

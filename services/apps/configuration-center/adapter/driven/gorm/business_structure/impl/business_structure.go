@@ -403,9 +403,9 @@ func (b *businessStructureRepo) ListByPaging(ctx context.Context, query *domain.
 	}
 
 	if query.Sort == "name" {
-		sql = fmt.Sprintf("%s %s order by object.f_priority asc,object.type, name %s", sql, tmp, query.Direction)
+		sql = fmt.Sprintf("%s %s order by object.type, name %s", sql, tmp, query.Direction)
 	} else {
-		sql = fmt.Sprintf("%s %s order by object.f_priority asc, %s %s", sql, tmp, query.Sort, query.Direction)
+		sql = fmt.Sprintf("%s %s order by %s %s", sql, tmp, query.Sort, query.Direction)
 	}
 
 	if query.Limit > 0 {
@@ -556,9 +556,9 @@ func (b *businessStructureRepo) ListOrgByPaging(ctx context.Context, query *doma
 	}
 
 	if query.Sort == "name" {
-		sql = fmt.Sprintf("%s %s order by  object.f_priority asc,object.type, convert(name using gbk) %s", sql, tmp, query.Direction)
+		sql = fmt.Sprintf("%s %s order by object.type, name %s", sql, tmp, query.Direction)
 	} else {
-		sql = fmt.Sprintf("%s %s order by  object.f_priority asc,%s %s", sql, tmp, query.Sort, query.Direction)
+		sql = fmt.Sprintf("%s %s order by %s %s", sql, tmp, query.Sort, query.Direction)
 	}
 
 	if query.Limit > 0 {

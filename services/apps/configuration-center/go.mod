@@ -22,8 +22,8 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/json-iterator/go v1.1.12
 	github.com/kweaver-ai/TelemetrySDK-Go/exporter/v2 v2.10.3
-	github.com/kweaver-ai/idrm-go-common v0.1.4-0.20260119010937-2456e402a095
-	github.com/kweaver-ai/idrm-go-frame v0.1.3
+	github.com/kweaver-ai/idrm-go-common v0.1.5-0.20260327081834-ffea580bb6b8
+	github.com/kweaver-ai/idrm-go-frame v0.1.4-0.20260227065704-e2e78cd5f96e
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/mozillazg/go-pinyin v0.20.0
 	github.com/nsqio/go-nsq v1.1.0
@@ -230,7 +230,7 @@ require (
 )
 
 replace (
-github.com/kweaver-ai/TelemetrySDK-Go/exporter/v2 => github.com/kweaver-ai/TelemetrySDK-Go/exporter/v2 v2.10.3
-github.com/kweaver-ai/TelemetrySDK-Go/event/v2 => github.com/kweaver-ai/TelemetrySDK-Go/event/v2 v2.10.3
-github.com/kweaver-ai/TelemetrySDK-Go/span/v2 => github.com/kweaver-ai/TelemetrySDK-Go/span/v2 v2.10.3
+	github.com/kweaver-ai/TelemetrySDK-Go/event/v2 => github.com/kweaver-ai/TelemetrySDK-Go/event/v2 v2.10.3
+	github.com/kweaver-ai/TelemetrySDK-Go/exporter/v2 => github.com/kweaver-ai/TelemetrySDK-Go/exporter/v2 v2.10.3
+	github.com/kweaver-ai/TelemetrySDK-Go/span/v2 => github.com/kweaver-ai/TelemetrySDK-Go/span/v2 v2.10.3
 )

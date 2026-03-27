@@ -31,7 +31,7 @@ type CreateReqBody struct {
 	Name            string `json:"name" binding:"required,lte=128" example:"name"`      // 业务事项名称
 	TypeKey         string `json:"type_key" binding:"omitempty,VerifyXssString,max=64"` // 业务事项类型key
 	DepartmentId    string `json:"department_id"  binding:"omitempty,uuid"`             // 部门id
-	MaterialsNumber int    `json:"materials_number"  binding:"omitempty"`               // 材料数
+	MaterialsNumber uint64 `json:"materials_number"  binding:"omitempty"`               // 材料数
 }
 
 func (i *CreateReqBody) ToModel(info model.User) *model.BusinessMatter {
@@ -57,7 +57,7 @@ type UpdateReqBody struct {
 	Name            string `json:"name" binding:"required,lte=128" example:"name"`     // 业务事项名称
 	TypeKey         string `json:"type_key" binding:"required,VerifyXssString,max=64"` // 业务事项类型key
 	DepartmentId    string `json:"department_id"  binding:"omitempty,uuid"`            // 部门id
-	MaterialsNumber int    `json:"materials_number"  binding:"omitempty"`              // 材料数
+	MaterialsNumber uint64 `json:"materials_number"  binding:"omitempty"`              // 材料数
 }
 
 func (i *UpdateReqBody) ToModel(info model.User) *model.BusinessMatter {
@@ -101,7 +101,7 @@ type BusinessMatterList struct {
 	DepartmentId    string `json:"department_id" binding:"omitempty"`                 // 部门id
 	DepartmentName  string `json:"department_name" binding:"omitempty"`               // 部门名称
 	DepartmentPath  string `json:"department_path" binding:"omitempty"`               // 部门路径
-	MaterialsNumber int    `json:"materials_number" binding:"omitempty" example:"1"`  // 材料数
+	MaterialsNumber uint64 `json:"materials_number" binding:"omitempty" example:"1"`  // 材料数
 
 }
 
